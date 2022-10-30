@@ -1,9 +1,5 @@
 #include "flprogModbusSlaveTCP.h"
 
-void ModbusSlaveTCP::pool(){
-
-}
-
 void ModbusSlaveTCP::setSlaveAddress(byte address)
 {
     slaveAddres = address;

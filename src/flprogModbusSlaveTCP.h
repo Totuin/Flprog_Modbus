@@ -5,7 +5,6 @@
 class ModbusSlaveTCP : public ModbusTCP
 {
 public:
-    virtual void pool();
     void setSlaveAddress(byte address);
     void setData(ModbusMainData *data);
     void saveLong(long value, byte table, int startAddres);
