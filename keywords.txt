@@ -1,0 +1,70 @@
+
+ModbusSlaveRTU	KEYWORD1
+ModbusTable	KEYWORD1
+ModbusWorldTable	KEYWORD1
+ModbusBoolTable	KEYWORD1
+ModbusMainData	KEYWORD1
+ModbusSlaveRTUHardware	KEYWORD1
+ModbusSlaveRTUSoftware	KEYWORD1
+ModbusSlaveTCPW5100	KEYWORD1
+ModbusSlaveInMaster	KEYWORD1
+ModbusMasterRTUSoftware	KEYWORD1
+ModbusMasterRTUHardware	KEYWORD1
+ModbusTCPW5100SlaveServer	KEYWORD1
+ModbusMasterTCPW5100	KEYWORD1
+ModbusSlaveRTUoverTCPW5100	KEYWORD1
+ModbusMasterRTUoverTCPW5100	KEYWORD1
+
+
+
+
+setDataTable	KEYWORD2
+setIntOrder	KEYWORD2
+setLongOrder	KEYWORD2
+setFloatOrder	KEYWORD2
+setUnsignedlongOrder	KEYWORD2
+saveLong	KEYWORD2
+saveUnsignedLong	KEYWORD2
+saveFloat	KEYWORD2
+saveInteger	KEYWORD2
+saveByte	KEYWORD2
+saveBool	KEYWORD2
+readByte	KEYWORD2
+readInteger	KEYWORD2
+readFloat	KEYWORD2
+readLong	KEYWORD2
+readUnsignedLong	KEYWORD2
+readBool	KEYWORD2
+setSlaveAddress	KEYWORD2
+setData	KEYWORD2
+setHardwareSerial	KEYWORD2
+getLastError	KEYWORD2
+setData	KEYWORD2
+setPinPeDe	KEYWORD2
+setPortDataBits	KEYWORD2
+setPortStopBits	KEYWORD2
+setPortSpeed	KEYWORD2
+setPortParity	KEYWORD2
+pool	KEYWORD2
+setPollingPeriod	KEYWORD2
+setTimeOutTime	KEYWORD2
+setSlaves	KEYWORD2
+setPort	KEYWORD2
+setIpAdress	KEYWORD2
+
+
+
+
+HOLDING_REGISTR	LITERAL1
+COIL	LITERAL1
+INPUT_REGISTR	LITERAL1
+DISCRETE_INPUT	LITERAL1
+AB_ORDER	LITERAL1
+BA_ORDER	LITERAL1
+ABCD_ORDER	LITERAL1
+CDAB_ORDER	LITERAL1
+BADC_ORDER	LITERAL1
+DCBA_ORDER	LITERAL1
+
+
+ 

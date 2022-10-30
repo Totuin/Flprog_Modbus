@@ -1,0 +1,26 @@
+{
+    "files.associations": {
+        "cstddef": "cpp",
+        "type_traits": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp",
+        "*.tcc": "cpp",
+        "limits": "cpp",
+        "tuple": "cpp",
+        "cmath": "cpp",
+        "ranges": "cpp",
+        "ctime": "cpp",
+        "numeric": "cpp",
+        "ratio": "cpp",
+        "streambuf": "cpp",
+        "utility": "cpp",
+        "iomanip": "cpp",
+        "*.inc": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "netfwd": "cpp"
+    }
+}
