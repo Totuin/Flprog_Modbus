@@ -1,6 +1,6 @@
-#include "flprogModbusKaScadaCloudW5100.h"
+#include "flprogModbusKaScadaCloudWifiESP8266.h"
 
-void ModbusKaScadaCloudW5100::setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
+void ModbusKaScadaCloudWifiESP8266::setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
 {
     IPAddress tempIp = IPAddress(first_octet, second_octet, third_octet, fourth_octet);
     if (kaScadaCloudIp == tempIp)
@@ -12,7 +12,7 @@ void ModbusKaScadaCloudW5100::setKaScadaCloudIp(uint8_t first_octet, uint8_t sec
     client.stop();
 }
 
-void ModbusKaScadaCloudW5100::setKaScadaCloudPort(int port)
+void ModbusKaScadaCloudWifiESP8266::setKaScadaCloudPort(int port)
 {
     if (this->port == port)
 
@@ -23,7 +23,7 @@ void ModbusKaScadaCloudW5100::setKaScadaCloudPort(int port)
     client.stop();
 }
 
-void ModbusKaScadaCloudW5100::setKaScadaCloudDevceId(String id)
+void ModbusKaScadaCloudWifiESP8266::setKaScadaCloudDevceId(String id)
 {
     if (deniceId.equals(id))
 
@@ -34,12 +34,12 @@ void ModbusKaScadaCloudW5100::setKaScadaCloudDevceId(String id)
     client.stop();
 }
 
-void ModbusKaScadaCloudW5100::begin()
+void ModbusKaScadaCloudWifiESP8266::begin()
 {
     kaScadaCloudTimeOutStartTime = millis() - 5000;
 }
 
-void ModbusKaScadaCloudW5100::pool()
+void ModbusKaScadaCloudWifiESP8266::pool()
 {
     if (flprog::isTimer(kaScadaCloudTimeOutStartTime, 5000))
     {
@@ -73,7 +73,7 @@ void ModbusKaScadaCloudW5100::pool()
     executeSlaveReqest(data);
 }
 
-void ModbusKaScadaCloudW5100::sendTxBuffer()
+void ModbusKaScadaCloudWifiESP8266::sendTxBuffer()
 {
     if (buffer[0] == 0)
     {
@@ -94,7 +94,7 @@ void ModbusKaScadaCloudW5100::sendTxBuffer()
     bufferSize = 0;
 }
 
-void ModbusKaScadaCloudW5100::getRxBuffer()
+void ModbusKaScadaCloudWifiESP8266::getRxBuffer()
 {
     byte currentByte = 0;
     boolean buffOverflow = false;

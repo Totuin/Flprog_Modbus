@@ -1,10 +1,9 @@
 #pragma once
 #include "Arduino.h"
+#include "ESP8266WiFi.h"
 #include "flprogModbusSlaveTCP.h"
-#include "Ethernet.h"
-#include "SPI.h"
 
-class ModbusKaScadaCloudW5100 : public ModbusSlaveTCP
+class ModbusKaScadaCloudWifiESP8266 : public ModbusSlaveTCP
 {
 public:
     void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
@@ -22,5 +21,5 @@ private:
     String deniceId;
     IPAddress kaScadaCloudIp = IPAddress(94, 250, 249, 225);
     unsigned long kaScadaCloudTimeOutStartTime;
-    EthernetClient client;
+    WiFiClient client;
 };

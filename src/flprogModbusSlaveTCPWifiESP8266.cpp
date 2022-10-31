@@ -1,16 +1,16 @@
-#include "flprogModbusSlaveTCPW5100.h"
+#include "flprogModbusSlaveTCPWifiESP8266.h"
 
-ModbusSlaveTCPW5100::ModbusSlaveTCPW5100(EthernetServer *server)
+ModbusSlaveTCPWifiESP8266::ModbusSlaveTCPWifiESP8266(WiFiServer *server)
 {
     this->server = server;
 }
 
-void ModbusSlaveTCPW5100::begin()
+void ModbusSlaveTCPWifiESP8266::begin()
 {
     server->begin();
 }
 
-void ModbusSlaveTCPW5100::pool()
+void ModbusSlaveTCPWifiESP8266::pool()
 {
     if (!client.connected())
     {
@@ -31,7 +31,7 @@ void ModbusSlaveTCPW5100::pool()
     executeSlaveReqest(data);
 }
 
-void ModbusSlaveTCPW5100::getRxBuffer()
+void ModbusSlaveTCPWifiESP8266::getRxBuffer()
 {
     byte currentByte = 0;
     boolean buffOverflow = false;
@@ -56,7 +56,7 @@ void ModbusSlaveTCPW5100::getRxBuffer()
     }
 }
 
-void ModbusSlaveTCPW5100::sendTxBuffer()
+void ModbusSlaveTCPWifiESP8266::sendTxBuffer()
 {
     if (buffer[0] == 0)
     {

@@ -21,6 +21,7 @@ public:
     bool readBool(byte table, int startAddres);
     byte getLastError();
     virtual void setLastError(byte error) { lastError = error; };
+    virtual byte validateRequest();
 
 protected:
     byte mbapBuffer[6];

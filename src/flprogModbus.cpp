@@ -110,7 +110,6 @@ void Modbus::process_modbus_FC1(ModbusMainData *data, byte table)
 
 void Modbus::process_modbus_FC3(ModbusMainData *data, byte table)
 {
-
     ModbusTable *dataTable = data->tableForType(table);
     int startAddr = word(buffer[2], buffer[3]);
     int byteRegsno = word(buffer[4], buffer[5]);

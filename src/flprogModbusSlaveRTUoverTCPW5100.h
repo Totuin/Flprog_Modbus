@@ -16,7 +16,7 @@ protected:
 
     virtual byte portAvailable(){return client.available();};
     virtual byte portRead(){return client.read();};
-    virtual byte portWrite(byte *buffer, byte size){client.write(buffer,size);};
+    virtual byte portWrite(byte *buffer, byte size){return client.write(buffer,size);};
     virtual bool hasPort(){return true;};
 
 

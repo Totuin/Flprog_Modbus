@@ -1,23 +1,21 @@
 #pragma once
 #include "Arduino.h"
+#include "ESP8266WiFi.h"
 #include "flprogModbusSlaveTCP.h"
-#include "Ethernet.h"
-#include "SPI.h"
 
-class ModbusSlaveTCPW5100 : public ModbusSlaveTCP
+class ModbusSlaveTCPWifiESP8266 : public ModbusSlaveTCP
 {
 public:
-    ModbusSlaveTCPW5100(EthernetServer *server);
+    ModbusSlaveTCPWifiESP8266(WiFiServer *server);
     virtual void begin();
     virtual void pool();
 
 protected:
     void getRxBuffer();
     virtual void sendTxBuffer();
-    
-   
-
+     
 private:
-    EthernetServer *server;
-    EthernetClient client;
+    WiFiServer *server;
+    WiFiClient client;
 };
+    

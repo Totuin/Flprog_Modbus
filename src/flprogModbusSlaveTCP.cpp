@@ -74,3 +74,8 @@ byte ModbusSlaveTCP::getLastError()
 {
     return lastError;
 }
+
+byte ModbusSlaveTCP::validateRequest()
+{
+    return validateSlaveReqest(data);
+}
