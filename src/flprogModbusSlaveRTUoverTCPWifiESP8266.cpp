@@ -1,6 +1,6 @@
 #include "flprogModbusSlaveRTUoverTCPWifiESP8266.h"
 
-
+#ifdef ESP8266
 ModbusSlaveRTUoverTCPWifiESP8266::ModbusSlaveRTUoverTCPWifiESP8266(WiFiServer *server)
 {
     this->server = server;
@@ -26,3 +26,4 @@ void ModbusSlaveRTUoverTCPWifiESP8266::pool()
   
    ModbusSlaveRTU::pool();
 }
+#endif

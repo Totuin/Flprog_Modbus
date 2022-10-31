@@ -1,12 +1,10 @@
 #include "flprogModbusSlaveRTUSoftware.h"
-
+#ifndef ESP32
 void ModbusSlaveRTUSoftware::begin(byte addres, uint8_t receivePin, uint8_t transmitPin)
 {
     port = new SoftwareSerial(receivePin, transmitPin);
     port->begin(flprog::speedFromCode(portSpeed));
     slaveAddres = addres;
-    bufferSize = 0;
-    lastRec = 0;
     if (!(pinPeDe == 200))
     {
         pinMode(pinPeDe, OUTPUT);
@@ -39,3 +37,4 @@ bool ModbusSlaveRTUSoftware::hasPort()
 {
     return !(port == 0);
 }
+#endif

@@ -1,4 +1,5 @@
 #include "flprogModbusSlaveTCPWifiESP8266.h"
+#ifdef ESP8266
 
 ModbusSlaveTCPWifiESP8266::ModbusSlaveTCPWifiESP8266(WiFiServer *server)
 {
@@ -76,3 +77,5 @@ void ModbusSlaveTCPWifiESP8266::sendTxBuffer()
     client.print(stringBuffer);
     bufferSize = 0;
 }
+
+#endif

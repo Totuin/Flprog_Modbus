@@ -1,5 +1,7 @@
 #include "flprogModbusMasterTCPWifiESP8266.h"
 
+
+#ifdef ESP8266
 // ModbusTCPWifiESP8266SlaveServer*****************
 void ModbusTCPWifiESP8266SlaveServer::connect()
 {
@@ -44,3 +46,4 @@ ModbusMasterTCPWifiESP8266::ModbusMasterTCPWifiESP8266(ModbusTCPSlaveServer tabl
     servers = table;
 }
 
+#endif

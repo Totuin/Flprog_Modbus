@@ -1,4 +1,5 @@
 #include "flprogModbusKaScadaCloudWifiESP8266.h"
+#ifdef ESP8266
 
 void ModbusKaScadaCloudWifiESP8266::setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
 {
@@ -118,3 +119,5 @@ void ModbusKaScadaCloudWifiESP8266::getRxBuffer()
         currentByteIndex++;
     }
 }
+
+#endif

@@ -1,5 +1,7 @@
 #include "flprogModbusMasterRTUSoftware.h"
 
+#ifndef ESP32
+
 ModbusMasterRTUSoftware::ModbusMasterRTUSoftware(ModbusSlaveInMaster table[], int size)
 {
     slavesSize = size;
@@ -42,3 +44,5 @@ bool ModbusMasterRTUSoftware::hasPort()
 {
     return !(port == 0);
 }
+
+#endif

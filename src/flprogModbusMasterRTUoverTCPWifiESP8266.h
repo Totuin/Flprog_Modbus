@@ -1,5 +1,6 @@
 #pragma once
 #include "Arduino.h"
+#ifdef ESP8266
 #include "ESP8266WiFi.h"
 #include "flprogModbusMasterTCPWifiESP8266.h"
 
@@ -14,3 +15,4 @@ protected:
     virtual void getRxBuffer();
     virtual void sendTxBuffer();
 };
+#endif

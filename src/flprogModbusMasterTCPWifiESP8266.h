@@ -1,5 +1,8 @@
 #pragma once
 #include "Arduino.h"
+
+
+#ifdef ESP8266
 #include "ESP8266WiFi.h"
 #include "flprogModbusMasterTCP.h"
 
@@ -26,3 +29,5 @@ public:
 protected:
 private:
 };
+
+#endif

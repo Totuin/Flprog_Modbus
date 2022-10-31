@@ -1,5 +1,6 @@
 #include "flprogModbusMasterRTUoverTCPWifiESP8266.h"
 
+#ifdef ESP8266
 ModbusMasterRTUoverTCPWifiESP8266::ModbusMasterRTUoverTCPWifiESP8266(ModbusTCPSlaveServer table[], int size)
 {
     serversSize = size;
@@ -77,3 +78,5 @@ void ModbusMasterRTUoverTCPWifiESP8266::sendTxBuffer()
     telegrammServer->write(buffer, bufferSize);
     bufferSize = 0;
 }
+
+#endif

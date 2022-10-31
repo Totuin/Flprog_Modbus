@@ -1,5 +1,7 @@
 #pragma once
 #include "Arduino.h"
+
+#ifndef ESP32
 #include "flprogModbusMasterRTU.h"
 #include "SoftwareSerial.h"
 
@@ -17,3 +19,4 @@ protected:
     virtual byte portWrite(byte *buffer, byte size);
     virtual bool hasPort();
 };
+#endif
