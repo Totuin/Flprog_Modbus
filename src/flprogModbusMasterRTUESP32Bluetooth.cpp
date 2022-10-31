@@ -1,6 +1,6 @@
 #include "flprogModbusMasterRTUESP32Bluetooth.h"
 
-//#ifdef ESP32
+#ifdef ESP32
 
 ModbusMasterRTUESP32Bluetooth::ModbusMasterRTUESP32Bluetooth(ModbusSlaveInMaster table[], int size)
 {
@@ -88,4 +88,4 @@ bool ModbusMasterRTUESP32Bluetooth::hasPort()
     return true;
 }
 
-//#endif
+#endif

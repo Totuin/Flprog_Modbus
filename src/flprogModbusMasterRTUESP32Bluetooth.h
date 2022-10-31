@@ -1,7 +1,7 @@
 #pragma once
 #include "Arduino.h"
 
-//#ifdef ESP32
+#ifdef ESP32
 #include "BluetoothSerial.h"
 #include "flprogModbusMasterRTU.h"
 
@@ -28,4 +28,4 @@ protected:
 
 };
 
-//#endif
+#endif
