@@ -24,7 +24,7 @@ bool tableS_4_1[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 */
 ModbusWorldTable Holder1(HOLDING_REGISTR, table_4_1, tableA_4_1, tableS_4_1, 8);
 
-
+//Повторяем действия для второго сдейва
 int table_4_2[8];
 int tableA_4_2[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 bool tableS_4_2[8] = {0, 0, 0, 0, 0, 0, 0, 0};

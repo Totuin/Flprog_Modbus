@@ -9,7 +9,6 @@ byte ethernet_gateway[] = {192, 168, 0, 1};
 byte ethernet_subnet[] = {255, 255, 255, 0};
 
 // Задаем область памяти для хранения регистров Modbus Holder Registr
-
 int _modbusSlaveDataTable_4[8];
 
 /*
