@@ -21,8 +21,8 @@ ModbusTCPWifiESP8266SlaveServer	KEYWORD1
 ModbusMasterTCPWifiESP8266	KEYWORD1
 ModbusSlaveRTUoverTCPWifiESP8266	KEYWORD1
 ModbusSlaveTCPWifiESP8266	KEYWORD1
-
-
+ModbusMasterRTUESP32Bluetooth	KEYWORD1
+ModbusKaScadaCloudWifiESP32	KEYWORD1
 
 
 setDataTable	KEYWORD2
@@ -61,6 +61,13 @@ setIpAdress	KEYWORD2
 setKaScadaCloudIp	KEYWORD2
 setKaScadaCloudPort	KEYWORD2
 setKaScadaCloudDevceId	KEYWORD2
+beBluetoothMaster	KEYWORD2
+setPartnerName	KEYWORD2
+beBluetoothSlave	KEYWORD2
+setDeviceName	KEYWORD2
+
+
+
 
 
 
