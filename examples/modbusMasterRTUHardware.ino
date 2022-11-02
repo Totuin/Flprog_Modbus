@@ -1,13 +1,39 @@
+//Подключаем необходимую библиотеку
 #include "flprogModbusMasterRTUHardware.h"
+
+// Задаем область памяти для хранения регистров Modbus Holder Registr первого слейва
 int table_4_1[8];
+
+/*
+Создаем  таблицу адресов для регистров Modbus Holder Registr.
+Для каждого регистра необходимо указать адрес.
+Последовательность адресов любая, просто список необходимых адресов, сортировка так же не обязательна
+Последовательно идущие адреса регистров даже при отсутствии сортировки будут опрашиваться одним запросом
+*/
 int tableA_4_1[8] = {0, 1, 2, 3, 4, 5, 6, 7};
+
+/*
+Создаем массив хранения флагов необходимости отправки новых данных на слейв
+Обязателен для таблиц Holder Registr и Coil. Для других таблиц (INPUT_REGISTR и  DISCRETE_INPUT) создавать эти массивы не надо
+*/
 bool tableS_4_1[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+/*
+Создаем объект для управления регистрами Modbus Holder Registr и сразу передаём этому объекту созданные ранее массивы.
+Последний параметр - количество регистров
+*/
 ModbusWorldTable Holder1(HOLDING_REGISTR, table_4_1, tableA_4_1, tableS_4_1, 8);
+
+
 int table_4_2[8];
 int tableA_4_2[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 bool tableS_4_2[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 ModbusWorldTable Holder2(HOLDING_REGISTR, table_4_2, tableA_4_2, tableS_4_2, 8);
 
+/*
+Повторяем действия для остальных таблиц Modbus  если есть необходимость
+Порядок создания таблиц не имеет значения
+*/
 int table_3_1[8];
 int tableA_3_1[8] = {0, 1, 2, 3, 4, 5, 6, 7};
 ModbusWorldTable InputRegistr1(INPUT_REGISTR, table_3_1, tableA_3_1, 8);
@@ -31,10 +57,13 @@ bool table_1_2[2];
 int tableA_1_2[2] = {0, 1};
 ModbusBoolTable DiscreteInput2(DISCRETE_INPUT, table_1_2, tableA_1_2, 2);
 
+//Создаем массив слейвов с которыми работает мастер
 ModbusSlaveInMaster Master1SlavesTable[2];
 
+//Создаем объект непосредстредственно Модбас мастера, последний параметр - количество слейвов
 ModbusMasterRTUHardware Master1(Master1SlavesTable, 2);
 
+//Вспомогательные переменные для демонстрации
 int tempInt;
 bool tempBool;
 int value, oldValue;
@@ -42,19 +71,58 @@ unsigned long startTime;
 
 void setup()
 {
-  Serial.begin(9600);
+  //Инициализация вспомогательных переменных
+  startTime = millis() + 1000;
+
+  //Параметрируем первый слейв :
+
+  //Устанавливаем слейв адрес
   Master1SlavesTable[0].setSlaveAddress(1);
-  Master1SlavesTable[0].setPollingPeriod(100);
-  Master1SlavesTable[0].setTimeOutTime(100);
+
+  /*
+ Устанавливаем период опроса в милисекундах
+ Вызов не обязятелен, значение по умолчанию - 1000 миллисекунд
+ значение можно изменять в режиме выполнения программы
+ */
+  Master1SlavesTable[0].setPollingPeriod(1000);
+
+  /*
+Устанавливаем период таймаута для слейва
+Вызов не обязятелен, значение по умолчанию - 1000 миллисекунд
+значение можно изменять в режиме выполнения программы
+*/
+  Master1SlavesTable[0].setTimeOutTime(1000);
+
+  //Привязываем ссылки на объекты таблиц к слейву
   Master1SlavesTable[0].setDataTable(&Holder1);
   Master1SlavesTable[0].setDataTable(&InputRegistr1);
   Master1SlavesTable[0].setDataTable(&Coil1);
   Master1SlavesTable[0].setDataTable(&DiscreteInput1);
+
+  /*
+Задаем последовательность байтов для хранения различных типов данных
+Возможные знаыения:
+
+Для Integer:
+AB_ORDER
+BA_ORDER
+
+Для остальных типов:
+ABCD_ORDER
+CDAB_ORDER
+BADC_ORDER
+DCBA_ORDER
+
+Вызов данных функций не обязателен.
+По умолчанию заданны  значения  AB_ORDER  и ABCD_ORDER
+Вызов данных функций возможен в любое время если необходимо изменить эти значения в режиме выполнения программы
+*/
   Master1SlavesTable[0].setLongOrder(DCBA_ORDER);
   Master1SlavesTable[0].setFloatOrder(BADC_ORDER);
   Master1SlavesTable[0].setUnsignedlongOrder(CDAB_ORDER);
   Master1SlavesTable[0].setIntOrder(AB_ORDER);
 
+  // Таким же образом настраиваем второй слейв
   Master1SlavesTable[1].setSlaveAddress(2);
   Master1SlavesTable[1].setPollingPeriod(100);
   Master1SlavesTable[1].setTimeOutTime(1000);
@@ -67,60 +135,90 @@ void setup()
   Master1SlavesTable[1].setUnsignedlongOrder(CDAB_ORDER);
   Master1SlavesTable[1].setIntOrder(AB_ORDER);
 
+  //Если необходимо - задаём номер пина управления потоком приёма - передачи
   Master1.setPinPeDe(13);
-  Master1.begin(&Serial1);
 
-  startTime = millis() + 1000;
+  /*
+ Параметрирузируем порт:
+ Вызовы не обязательны по умолчанию параметры порта 9600 8N1
+ Параметры порта можно менять во время исполнения программы
+
+ Задаём скорость порта допустимые константы:
+ SPEED_300
+ SPEED_600
+ SPEED_1200
+ SPEED_2400
+ SPEED_4800
+ SPEED_9600
+ SPEED_14400
+ SPEED_19200
+ SPEED_28800
+ SPEED_38400
+ SPEED_57600
+ SPEED_115200
+  */
+  Master1.setPortSpeed(SPEED_14400);
+
+  //Задаем количество дата бит
+  Master1.setPortDataBits(8);
+
+  //Задаем количество стоп бит
+  Master1.setPortStopBits(2);
+
+  /*
+  Задаем четность
+  Значения 0 (NONE), 1 (EVEN), 2 (ODD)
+  */
+  Master1.setPortParity(2);
+
+  //Инициализируем мастер
+  Master1.begin(&Serial1);
 }
 
 void loop()
 {
 
-  // Master1.setPortSpeed(SPEED_14400);
-  //  Master1.setPortDataBits(8);
-  //  Master1.setPortStopBits(2);
-  //  Master1.setPortParity(2);
-
+  //Цикл работы мастера
   Master1.pool();
 
+  //Демонстрационная логика - раз в секунду изменяем значение переменной.
   if ((startTime + 1000) < millis())
   {
     startTime = millis();
     tempInt = tempInt + 1;
     tempBool = !tempBool;
-    
   }
+  /*
+    Играемся с регистрами
 
-value = Master1.readInteger(0, INPUT_REGISTR, 0);
+    Доступные функции:
+      void saveLong(int slave, long value, byte table, int startAddres);
+      void saveUnsignedLong(int slave, unsigned long value, byte table, int startAddres);
+      void saveFloat(int slave, float value, byte table, int startAddres);
+      void saveInteger(int slave, int value, byte table, int startAddres);
+      void saveByte(int slave, byte value, byte table, int startAddres);
+      void saveBool(int slave, bool value, byte table, int startAddres);
+      byte readByte(int slave, byte table, int startAddres);
+      int readInteger(int slave, byte table, int startAddres);
+      float readFloat(int slave, byte table, int startAddres);
+      long readLong(int slave, byte table, int startAddres);
+      unsigned long readUnsignedLong(int slave, byte table, int startAddres);
+      bool readBool(int slave, byte table, int startAddres);
 
-   Master1.saveBool(0, tempBool, COIL, 0);
-    Master1.saveBool(0, tempBool, COIL, 1);
-    Master1.saveBool(1, tempBool, COIL, 1);
-    Master1.saveBool(1, tempBool, COIL, 0);
+      Где slave - индекс нужного слейва в таблице слейвов (НЕ АДРЕС СЛЕЙВА - ОН МОЖЕТ МЕНЯТСЯ!)
+  */
+  value = Master1.readInteger(0, INPUT_REGISTR, 0);
 
-    Master1.saveInteger(0, tempInt, HOLDING_REGISTR, 1);
-    Master1.saveInteger(0, tempInt, HOLDING_REGISTR, 2);
-    Master1.saveInteger(1, tempInt, HOLDING_REGISTR, 1);
-    Master1.saveInteger(1, tempInt, HOLDING_REGISTR, 2);
-
-
+  Master1.saveBool(0, tempBool, COIL, 0);
+  Master1.saveBool(0, tempBool, COIL, 1);
+  Master1.saveBool(1, tempBool, COIL, 1);
+  Master1.saveBool(1, tempBool, COIL, 0);
+  Master1.saveInteger(0, tempInt, HOLDING_REGISTR, 1);
+  Master1.saveInteger(0, tempInt, HOLDING_REGISTR, 2);
+  Master1.saveInteger(1, tempInt, HOLDING_REGISTR, 1);
+  Master1.saveInteger(1, tempInt, HOLDING_REGISTR, 2);
   Master1.saveInteger(0, value, HOLDING_REGISTR, 0);
-  
   Master1.saveInteger(1, value, HOLDING_REGISTR, 0);
-
-
-
- 
-
-
-
-
-  // Master1.saveInteger(0, tempInt, HOLDING_REGISTR, 6);
-
-
-
-  //  Master1.saveInteger(1, tempInt, HOLDING_REGISTR, 1);
-
-
-
+  Master1.saveInteger(0, tempInt, HOLDING_REGISTR, 6);
+  Master1.saveInteger(1, tempInt, HOLDING_REGISTR, 1);
 }
