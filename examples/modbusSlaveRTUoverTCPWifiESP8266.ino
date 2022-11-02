@@ -296,7 +296,7 @@ int hexStrToInt(String instring)
   if (len == 0)
     return 0;
   int result = 0;
-  for (byte i = 0; i < 8; i++) // только первые 8 цыфар влезуть в uint32
+  for (byte i = 0; i < 8; i++) 
   {
     char ch = instring[i];
     if (ch == 0)
