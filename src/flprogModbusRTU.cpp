@@ -120,13 +120,13 @@ void ModbusRTU::sendTxBuffer()
     }
     byte i = 0;
     onPeDePin();
-    int crc = modbusCalcCRC(bufferSize, buffer);
+    int crc = flprogModus::modbusCalcCRC(bufferSize, buffer);
     buffer[bufferSize] = crc >> 8;
     bufferSize++;
     buffer[bufferSize] = crc & 0x00ff;
     bufferSize++;
     portWrite(buffer, bufferSize);
-    timeOfSend = timeForSendBytes(portDataBits, portStopBits, portParity, portSpeed, bufferSize);
+    timeOfSend = flprogModus::timeForSendBytes(portDataBits, portStopBits, portParity, portSpeed, bufferSize);
     startSendTime = millis();
     workStatus = MODBUS_WAITING_SENDING;
     bufferSize = 0;
@@ -143,7 +143,7 @@ bool ModbusRTU::checkAvalibleBytes()
         time = millis();
         return false;
     }
-    if (!(flprog::isTimer(time, t35TimeForSpeed(portSpeed))))
+    if (!(flprog::isTimer(time, flprogModus::t35TimeForSpeed(portSpeed))))
         return false;
     lastRec = 0;
     return true;

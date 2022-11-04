@@ -33,7 +33,7 @@ void ModbusMasterRTUoverTCPW5100::checkAnswer()
 byte ModbusMasterRTUoverTCPW5100::validateRequest()
 {
     uint16_t msgCRC = ((buffer[bufferSize - 2] << 8) | buffer[bufferSize - 1]);
-    if (modbusCalcCRC(bufferSize - 2, buffer) != msgCRC)
+    if (flprogModus::modbusCalcCRC(bufferSize - 2, buffer) != msgCRC)
     {
         return 255;
     }
@@ -68,7 +68,7 @@ void ModbusMasterRTUoverTCPW5100::getRxBuffer()
 void ModbusMasterRTUoverTCPW5100::sendTxBuffer()
 {
     byte i = 0;
-    int crc = modbusCalcCRC(bufferSize, buffer);
+    int crc = flprogModus::modbusCalcCRC(bufferSize, buffer);
     buffer[bufferSize] = crc >> 8;
     bufferSize++;
     buffer[bufferSize] = crc & 0x00ff;

@@ -29,7 +29,7 @@ byte ModbusSlaveRTU::validateRequest()
 
     int msgCRC =
         ((buffer[bufferSize - 2] << 8) | buffer[bufferSize - 1]);
-    if (modbusCalcCRC(bufferSize - 2, buffer) != msgCRC)
+    if (flprogModus::modbusCalcCRC(bufferSize - 2, buffer) != msgCRC)
     {
         return 255;
     }

@@ -1,6 +1,7 @@
 #pragma once
 #include "Arduino.h"
 #include "flprogUtilites.h"
+#include "flprogModbusUtilites.h"
 #include "flprogModbusData.h"
 
 #define MODBUS_READY 0
@@ -34,13 +35,9 @@ protected:
     void create_Write_FC16(ModbusTable *table, int startAddress, int numberRegs);
     void create_PDU(ModbusTable *table, int startAddress, int numberRegs);
     void writeMaserData(ModbusTable *table, int startAddress, int numberRegs);
-
-
     byte validateSlaveReqest(ModbusMainData *data);
     void buildException(byte exception);
     virtual byte validateRequest(){};
     void executeSlaveReqest(ModbusMainData *data);
-    int modbusCalcCRC(byte length, byte bufferArray[]);
-    byte t35TimeForSpeed(byte speed);
-    int timeForSendBytes(byte portDataBits, byte portStopBits, byte portParity, byte portSpeed, int dataSize);
+    
 };
