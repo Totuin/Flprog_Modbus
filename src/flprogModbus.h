@@ -4,9 +4,6 @@
 #include "flprogModbusUtilites.h"
 #include "flprogModbusData.h"
 
-#define MODBUS_READY 0
-#define MODBUS_WAITING_SENDING 1
-#define MODBUS_WAITING_ANSWER 2
 
 class Modbus
 {
