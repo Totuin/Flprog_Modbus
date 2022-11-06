@@ -1,5 +1,6 @@
 #pragma once
 #include "Arduino.h"
+#ifndef ESP32
 #include "flprogModbusMasterTCP.h"
 #include "Ethernet.h"
 #include "SPI.h"
@@ -28,3 +29,5 @@ public:
 protected:
 private:
 };
+
+#endif

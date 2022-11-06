@@ -1,5 +1,6 @@
 #pragma once
 #include "Arduino.h"
+#ifndef ESP32
 #include "flprogModbusMasterTCPW5100.h"
 
 class ModbusMasterRTUoverTCPW5100 : public ModbusMasterTCPW5100
@@ -13,3 +14,4 @@ protected:
     virtual void getRxBuffer();
     virtual void sendTxBuffer();
 };
+#endif

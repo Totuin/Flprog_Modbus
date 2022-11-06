@@ -1,5 +1,5 @@
 #include "flprogModbusSlaveRTUoverTCPW5100.h"
-
+#ifndef ESP32
 ModbusSlaveRTUoverTCPW5100::ModbusSlaveRTUoverTCPW5100(EthernetServer *server)
 {
     this->server = server;
@@ -23,4 +23,4 @@ void ModbusSlaveRTUoverTCPW5100::pool()
     ModbusSlaveRTU::pool();
 }
 
-
+#endif

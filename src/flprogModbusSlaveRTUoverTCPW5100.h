@@ -1,5 +1,6 @@
 #pragma once
 #include "Arduino.h"
+#ifndef ESP32
 #include "flprogModbusSlaveRTU.h"
 #include "Ethernet.h"
 #include "SPI.h"
@@ -25,3 +26,4 @@ protected:
     EthernetClient client;
 
 };
+#endif

@@ -1,4 +1,5 @@
 #include "flprogModbusMasterRTUoverTCPW5100.h"
+#ifndef ESP32
 
 ModbusMasterRTUoverTCPW5100::ModbusMasterRTUoverTCPW5100(ModbusTCPSlaveServer table[], int size)
 {
@@ -77,3 +78,4 @@ void ModbusMasterRTUoverTCPW5100::sendTxBuffer()
     telegrammServer->write(buffer, bufferSize);
     bufferSize = 0;
 }
+#endif

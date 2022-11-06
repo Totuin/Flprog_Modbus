@@ -1,6 +1,8 @@
 #pragma once
 #include "Arduino.h"
+#ifndef ESP32
 #include "flprogModbusSlaveTCP.h"
+
 #include "Ethernet.h"
 #include "SPI.h"
 
@@ -24,3 +26,4 @@ private:
     unsigned long kaScadaCloudTimeOutStartTime;
     EthernetClient client;
 };
+#endif

@@ -1,5 +1,6 @@
 #include "flprogModbusSlaveTCPW5100.h"
 
+#ifndef ESP32
 ModbusSlaveTCPW5100::ModbusSlaveTCPW5100(EthernetServer *server)
 {
     this->server = server;
@@ -76,3 +77,5 @@ void ModbusSlaveTCPW5100::sendTxBuffer()
     client.print(stringBuffer);
     bufferSize = 0;
 }
+
+#endif

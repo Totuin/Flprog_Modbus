@@ -1,5 +1,6 @@
 #include "flprogModbusKaScadaCloudW5100.h"
 
+#ifndef ESP32
 void ModbusKaScadaCloudW5100::setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
 {
     IPAddress tempIp = IPAddress(first_octet, second_octet, third_octet, fourth_octet);
@@ -118,3 +119,4 @@ void ModbusKaScadaCloudW5100::getRxBuffer()
         currentByteIndex++;
     }
 }
+#endif

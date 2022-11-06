@@ -6,7 +6,7 @@ void ModbusSlaveRTUESP32Bluetooth::begin(byte addres)
     port.begin(deviceName);
     if (isMaster)
     {
-        port.connect("test23");
+        port.connect(partnerName);
     }
 
     slaveAddres = addres;
@@ -57,7 +57,7 @@ void ModbusSlaveRTUESP32Bluetooth::restartPort()
     port.begin(deviceName);
     if (isMaster)
     {
-        port.connect("test23");
+        port.connect(partnerName);
     }
 }
 

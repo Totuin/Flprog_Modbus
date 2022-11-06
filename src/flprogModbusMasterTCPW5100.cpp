@@ -1,5 +1,6 @@
 #include "flprogModbusMasterTCPW5100.h"
 
+#ifndef ESP32
 // ModbusTCPW5100Client*****************
 void ModbusTCPW5100SlaveServer::connect()
 {
@@ -44,3 +45,4 @@ ModbusMasterTCPW5100::ModbusMasterTCPW5100(ModbusTCPSlaveServer table[], int siz
     servers = table;
 }
 
+#endif
