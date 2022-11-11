@@ -15,6 +15,4 @@ protected:
     virtual byte portRead();
     virtual byte portWrite(byte *buffer, byte size);
     virtual bool hasPort();
-    virtual void getRxBuffer();
-    virtual void sendTxBuffer();
 };

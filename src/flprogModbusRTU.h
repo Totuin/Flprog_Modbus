@@ -10,6 +10,10 @@ public:
     void setPortDataBits(byte dataBits);
     void setPortStopBits(byte stopBits);
     void setPortParity(byte stopBits);
+    byte getPortSpeed() { return portSpeed; };
+    byte getPortDataBits() { return portDataBits; };
+    byte getPortStopBits() { return portStopBits; };
+    byte getPortParity() { return portParity; };
 
 protected:
     virtual void restartPort(){};
