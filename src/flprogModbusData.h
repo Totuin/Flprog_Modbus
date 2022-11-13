@@ -124,6 +124,7 @@ public:
     byte slaveAddres;
     byte getLastError();
     void status(bool status);
+    bool status() { return isActive; };
     void setPollingPeriod(unsigned long period);
     void setTimeOutTime(unsigned long time);
     unsigned long getTimeOutTime();

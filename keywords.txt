@@ -65,6 +65,7 @@ beBluetoothMaster	KEYWORD2
 setPartnerName	KEYWORD2
 beBluetoothSlave	KEYWORD2
 setDeviceName	KEYWORD2
+getPortSpeed	KEYWORD2
 
 
 

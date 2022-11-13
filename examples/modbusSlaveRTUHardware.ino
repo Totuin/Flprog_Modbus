@@ -1,5 +1,5 @@
 //Подключаем необходимую библиотеку
-#include <flprogModbusSlaveRTUHardware.h>
+#include "flprogModbusSlaveRTUHardware.h"
 
 // Задаем область памяти для хранения регистров Modbus Holder Registr первого слейва
 int _modbusSlaveDataTable_4[8];
