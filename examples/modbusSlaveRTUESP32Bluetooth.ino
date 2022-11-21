@@ -1,5 +1,5 @@
 //Подключаем необходимую библиотеку
-#include <flprogModbusSlaveRTUESP32Bluetooth.h>
+#include "flprogModbusSlaveRTUESP32Bluetooth.h"
 
 // Задаем область памяти для хранения регистров Modbus Holder Registr первого слейва
 int _modbusSlaveDataTable_4[8];
