@@ -51,13 +51,11 @@ byte ModbusMasterRTUoverTCPWifiESP8266::validateRequest()
 
 void ModbusMasterRTUoverTCPWifiESP8266::getRxBuffer()
 {
-
     boolean buffOverflow = false;
-
     bufferSize = 0;
-    while (telegrammServer->available())
+    while (available())
     {
-        buffer[bufferSize] = telegrammServer->read();
+        buffer[bufferSize] = read();
         bufferSize++;
         if (bufferSize >= 64)
         {
@@ -74,8 +72,8 @@ void ModbusMasterRTUoverTCPWifiESP8266::sendTxBuffer()
     bufferSize++;
     buffer[bufferSize] = crc & 0x00ff;
     bufferSize++;
-    telegrammServer->connect();
-    telegrammServer->write(buffer, bufferSize);
+    connect(telegrammServer);
+    write(telegrammServer, buffer, bufferSize);
     bufferSize = 0;
 }
 

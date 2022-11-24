@@ -1,8 +1,8 @@
 #include "flprogModbusMasterTCPW5100.h"
 
 #ifndef ESP32
-// ModbusTCPW5100Client*****************
-void ModbusTCPW5100SlaveServer::connect()
+
+void ModbusMasterTCPW5100::connect(ModbusTCPSlaveServer *server)
 {
     
     if (w5100Client.connected())
@@ -10,14 +10,14 @@ void ModbusTCPW5100SlaveServer::connect()
         
         return;
     }
-    w5100Client.connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth), port);
+    w5100Client.connect(IPAddress(server->getIp(0), server->getIp(1), server->getIp(2), server->getIp(3)), server->getPort());
 }
 
-void ModbusTCPW5100SlaveServer::write(byte buffer[], byte buferSize)
+void ModbusMasterTCPW5100::write(ModbusTCPSlaveServer *server, byte buffer[], byte buferSize)
 {
     if (!w5100Client.connected())
     {
-        connect();
+        connect(server);
     }
     if (w5100Client.connected())
     {
@@ -26,23 +26,23 @@ void ModbusTCPW5100SlaveServer::write(byte buffer[], byte buferSize)
     }
 }
 
-void ModbusTCPW5100SlaveServer::stop()
+void ModbusMasterTCPW5100::stop()
 {
     w5100Client.stop();
   
 }
 
-byte ModbusTCPW5100SlaveServer::read()
+byte ModbusMasterTCPW5100::read()
 {
     return w5100Client.read();
 }
 
-byte ModbusTCPW5100SlaveServer::available()
+byte ModbusMasterTCPW5100::available()
 {
     return w5100Client.available();
 }
 
-// ModbusMasterTCPW5100********************
+
 ModbusMasterTCPW5100::ModbusMasterTCPW5100(ModbusTCPSlaveServer table[], int size)
 {
     serversSize = size;

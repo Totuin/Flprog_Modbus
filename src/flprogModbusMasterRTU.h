@@ -20,6 +20,16 @@ public:
     unsigned long readUnsignedLong(int slave, byte table, int startAddres);
     bool readBool(int slave, byte table, int startAddres);
     bool hasSlave(int slaveIndex);
+    void setDataTable(int slave, ModbusWorldTable *table);
+    void setDataTable(int slave, ModbusBoolTable *table);
+    void setSlaveAddress(int slave, byte address);
+    void setPollingPeriod(int slave, unsigned long period);
+    void setLongOrder(int slave, byte order);
+    void setFloatOrder(int slave, byte order);
+    void setUnsignedlongOrder(int slave, byte order);
+    void setIntOrder(int slave, byte order);
+    byte getLastError(int slave);
+    void status(int slave, bool status);
 
 protected:
     ModbusSlaveInMaster *slaves;

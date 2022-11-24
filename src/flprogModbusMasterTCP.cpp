@@ -4,19 +4,18 @@
 
 void ModbusTCPSlaveServer::setSlaves(ModbusSlaveInMaster table[], int size)
 {
-    slaves = table;
-    slavesSize = size;
+    this->slaves = table;
+    this->slavesSize = size;
 }
 
 void ModbusTCPSlaveServer::setPort(int serverPort)
 {
-    if (serverPort == port)
+    if (serverPort == this->port)
     {
         return;
     }
 
-    port = serverPort;
-    stop();
+    this->port = serverPort;
 }
 
 void ModbusTCPSlaveServer::setIpAdress(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
@@ -29,7 +28,6 @@ void ModbusTCPSlaveServer::setIpAdress(uint8_t first_octet, uint8_t second_octet
     ipSecond = second_octet;
     ipThird = third_octet;
     ipFourth = fourth_octet;
-    stop();
 }
 
 bool ModbusTCPSlaveServer::compareWithIpAddress(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
@@ -225,6 +223,7 @@ ModbusSlaveInMaster *ModbusTCPSlaveServer::nextSlave(ModbusSlaveInMaster *curren
 
 bool ModbusTCPSlaveServer::isReady()
 {
+
     for (int i = 0; i < slavesSize; i++)
     {
         if (slaves[i].isReady())
@@ -233,6 +232,78 @@ bool ModbusTCPSlaveServer::isReady()
         }
     }
     return false;
+}
+
+void ModbusTCPSlaveServer::setSlaveAddress(int slave, byte address)
+{
+    slaves[slave].setSlaveAddress(address);
+}
+
+void ModbusTCPSlaveServer::setPollingPeriod(int slave, unsigned long period)
+{
+    slaves[slave].setPollingPeriod(period);
+}
+
+void ModbusTCPSlaveServer::setLongOrder(int slave, byte order)
+{
+    slaves[slave].setLongOrder(order);
+}
+
+void ModbusTCPSlaveServer::setFloatOrder(int slave, byte order)
+{
+    slaves[slave].setFloatOrder(order);
+}
+
+void ModbusTCPSlaveServer::setUnsignedlongOrder(int slave, byte order)
+{
+    slaves[slave].setUnsignedlongOrder(order);
+}
+
+void ModbusTCPSlaveServer::setIntOrder(int slave, byte order)
+{
+    slaves[slave].setIntOrder(order);
+}
+
+void ModbusTCPSlaveServer::setDataTable(int slave, ModbusWorldTable *table)
+{
+    slaves[slave].setDataTable(table);
+}
+
+void ModbusTCPSlaveServer::setDataTable(int slave, ModbusBoolTable *table)
+{
+    slaves[slave].setDataTable(table);
+}
+
+uint8_t ModbusTCPSlaveServer::getIp(byte index)
+{
+
+    if (index == 0)
+    {
+        return ipFirst;
+    }
+    if (index == 1)
+    {
+        return ipSecond;
+    }
+    if (index == 2)
+    {
+        return ipThird;
+    }
+    if (index == 3)
+    {
+        return ipFourth;
+    }
+    return 0;
+}
+
+byte ModbusTCPSlaveServer::getLastError(int slave)
+{
+    return slaves[slave].getLastError();
+}
+
+void ModbusTCPSlaveServer::status(int slave, bool status)
+{
+    slaves[slave].status(status);
 }
 
 // ModbusMasterTCP******************
@@ -406,9 +477,9 @@ void ModbusMasterTCP::getRxBuffer()
     boolean buffOverflow = false;
     byte currentByteIndex = 0;
     bufferSize = 0;
-    while (telegrammServer->available())
+    while (available())
     {
-        currentByte = telegrammServer->read();
+        currentByte = read();
         if (currentByteIndex < 6)
 
         {
@@ -548,7 +619,9 @@ bool ModbusMasterTCP::nextSlave()
 
 bool ModbusMasterTCP::nextServer()
 {
+    stop();
     currentServer = nextReadyServer(currentServer);
+
     if (currentServer == 0)
     {
         return false;
@@ -690,7 +763,72 @@ void ModbusMasterTCP::sendTxBuffer()
         resultBuffer[resultBufferSize] = buffer[i];
         resultBufferSize++;
     }
-    telegrammServer->connect();
-    telegrammServer->write(resultBuffer, resultBufferSize);
+    connect(telegrammServer);
+    write(telegrammServer, resultBuffer, resultBufferSize);
     bufferSize = 0;
+}
+
+void ModbusMasterTCP::setSlavesToServer(int server, ModbusSlaveInMaster table[], int size)
+{
+    servers[server].setSlaves(table, size);
+}
+
+void ModbusMasterTCP::setServerPort(int server, int serverPort)
+{
+    servers[server].setPort(serverPort);
+}
+
+void ModbusMasterTCP::setServerIP(int server, uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
+{
+    servers[server].setIpAdress(first_octet, second_octet, third_octet, fourth_octet);
+}
+
+void ModbusMasterTCP::setSlaveAddress(int server, int slave, byte address)
+{
+    servers[server].setSlaveAddress(slave, address);
+}
+
+void ModbusMasterTCP::setPollingPeriod(int server, int slave, unsigned long period)
+{
+    servers[server].setPollingPeriod(slave, period);
+}
+
+void ModbusMasterTCP::setLongOrder(int server, int slave, byte order)
+{
+    servers[server].setLongOrder(slave, order);
+}
+
+void ModbusMasterTCP::setFloatOrder(int server, int slave, byte order)
+{
+    servers[server].setFloatOrder(slave, order);
+}
+
+void ModbusMasterTCP::setUnsignedlongOrder(int server, int slave, byte order)
+{
+    servers[server].setUnsignedlongOrder(slave, order);
+}
+
+void ModbusMasterTCP::setIntOrder(int server, int slave, byte order)
+{
+    servers[server].setIntOrder(slave, order);
+}
+
+void ModbusMasterTCP::setDataTable(int server, int slave, ModbusWorldTable *table)
+{
+    servers[server].setDataTable(slave, table);
+}
+
+void ModbusMasterTCP::setDataTable(int server, int slave, ModbusBoolTable *table)
+{
+    servers[server].setDataTable(slave, table);
+}
+
+byte ModbusMasterTCP::getLastError(int server, int slave)
+{
+    servers[server].getLastError(slave);
+}
+
+void ModbusMasterTCP::status(int server, int slave, bool status)
+{
+    servers[server].status(slave, status);
 }

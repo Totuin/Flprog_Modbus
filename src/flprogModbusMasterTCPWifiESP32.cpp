@@ -2,20 +2,20 @@
 
 #ifdef ESP32
 // ModbusTCPWifiESP32SlaveServer*****************
-void ModbusTCPWifiESP32SlaveServer::connect()
+void ModbusMasterTCPWifiESP32::connect(ModbusTCPSlaveServer *server)
 {
     if (client.connected())
     {
         return;
     }
-    client.connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth), port);
+    client.connect(IPAddress(server->getIp(0), server->getIp(1), server->getIp(2), server->getIp(3)), server->getPort());
 }
 
-void ModbusTCPWifiESP32SlaveServer::write(byte buffer[], byte buferSize)
+void ModbusMasterTCPWifiESP32::write(ModbusTCPSlaveServer *server, byte buffer[], byte buferSize)
 {
     if (!client.connected())
     {
-        connect();
+        connect(server);
     }
     if (client.connected())
     {
@@ -23,17 +23,17 @@ void ModbusTCPWifiESP32SlaveServer::write(byte buffer[], byte buferSize)
     }
 }
 
-void ModbusTCPWifiESP32SlaveServer::stop()
+void ModbusMasterTCPWifiESP32::stop()
 {
     client.stop();
 }
 
-byte ModbusTCPWifiESP32SlaveServer::read()
+byte ModbusMasterTCPWifiESP32::read()
 {
     return client.read();
 }
 
-byte ModbusTCPWifiESP32SlaveServer::available()
+byte ModbusMasterTCPWifiESP32::available()
 {
     return client.available();
 }

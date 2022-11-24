@@ -1,22 +1,21 @@
 #include "flprogModbusMasterTCPWifiESP8266.h"
 
-
 #ifdef ESP8266
-// ModbusTCPWifiESP8266SlaveServer*****************
-void ModbusTCPWifiESP8266SlaveServer::connect()
+
+void ModbusMasterTCPWifiESP8266::connect(ModbusTCPSlaveServer *server)
 {
     if (client.connected())
     {
         return;
     }
-    client.connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth), port);
+    client.connect(IPAddress(server->getIp(0), server->getIp(1), server->getIp(2), server->getIp(3)), server->getPort());
 }
 
-void ModbusTCPWifiESP8266SlaveServer::write(byte buffer[], byte buferSize)
+void ModbusMasterTCPWifiESP8266::write(ModbusTCPSlaveServer *server, byte buffer[], byte buferSize)
 {
     if (!client.connected())
     {
-        connect();
+        connect(server);
     }
     if (client.connected())
     {
@@ -24,22 +23,21 @@ void ModbusTCPWifiESP8266SlaveServer::write(byte buffer[], byte buferSize)
     }
 }
 
-void ModbusTCPWifiESP8266SlaveServer::stop()
+void ModbusMasterTCPWifiESP8266::stop()
 {
     client.stop();
 }
 
-byte ModbusTCPWifiESP8266SlaveServer::read()
+byte ModbusMasterTCPWifiESP8266::read()
 {
     return client.read();
 }
 
-byte ModbusTCPWifiESP8266SlaveServer::available()
+byte ModbusMasterTCPWifiESP8266::available()
 {
     return client.available();
 }
 
-// ModbusMasterTCPW5100********************
 ModbusMasterTCPWifiESP8266::ModbusMasterTCPWifiESP8266(ModbusTCPSlaveServer table[], int size)
 {
     serversSize = size;

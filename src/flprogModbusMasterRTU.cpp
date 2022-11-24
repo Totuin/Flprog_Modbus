@@ -415,3 +415,53 @@ bool ModbusMasterRTU::readBool(int slave, byte table, int startAddres)
     }
     return slaves[slave].readBool(table, startAddres);
 }
+
+void ModbusMasterRTU::setDataTable(int slave, ModbusWorldTable *table)
+{
+    slaves[slave].setDataTable(table);
+}
+
+void ModbusMasterRTU::setDataTable(int slave, ModbusBoolTable *table)
+{
+    slaves[slave].setDataTable(table);
+}
+
+void ModbusMasterRTU::setSlaveAddress(int slave, byte address)
+{
+    slaves[slave].setSlaveAddress(address);
+}
+
+void ModbusMasterRTU::setPollingPeriod(int slave, unsigned long period)
+{
+    slaves[slave].setPollingPeriod(period);
+}
+
+void ModbusMasterRTU::setLongOrder(int slave, byte order)
+{
+    slaves[slave].setLongOrder(order);
+}
+
+void ModbusMasterRTU::setFloatOrder(int slave, byte order)
+{
+    slaves[slave].setFloatOrder(order);
+}
+
+void ModbusMasterRTU::setUnsignedlongOrder(int slave, byte order)
+{
+    slaves[slave].setUnsignedlongOrder(order);
+}
+
+void ModbusMasterRTU::setIntOrder(int slave, byte order)
+{
+    slaves[slave].setIntOrder(order);
+}
+
+byte ModbusMasterRTU::getLastError(int slave)
+{
+    return slaves[slave].getLastError();
+}
+
+void ModbusMasterRTU::status(int slave, bool status)
+{
+    slaves[slave].status(status);
+}
