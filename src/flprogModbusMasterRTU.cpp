@@ -1,5 +1,21 @@
 #include "flprogModbusMasterRTU.h"
 
+ModbusMasterRTU::ModbusMasterRTU(ModbusSlaveInMaster table[], int size)
+{
+    slavesSize = size;
+    slaves = table;
+}
+
+void ModbusMasterRTU::begin()
+{
+    uart->begin();
+    if (!(pinPeDe == 200))
+    {
+        pinMode(pinPeDe, OUTPUT);
+        digitalWrite(pinPeDe, LOW);
+    }
+}
+
 void ModbusMasterRTU::pool()
 {
 

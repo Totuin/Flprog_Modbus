@@ -5,32 +5,25 @@
 class ModbusRTU : public Modbus
 {
 public:
-    void setPortSpeed(byte speed);
-    void setPinPeDe(byte pin);
-    void setPortDataBits(byte dataBits);
-    void setPortStopBits(byte stopBits);
-    void setPortParity(byte stopBits);
-    byte getPortSpeed() { return portSpeed; };
-    byte getPortDataBits() { return portDataBits; };
-    byte getPortStopBits() { return portStopBits; };
-    byte getPortParity() { return portParity; };
+    void setPortSpeed(byte speed) { uart->setPortSpeed(speed); };
+    void setPinPeDe(byte pin) { pinPeDe = pin; };
+    void setPortDataBits(byte dataBits) { uart->setPortDataBits(dataBits); };
+    void setPortStopBits(byte stopBits) { uart->setPortStopBits(stopBits); };
+    void setPortParity(byte parity) { uart->setPortParity(parity); };
+    byte getPortSpeed() { return uart->getPortSpeed(); };
+    byte getPortDataBits() { return uart->getPortDataBits(); };
+    byte getPortStopBits() { return uart->getPortStopBits(); };
+    byte getPortParity() { return uart->getPortParity(); };
+    void setUart(FLProgUart *uartPort) { uart = uartPort; };
 
 protected:
-    virtual void restartPort(){};
-    virtual byte portAvailable() { return 0; };
-    virtual byte portRead() { return 0; };
-    virtual bool hasPort() { return false; };
-    virtual byte portWrite(byte *buffer, byte size) { return 0; };
+    FLProgUart *uart;
     void onPeDePin();
     void offPeDePin();
     byte rxBuffer();
     virtual void sendTxBuffer();
     bool checkAvalibleBytes();
     byte pinPeDe = 200;
-    byte portSpeed = SPEED_9600;
-    byte portDataBits = 8;
-    byte portParity = 0;
-    byte portStopBits = 1;
     byte lastRec = 0;
     unsigned long time;
     int timeOfSend;

@@ -6,7 +6,9 @@
 class ModbusMasterRTU : public ModbusRTU
 {
 public:
+    ModbusMasterRTU(ModbusSlaveInMaster table[], int size);
     void pool();
+    void begin();
     void saveLong(int slave, long value, byte table, int startAddres);
     void saveUnsignedLong(int slave, unsigned long value, byte table, int startAddres);
     void saveFloat(int slave, float value, byte table, int startAddres);

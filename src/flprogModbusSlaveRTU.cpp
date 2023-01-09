@@ -1,5 +1,17 @@
 #include "flprogModbusSlaveRTU.h"
 
+void ModbusSlaveRTU::begin(byte addres){
+    uart->begin();
+    slaveAddres = addres;
+    bufferSize = 0;
+    lastRec = 0;
+    if (!(pinPeDe == 200))
+    {
+        pinMode(pinPeDe, OUTPUT);
+        digitalWrite(pinPeDe, LOW);
+    }
+}
+
 void ModbusSlaveRTU::pool()
 {
     if (workStatus == MODBUS_WAITING_SENDING)

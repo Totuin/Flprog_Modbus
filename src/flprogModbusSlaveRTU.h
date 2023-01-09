@@ -5,6 +5,8 @@
 class ModbusSlaveRTU : public ModbusRTU
 {
 public:
+    
+    void begin(byte addres);
     void pool();
     void setSlaveAddress(byte address);
     void setData(ModbusMainData *data);
