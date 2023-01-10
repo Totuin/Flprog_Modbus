@@ -1,5 +1,5 @@
 //Подключаем необходимую библиотеку
-#include "flprogModbusMasterRTUESP32Bluetooth.h"
+#include "flprogModbusMasterRTU.h"
 
 // Задаем область памяти для хранения регистров Modbus Holder Registr первого слейва
 int table_4_1[8];
@@ -60,7 +60,8 @@ ModbusBoolTable DiscreteInput2(DISCRETE_INPUT, table_1_2, tableA_1_2, 2);
 ModbusSlaveInMaster Master1SlavesTable[2];
 
 //Создаем объект непосредстредственно Модбас мастера
-ModbusMasterRTUESP32Bluetooth Master1(Master1SlavesTable, 2);
+ModbusMasterRTU Master1(Master1SlavesTable, 2);
+FLProgUart uart1("ESP32-BL");
 
 //Вспомогательные переменные для демонстрации
 int tempInt;
@@ -69,7 +70,7 @@ int value;
 unsigned long startTime;
 
 void setup()
-{
+{ Master1.setUart(&uart1);
   //Инициализация вспомогательных переменных
   startTime = millis() + 1000;
 
@@ -151,7 +152,8 @@ DCBA_ORDER
 
   Все эти функции можно вызывать в процессе выполнения программы
   */
-  Master1.setDeviceName("ESP32-BL");
+  uart1.setDeviceName("ESP32-BL");
+ 
 
   //Инициализируем мастер
   Master1.begin();

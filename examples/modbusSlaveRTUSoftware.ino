@@ -1,5 +1,5 @@
 //Подключаем необходимую библиотеку
-#include "flprogModbusSlaveRTUSoftware.h"
+#include "flprogModbusSlaveRTU.h"
 
 // Задаем область памяти для хранения регистров Modbus Holder Registr
 int _modbusSlaveDataTable_4[8];
@@ -34,7 +34,10 @@ ModbusBoolTable DiscreteInput(DISCRETE_INPUT, _modbusSlaveDataTable_1, _modbusSl
 ModbusMainData TestData;
 
 //Создаем объект непосредстредственно Модбас слейва
-ModbusSlaveRTUSoftware SlaveRTU1;
+ModbusSlaveRTU SlaveRTU1;
+FLProgUart uart1(2,3);
+
+
 byte tempByte;
 int tempInt;
 float tempFloat;
@@ -46,6 +49,8 @@ byte lastError;
 
 void setup()
 {
+
+  SlaveRTU1.setUart(&uart1);
 // Передаем слейву ссылку на обект управления таблицами
   SlaveRTU1.setData(&TestData);
 
@@ -100,14 +105,14 @@ void setup()
  SPEED_57600
  SPEED_115200
   */
-  Master1.setPortSpeed(SPEED_14400);
+  SlaveRTU1.setPortSpeed(SPEED_14400);
 
    /*
   Инициализируем мастер
   Параметры:
    номер слейва, RX pin, TX pin
   */
-  SlaveRTU1.begin(1, 2, 3);
+  SlaveRTU1.begin(1);
 }
 
 void loop()

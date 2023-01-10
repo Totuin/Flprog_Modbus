@@ -1,5 +1,5 @@
 //Подключаем необходимую библиотеку
-#include <flprogModbusSlaveRTUHardware.h>
+#include <flprogModbusSlaveRTU.h>
 #include "flprogModbusSlaveTCPW5100.h"
 
 // Задаем данные для интернет соеденения
@@ -42,7 +42,8 @@ ModbusBoolTable DiscreteInput(DISCRETE_INPUT, _modbusSlaveDataTable_1, _modbusSl
 ModbusMainData TestData;
 
 //Создаем объект непосредстредственно Модбас слейва RTU
-ModbusSlaveRTUHardware SlaveRTU1;
+ModbusSlaveRTU SlaveRTU1;
+FLProgUart uart1(&Serial);
 
 // создаем сервер для прослушки порта
 EthernetServer tempServer(502);
@@ -62,7 +63,7 @@ byte lastError;
 
 void setup()
 {
-
+SlaveRTU1.setUart(&uart1);
   //Привязываем ссылки на объекты таблиц к объекту управления таблицами
   TestData.setDataTable(&Holder);
   TestData.setDataTable(&InputRegistr);
@@ -134,7 +135,7 @@ SPEED_115200
   */
   SlaveRTU1.setPortParity(2);
   //Инициализируем слейв (Первый параметр номера слейва)
-  SlaveRTU1.begin(1, &Serial);
+  SlaveRTU1.begin(1);
 
   // Стартуем модуль W5100
   Ethernet.begin(ethernet_mac, ethernet_ip, ethernet_dns, ethernet_gateway, ethernet_subnet);

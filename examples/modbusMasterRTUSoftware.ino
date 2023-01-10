@@ -1,5 +1,5 @@
 //Подключаем необходимую библиотеку
-#include "flprogModbusMasterRTUSoftware.h"
+#include "flprogModbusMasterRTU.h"
 
 // Задаем область памяти для хранения регистров Modbus Holder Registr первого слейва
 int table_4_1[8];
@@ -59,17 +59,21 @@ ModbusBoolTable DiscreteInput2(DISCRETE_INPUT, table_1_2, tableA_1_2, 2);
 
 //Создаем массив слейвов с которыми работает мастер
 ModbusSlaveInMaster Master1SlavesTable[2];
+FLProgUart uart1(2,3);
 
 //Создаем объект непосредстредственно Модбас мастера, последний параметр - количество слейвов
-ModbusMasterRTUSoftware Master1(Master1SlavesTable, 2);
+ModbusMasterRTU Master1(Master1SlavesTable, 2);
 
 //Вспомогательные переменные для демонстрации
 int tempInt;
 bool tempBool;
 int value;
+unsigned long startTime;
 
 void setup()
 {
+
+  Master1.setUart(&uart1);
   //Инициализация вспомогательных переменных
   startTime = millis() + 1000;
 
@@ -163,7 +167,7 @@ DCBA_ORDER
   Параметры:
   RX pin, TX pin
   */
-  Master1.begin(2, 3);
+  Master1.begin();
 }
 
 void loop()

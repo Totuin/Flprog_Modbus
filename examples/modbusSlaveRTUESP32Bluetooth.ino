@@ -1,5 +1,5 @@
 //Подключаем необходимую библиотеку
-#include "flprogModbusSlaveRTUESP32Bluetooth.h"
+#include "flprogModbusSlaveRTU.h"
 
 // Задаем область памяти для хранения регистров Modbus Holder Registr первого слейва
 int _modbusSlaveDataTable_4[8];
@@ -19,7 +19,7 @@ ModbusWorldTable Holder(HOLDING_REGISTR, _modbusSlaveDataTable_4, _modbusSlaveAd
 
 /*
 Повторяем действия для остальных таблиц Modbus  если есть необходимость
-Порядок создания таблиц не имеет значения
+Порядок создания таблиц не имеет значенияa
 */
 int _modbusSlaveDataTable_3[8];
 int _modbusSlaveAddresTable_3[8] = {0, 1, 2, 3, 4, 5, 6, 7};
@@ -37,8 +37,8 @@ ModbusBoolTable DiscreteInput(DISCRETE_INPUT, _modbusSlaveDataTable_1, _modbusSl
 ModbusMainData TestData;
 
 //Создаем объект непосредстредственно Модбас слейва
-ModbusSlaveRTUESP32Bluetooth SlaveRTU1;
-
+ModbusSlaveRTU SlaveRTU1;
+FLProgUart uart1("ESP32-BL");
 
 //Вспомогательные переменные для демонстрации
 byte tempByte;
@@ -52,6 +52,7 @@ byte lastError;
 
 void setup()
 {
+  SlaveRTU1.setUart(&uart1);
  //Привязываем ссылки на объекты таблиц к объекту управления таблицами
   TestData.setDataTable(&Holder);
   TestData.setDataTable(&InputRegistr);
@@ -101,7 +102,7 @@ void setup()
 
   Все эти функции можно вызывать в процессе выполнения программы
   */
-  SlaveRTU1.setDeviceName("ESP32-BL");
+  uart1.setDeviceName("ESP32-BL");
 
   //Инициализируем слейв
   SlaveRTU1.begin(1);
