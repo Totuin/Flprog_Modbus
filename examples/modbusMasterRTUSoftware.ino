@@ -59,7 +59,7 @@ ModbusBoolTable DiscreteInput2(DISCRETE_INPUT, table_1_2, tableA_1_2, 2);
 
 //Создаем массив слейвов с которыми работает мастер
 ModbusSlaveInMaster Master1SlavesTable[2];
-FLProgUart uart1(2,3);
+FLProgSoftwareUart uart1(2,3);
 
 //Создаем объект непосредстредственно Модбас мастера, последний параметр - количество слейвов
 ModbusMasterRTU Master1(Master1SlavesTable, 2);

@@ -35,7 +35,7 @@ ModbusMainData TestData;
 
 //Создаем объект непосредстредственно Модбас слейва
 ModbusSlaveRTU SlaveRTU1;
-FLProgUart uart1(2,3);
+FLProgSoftwareUart uart1(2,3);
 
 
 byte tempByte;

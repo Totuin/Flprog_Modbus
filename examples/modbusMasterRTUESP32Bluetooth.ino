@@ -61,7 +61,7 @@ ModbusSlaveInMaster Master1SlavesTable[2];
 
 //Создаем объект непосредстредственно Модбас мастера
 ModbusMasterRTU Master1(Master1SlavesTable, 2);
-FLProgUart uart1("ESP32-BL");
+FLProgBluetoothUart uart1("ESP32-BL");
 
 //Вспомогательные переменные для демонстрации
 int tempInt;
