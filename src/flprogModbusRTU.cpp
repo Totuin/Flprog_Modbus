@@ -2,11 +2,10 @@
 
 FLProgUartBasic *ModbusRTU::uardDevice()
 {
-    if (uart != 0)
+    if (uart == 0)
     {
-        return uart;
+        uart = new FLProgUart();
     }
-    uart = new FLProgUart();
     return uart;
 }
 

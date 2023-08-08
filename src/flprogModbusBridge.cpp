@@ -1,34 +1,15 @@
 #include "flprogModbusBridge.h"
 
-bool ModbusBridge::compareRemoteIp(byte newIpFirst, byte newIpSecond, byte newIpThird, byte newIpFourth)
+ModbusBridge::ModbusBridge(uint8_t portNumber, FlprogAbstractEthernet *sourse)
 {
-    if (this->ipFirst != newIpFirst)
-    {
-        return false;
-    }
-    if (this->ipSecond != newIpSecond)
-    {
-        return false;
-    }
-    if (this->ipThird != newIpThird)
-    {
-        return false;
-    }
-    if (this->ipFourth != newIpFourth)
-    {
-        return false;
-    }
-    return true;
+    tcpDevice = new FLProgTcpDevice(sourse);
+    uart = new FLProgUart(portNumber);
 }
 
-void ModbusBridge::setTCPDevice(FLProgTcpDevice *device)
+ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstracttWiFiInterface *sourse)
 {
-    tcpDevice = device;
-}
-
-void ModbusBridge::setRTUDevice(FLProgUartBasic *device)
-{
-    rtuDevice = device;
+    tcpDevice = new FLProgTcpDevice(sourse);
+    uart = new FLProgUart(portNumber);
 }
 
 void ModbusBridge::pool()
@@ -45,67 +26,69 @@ void ModbusBridge::pool()
     }
 }
 
-void ModbusBridge::getRTURxBuffer()
+void ModbusBridge::setTCPPort(int port)
 {
-    bufferSize = 0;
-    while (rtuDevice->available())
-    {
-        buffer[bufferSize] = rtuDevice->read();
-
-        bufferSize++;
-    }
-}
-
-void ModbusBridge::sendRTUBuffer()
-{
-    onPeDePin();
-    int crc = flprogModus::modbusCalcCRC(bufferSize, buffer);
-    buffer[bufferSize] = crc >> 8;
-    bufferSize++;
-    buffer[bufferSize] = crc & 0x00ff;
-    bufferSize++;
-    rtuDevice->write(buffer, bufferSize);
-    timeOfSend = timeForSendbytes(bufferSize);
-    startSendTime = millis();
-    workStatus = FLPROG_MODBUS_WAITING_SENDING;
-    bufferSize = 0;
-}
-
-long ModbusBridge::timeForSendbytes(byte bufferSize)
-{
-    return flprogModus::timeForSendBytes((rtuDevice->getPortDataBits()), (rtuDevice->getPortStopBits()), (rtuDevice->getPortParity()), (rtuDevice->getPortSpeed()), bufferSize);
-}
-
-void ModbusBridge::setPinPeDe(byte pin)
-{
-    pinPeDe = pin;
-}
-
-void ModbusBridge::onPeDePin()
-{
-    if (pinPeDe == 200)
+    if (tcpDevice == 0)
     {
         return;
     }
-    digitalWrite(pinPeDe, HIGH);
+    tcpDevice->setPort(port);
 }
 
-void ModbusBridge::offPeDePin()
+void ModbusBridge::setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourth)
 {
-    if (pinPeDe == 200)
+    setTCPRemoteIp(IPAddress(newIpFirst, newIpSecond, newIpThird, newIpFourth));
+}
+
+void ModbusBridge::setTCPRemoteIp(IPAddress newIp)
+{
+    if (newIp == ip)
     {
         return;
     }
-    digitalWrite(pinPeDe, LOW);
+    ip = newIp;
+    tcpDevice->restart();
+}
+
+void ModbusBridge::byServer()
+{
+    if (isServer == true)
+    {
+        return;
+    }
+    isServer = true;
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->beServer();
+}
+
+void ModbusBridge::byClient()
+{
+    if (isServer == false)
+    {
+        return;
+    }
+    isServer = false;
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->beClient();
 }
 
 void ModbusBridge::begin()
 {
-    rtuDevice->begin();
-    if (!(pinPeDe == 200))
+    rtuDevice()->begin();
+    if (!(pinPeDe < 0))
     {
         pinMode(pinPeDe, OUTPUT);
         digitalWrite(pinPeDe, LOW);
+    }
+    if (tcpDevice == 0)
+    {
+        return;
     }
     if (isServer)
     {
@@ -118,62 +101,31 @@ void ModbusBridge::begin()
     tcpDevice->begin();
 }
 
-void ModbusBridge::setTCPPort(int port)
+FLProgUartBasic *ModbusBridge::rtuDevice()
 {
-    tcpDevice->setPort(port);
+    if (uart == 0)
+    {
+        uart = new FLProgUart();
+    }
+    return uart;
 }
 
-void ModbusBridge::setRtuPortSpeed(byte speed)
+void ModbusBridge::onPeDePin()
 {
-    rtuDevice->setPortSpeed(speed);
-}
-
-void ModbusBridge::setRtuPortDataBits(byte dataBits)
-{
-    rtuDevice->setPortDataBits(dataBits);
-}
-
-void ModbusBridge::setRtuPortStopBits(byte stopBits)
-{
-    rtuDevice->setPortStopBits(stopBits);
-}
-
-void ModbusBridge::setRtuPortParity(byte stopBits)
-{
-    rtuDevice->setPortParity(stopBits);
-}
-
-void ModbusBridge::byServer()
-{
-    if (isServer == true)
+    if (pinPeDe < 0)
     {
         return;
     }
-    isServer = true;
-    tcpDevice->beServer();
+    digitalWrite(pinPeDe, HIGH);
 }
 
-void ModbusBridge::byClient()
+void ModbusBridge::offPeDePin()
 {
-    if (isServer == false)
+    if (pinPeDe < 0)
     {
         return;
     }
-    isServer = false;
-    tcpDevice->beClient();
-}
-
-void ModbusBridge::setTCPRemoteIp(byte newIpFirst, byte newIpSecond, byte newIpThird, byte newIpFourth)
-{
-    if (compareRemoteIp(newIpFirst, newIpSecond, newIpThird, newIpFourth))
-    {
-        return;
-    }
-    ipFirst = newIpFirst;
-    ipSecond = newIpSecond;
-    ipThird = newIpThird;
-    ipFourth = newIpFourth;
-    tcpDevice->restart();
+    digitalWrite(pinPeDe, LOW);
 }
 
 void ModbusBridge::rtuPool()
@@ -191,7 +143,7 @@ void ModbusBridge::rtuPool()
             return;
         }
     }
-    byte avalibleBytes = rtuDevice->available();
+    uint8_t avalibleBytes = rtuDevice()->available();
     if (avalibleBytes == 0)
         return;
     if (avalibleBytes != lastRec)
@@ -200,7 +152,7 @@ void ModbusBridge::rtuPool()
         startT35 = millis();
         return;
     }
-    if (!(flprog::isTimer(startT35, (t35TimeForSpeed()))))
+    if (!(flprog::isTimer(startT35, (flprogModus::t35TimeForSpeed(rtuDevice()->getPortSpeed())))))
         return;
     lastRec = 0;
     getRTURxBuffer();
@@ -211,22 +163,47 @@ void ModbusBridge::rtuPool()
     sendTCPBuffer();
 }
 
-long ModbusBridge::t35TimeForSpeed()
+void ModbusBridge::getRTURxBuffer()
 {
-    return flprogModus::t35TimeForSpeed(rtuDevice->getPortSpeed());
+    bufferSize = 0;
+    while (rtuDevice()->available())
+    {
+        buffer[bufferSize] = rtuDevice()->read();
+
+        bufferSize++;
+    }
 }
 
-// ModbusTcpBridge******
+void ModbusBridge::sendRTUBuffer()
+{
+    onPeDePin();
+    int crc = flprogModus::modbusCalcCRC(bufferSize, buffer);
+    buffer[bufferSize] = crc >> 8;
+    bufferSize++;
+    buffer[bufferSize] = crc & 0x00ff;
+    bufferSize++;
+    rtuDevice()->write(buffer, bufferSize);
+    timeOfSend = flprogModus::timeForSendBytes((rtuDevice()->getPortDataBits()), (rtuDevice()->getPortStopBits()), (rtuDevice()->getPortParity()), (rtuDevice()->getPortSpeed()), bufferSize);
+    startSendTime = millis();
+    workStatus = FLPROG_MODBUS_WAITING_SENDING;
+    bufferSize = 0;
+}
+
+//------------------------------------ModbusTcpBridge---------------------------------------------
 void ModbusTcpBridge::tcpPool()
 {
-    tcpDevice->connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth));
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->connect(ip);
 
     if (!tcpDevice->connected())
     {
         return;
     }
     bufferSize = 0;
-    byte byteIndex = 0;
+    uint8_t byteIndex = 0;
     if (tcpDevice->available())
     {
         while (tcpDevice->available())
@@ -248,7 +225,11 @@ void ModbusTcpBridge::tcpPool()
 
 void ModbusTcpBridge::sendTCPBuffer()
 {
-    tcpDevice->connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth));
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->connect(ip);
     if (!tcpDevice->connected())
     {
         return;
@@ -261,11 +242,14 @@ void ModbusTcpBridge::sendTCPBuffer()
     bufferSize = 0;
 }
 
-// ModbusRtuOverTcpBridge*****************
+// --------------------------------ModbusRtuOverTcpBridge------------------------------------
 void ModbusRtuOverTcpBridge::tcpPool()
 {
-    tcpDevice->connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth));
-
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->connect(ip);
     if (!tcpDevice->connected())
     {
         return;
@@ -291,7 +275,11 @@ void ModbusRtuOverTcpBridge::tcpPool()
 
 void ModbusRtuOverTcpBridge::sendTCPBuffer()
 {
-    tcpDevice->connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth));
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->connect(ip);
     if (!tcpDevice->connected())
     {
         return;
@@ -300,10 +288,14 @@ void ModbusRtuOverTcpBridge::sendTCPBuffer()
     bufferSize = 0;
 }
 
-// ModbusKasCadaCloudTcpBridge*************
+//_______________-----------ModbusKasCadaCloudTcpBridge------------------------------
 void ModbusKasCadaCloudTcpBridge::pool()
 {
     isServer = false;
+    if (tcpDevice == 0)
+    {
+        return;
+    }
     if (flprog::isTimer(kaScadaCloudTimeStartTime, 5000))
     {
         if (tcpDevice->connected())
@@ -313,7 +305,7 @@ void ModbusKasCadaCloudTcpBridge::pool()
         }
         else
         {
-            tcpDevice->connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth));
+            tcpDevice->connect(ip);
             return;
         }
     }
@@ -325,24 +317,33 @@ void ModbusKasCadaCloudTcpBridge::pool()
     rtuPool();
 }
 
-void ModbusKasCadaCloudTcpBridge::setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
+void ModbusKasCadaCloudTcpBridge::setKaScadaCloudIp(IPAddress newIp)
 {
     isServer = false;
-    tcpDevice->beClient();
-    if (compareRemoteIp(first_octet, second_octet, third_octet, fourth_octet))
+    if (ip == newIp)
     {
         return;
     }
-    ipFirst = first_octet;
-    ipSecond = second_octet;
-    ipThird = third_octet;
-    ipFourth = fourth_octet;
+    ip = newIp;
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->beClient();
     tcpDevice->restart();
+}
+void ModbusKasCadaCloudTcpBridge::setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
+{
+    setKaScadaCloudIp(IPAddress(first_octet, second_octet, third_octet, fourth_octet));
 }
 
 void ModbusKasCadaCloudTcpBridge::setKaScadaCloudPort(int port)
 {
     isServer = false;
+    if (tcpDevice == 0)
+    {
+        return;
+    }
     tcpDevice->beClient();
     tcpDevice->setPort(port);
 }
@@ -350,28 +351,50 @@ void ModbusKasCadaCloudTcpBridge::setKaScadaCloudPort(int port)
 void ModbusKasCadaCloudTcpBridge::setKaScadaCloudDevceId(String id)
 {
     isServer = false;
-    tcpDevice->beClient();
     if (deniceId.equals(id))
 
     {
         return;
     }
     deniceId = id;
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->beClient();
     tcpDevice->stop();
 }
-
+void ModbusKasCadaCloudTcpBridge::begin()
+{
+    isServer = false;
+    rtuDevice()->begin();
+    if (!(pinPeDe == 200))
+    {
+        pinMode(pinPeDe, OUTPUT);
+        digitalWrite(pinPeDe, LOW);
+    }
+    if (tcpDevice == 0)
+    {
+        return;
+    }
+    tcpDevice->beClient();
+    tcpDevice->begin();
+}
 void ModbusKasCadaCloudTcpBridge::tcpPool()
 {
     isServer = false;
+    if (tcpDevice == 0)
+    {
+        return;
+    }
     tcpDevice->beClient();
-    tcpDevice->connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth));
-
+    tcpDevice->connect(ip);
     if (!tcpDevice->connected())
     {
         return;
     }
-    byte readingByte;
-    byte byteIndex = 0;
+    uint8_t readingByte;
+    uint8_t byteIndex = 0;
     if (tcpDevice->available())
     {
         bufferSize = 0;
@@ -396,8 +419,12 @@ void ModbusKasCadaCloudTcpBridge::tcpPool()
 void ModbusKasCadaCloudTcpBridge::sendTCPBuffer()
 {
     isServer = false;
+    if (tcpDevice == 0)
+    {
+        return;
+    }
     tcpDevice->beClient();
-    tcpDevice->connect(IPAddress(ipFirst, ipSecond, ipThird, ipFourth));
+    tcpDevice->connect(ip);
     if (!tcpDevice->connected())
     {
         return;
@@ -408,17 +435,4 @@ void ModbusKasCadaCloudTcpBridge::sendTCPBuffer()
     tcpDevice->write(mbapBuffer, 6);
     tcpDevice->write(buffer, bufferSize);
     bufferSize = 0;
-}
-
-void ModbusKasCadaCloudTcpBridge::begin()
-{
-    isServer = false;
-    tcpDevice->beClient();
-    rtuDevice->begin();
-    if (!(pinPeDe == 200))
-    {
-        pinMode(pinPeDe, OUTPUT);
-        digitalWrite(pinPeDe, LOW);
-    }
-    tcpDevice->begin();
 }
