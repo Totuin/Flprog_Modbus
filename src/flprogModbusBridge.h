@@ -1,5 +1,5 @@
 #pragma once
-#include "base/flprogModbusData.h"
+#include "base/flprogModbusUtilites.h"
 #include "flprogUart.h"
 #include "tcp/tcpDevice/flprogTcpDevice.h"
 
