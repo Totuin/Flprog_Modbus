@@ -141,7 +141,7 @@ bool ModbusSlaveRTUoverTCP::checkAvaliblePacage()
 
 uint8_t ModbusSlaveRTUoverTCP::rxBuffer()
 {
-    boolean bBuffOverflow = false;
+    bool bBuffOverflow = false;
     bufferSize = 0;
     while (tcpDevice->available())
     {

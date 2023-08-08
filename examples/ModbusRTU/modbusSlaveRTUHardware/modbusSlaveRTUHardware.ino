@@ -85,9 +85,9 @@ void setup()
 
 
 // задаем области памяти
-  SlaveRTU1.setDataTable(FLPROG_HOLDING_REGISTR, 10);
-  SlaveRTU1.setDataTable(FLPROG_INPUT_REGISTR, 10);
-  SlaveRTU1.setDataTable(FLPROG_COIL, 10, 5);
+  SlaveRTU1.configDataTable(FLPROG_HOLDING_REGISTR, 10);
+  SlaveRTU1.configDataTable(FLPROG_INPUT_REGISTR, 10);
+  SlaveRTU1.configDataTable(FLPROG_COIL, 10, 5);
   SlaveRTU1.setDataTable(FLPROG_DISCRETE_INPUT, 10, _DiscreteInputAddreses);
   
 //Инициализируем слейв (Первый параметр номера слейва)

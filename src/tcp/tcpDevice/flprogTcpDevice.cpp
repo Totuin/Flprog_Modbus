@@ -147,7 +147,7 @@ Client *FLProgTcpDevice::tcpClient()
 #ifdef FLPROG_WIFI_TCP_DEVICE
     if (type == FLPROG_WIFI_INTERFACE)
     {
-        return &wifiClient
+        return &wifiClient;
     }
 #endif
     return 0;

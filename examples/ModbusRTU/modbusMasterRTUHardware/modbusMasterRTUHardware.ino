@@ -22,19 +22,19 @@ void setup()
   Master1.setTimeOutTime(1, 1000);
 
   // описываем таблицы слейва
-  Master1.setDataTable(1, FLPROG_HOLDING_REGISTR, 8);
-  Master1.setDataTable(1, FLPROG_INPUT_REGISTR, 8);
-  Master1.setDataTable(1, FLPROG_COIL, 2);
-  Master1.setDataTable(1, FLPROG_DISCRETE_INPUT, 2);
+  Master1.configDataTable(1, FLPROG_HOLDING_REGISTR, 8);
+  Master1.configDataTable(1, FLPROG_INPUT_REGISTR, 8);
+  Master1.configDataTable(1, FLPROG_COIL, 2);
+  Master1.configDataTable(1, FLPROG_DISCRETE_INPUT, 2);
 
   // аналогично для второго слейва
   Master1.setSlaveAddress(1, 2);
   Master1.setPollingPeriod(2, 100);
   Master1.setTimeOutTime(2, 1000);
-  Master1.setDataTable(2, FLPROG_HOLDING_REGISTR, 8);
-  Master1.setDataTable(2, FLPROG_INPUT_REGISTR, 8);
-  Master1.setDataTable(2, FLPROG_COIL, 2);
-  Master1.setDataTable(2, FLPROG_DISCRETE_INPUT, 2);
+  Master1.configDataTable(2, FLPROG_HOLDING_REGISTR, 8);
+  Master1.configDataTable(2, FLPROG_INPUT_REGISTR, 8);
+  Master1.configDataTable(2, FLPROG_COIL, 2);
+  Master1.configDataTable(2, FLPROG_DISCRETE_INPUT, 2);
 
   // Запускаем мастера
   Master1.begin();
