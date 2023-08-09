@@ -113,7 +113,7 @@ void FLProgTcpDevice::begin()
         if (type == FLPROG_WIFI_INTERFACE)
         {
             wifiServer = new WiFiServer(tcpPort);
-            wifiServer->begin();
+            wifiServer->begin(tcpPort);
         }
 #endif
     }

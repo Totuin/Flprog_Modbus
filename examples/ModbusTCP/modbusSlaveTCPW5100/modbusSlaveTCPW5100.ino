@@ -14,7 +14,7 @@ FlprogW5100Interface W5100_Interface(&spiBus, 10);
 ModbusSlaveRTUoverTCP Slave1(&W5100_Interface);
 
 // Задаем данные для интернет соеденения
-byte ethernet_mac[] = {0x78, 0xAC, 0xC0, 0x77, 0xE3, 0x05};
+uint8_t ethernet_mac[] = {0x78, 0xAC, 0xC0, 0x77, 0xE3, 0x05};
 IPAddress ethernet_ip(192, 168, 199, 177);
 
 int _DiscreteInputAddreses[] = {8, 9, 10, 11, 12, 14, 15, 16, 17, 18};
