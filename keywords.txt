@@ -92,6 +92,7 @@ readWorldRegister	KEYWORD2
 resetInit	KEYWORD2
 resetWriteFlag	KEYWORD2
 restart	KEYWORD2
+rtuDevice	KEYWORD2
 saveBool	KEYWORD2
 saveByte	KEYWORD2
 saveFloat	KEYWORD2
