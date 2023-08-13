@@ -53,7 +53,7 @@ private:
     FlprogEthernetClient ethernetClient;
 #ifdef FLPROG_WIFI_TCP_DEVICE
     FLProgAbstracttWiFiInterface *wifiInterface = 0;
-    WiFiServer *wifiServer = 0;
-    WiFiClient wifiClient;
+    FlprogWiFiServer *wifiServer = 0;
+    FLProgWiFiClient wifiClient;
 #endif
 };

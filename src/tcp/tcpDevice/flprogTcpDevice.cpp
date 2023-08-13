@@ -112,8 +112,7 @@ void FLProgTcpDevice::begin()
 #ifdef FLPROG_WIFI_TCP_DEVICE
         if (type == FLPROG_WIFI_INTERFACE)
         {
-            wifiServer = new WiFiServer(tcpPort);
-            wifiServer->begin(tcpPort);
+            wifiServer = new FlprogWiFiServer(wifiInterface, tcpPort);
         }
 #endif
     }
@@ -121,6 +120,7 @@ void FLProgTcpDevice::begin()
 
 void FLProgTcpDevice::setAvalibleClientFromServer()
 {
+    Serial.println("Avalible");
     if (type == FLPROG_ETHERNET_INTERFACE)
     {
         if (ethernetServer == 0)

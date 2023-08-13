@@ -13,7 +13,7 @@ public:
     ModbusBridge(uint8_t portNumber, FLProgAbstracttWiFiInterface *sourse);
 
     virtual void pool();
-    void setTCPDevice(FLProgTcpDevice *device) { tcpDevice = device; };
+    virtual void setTCPDevice(FLProgTcpDevice *device) { tcpDevice = device; };
     void setRTUDevice(FLProgUartBasic *device) { uart = device; };
 
     void setTCPPort(int port);
@@ -31,8 +31,8 @@ public:
     void setDeviceName(String name) { rtuDevice()->setDeviceName(name); };
     void setPinPeDe(uint8_t pin) { pinPeDe = pin; };
 
-    void byServer();
-    void byClient();
+    virtual void byServer();
+    virtual void byClient();
 
     virtual void begin();
 
@@ -50,7 +50,9 @@ protected:
     virtual void sendTCPBuffer() = 0;
 
     FLProgTcpDevice *tcpDevice = 0;
-    bool isServer = true;
+    FLProgUartBasic *uart = 0;
+
+    bool isServer = false;
     int pinPeDe = -1;
     uint8_t bufferSize = 0;
     uint8_t buffer[64];
@@ -60,10 +62,7 @@ protected:
     unsigned long startSendTime;
     int timeOfSend;
     IPAddress ip = IPAddress(0, 0, 0, 0);
-    bool isInit = false;
-
-private:
-    FLProgUartBasic *uart = 0;
+    bool isInit = false;    
 };
 
 class ModbusTcpBridge : public ModbusBridge
@@ -94,12 +93,19 @@ private:
 class ModbusKasCadaCloudTcpBridge : public ModbusBridge
 {
 public:
-    using ModbusBridge::ModbusBridge;
+    ModbusKasCadaCloudTcpBridge(){};
+    ModbusKasCadaCloudTcpBridge(FlprogAbstractEthernet *sourse);
+    ModbusKasCadaCloudTcpBridge(FLProgAbstracttWiFiInterface *sourse);
+    ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FlprogAbstractEthernet *sourse);
+    ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FLProgAbstracttWiFiInterface *sourse);
     virtual void pool();
     void setKaScadaCloudIp(IPAddress newIp);
     void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
     void setKaScadaCloudPort(int port);
     void setKaScadaCloudDevceId(String id);
+      virtual void setTCPDevice(FLProgTcpDevice *device);
+    virtual void byServer(){};
+    virtual void byClient(){};
     virtual void begin();
 
 protected:
@@ -107,6 +113,8 @@ protected:
     virtual void sendTCPBuffer();
 
 private:
+    IPAddress cloudIp = IPAddress(94, 250, 249, 225);
+    int cloudPort = 25000;
     uint8_t mbapBuffer[6];
     String deniceId;
     unsigned long kaScadaCloudTimeStartTime;

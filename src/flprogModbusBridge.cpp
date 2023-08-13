@@ -195,6 +195,7 @@ void ModbusBridge::sendRTUBuffer()
 }
 
 //------------------------------------ModbusTcpBridge---------------------------------------------
+
 void ModbusTcpBridge::tcpPool()
 {
     if (tcpDevice == 0)
@@ -294,13 +295,39 @@ void ModbusRtuOverTcpBridge::sendTCPBuffer()
 }
 
 //_______________-----------ModbusKasCadaCloudTcpBridge------------------------------
+
+ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(FlprogAbstractEthernet *sourse)
+{
+    tcpDevice = new FLProgTcpDevice(sourse);
+    tcpDevice->beClient();
+}
+
+ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(FLProgAbstracttWiFiInterface *sourse)
+{
+    tcpDevice = new FLProgTcpDevice(sourse);
+    tcpDevice->beClient();
+}
+
+ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FlprogAbstractEthernet *sourse)
+{
+    tcpDevice = new FLProgTcpDevice(sourse);
+    uart = new FLProgUart(portNumber);
+    tcpDevice->beClient();
+}
+ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FLProgAbstracttWiFiInterface *sourse)
+{
+    tcpDevice = new FLProgTcpDevice(sourse);
+    uart = new FLProgUart(portNumber);
+    tcpDevice->beClient();
+}
+
 void ModbusKasCadaCloudTcpBridge::pool()
 {
     if (!isInit)
     {
         begin();
+        return;
     }
-    isServer = false;
     if (tcpDevice == 0)
     {
         return;
@@ -314,7 +341,7 @@ void ModbusKasCadaCloudTcpBridge::pool()
         }
         else
         {
-            tcpDevice->connect(ip);
+            tcpDevice->connect(cloudIp, cloudPort);
             return;
         }
     }
@@ -328,18 +355,12 @@ void ModbusKasCadaCloudTcpBridge::pool()
 
 void ModbusKasCadaCloudTcpBridge::setKaScadaCloudIp(IPAddress newIp)
 {
-    isServer = false;
-    if (ip == newIp)
-    {
-        return;
-    }
-    ip = newIp;
+    cloudIp = newIp;
     if (tcpDevice == 0)
     {
         return;
     }
-    tcpDevice->beClient();
-    tcpDevice->restart();
+    tcpDevice->stop();
 }
 void ModbusKasCadaCloudTcpBridge::setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet)
 {
@@ -348,57 +369,41 @@ void ModbusKasCadaCloudTcpBridge::setKaScadaCloudIp(uint8_t first_octet, uint8_t
 
 void ModbusKasCadaCloudTcpBridge::setKaScadaCloudPort(int port)
 {
-    isServer = false;
+    cloudPort = port;
     if (tcpDevice == 0)
     {
         return;
     }
-    tcpDevice->beClient();
-    tcpDevice->setPort(port);
+    tcpDevice->stop();
 }
 
 void ModbusKasCadaCloudTcpBridge::setKaScadaCloudDevceId(String id)
 {
-    isServer = false;
-    if (deniceId.equals(id))
-
-    {
-        return;
-    }
     deniceId = id;
-    if (tcpDevice == 0)
-    {
-        return;
-    }
-    tcpDevice->beClient();
-    tcpDevice->stop();
 }
 void ModbusKasCadaCloudTcpBridge::begin()
 {
     isInit = true;
-    isServer = false;
     rtuDevice()->begin();
-    if (!(pinPeDe == 200))
+    if (pinPeDe >= 0)
     {
         pinMode(pinPeDe, OUTPUT);
         digitalWrite(pinPeDe, LOW);
     }
+    kaScadaCloudTimeStartTime = flprog::timeBack(5000);
     if (tcpDevice == 0)
     {
         return;
     }
-    tcpDevice->beClient();
     tcpDevice->begin();
 }
 void ModbusKasCadaCloudTcpBridge::tcpPool()
 {
-    isServer = false;
     if (tcpDevice == 0)
     {
         return;
     }
-    tcpDevice->beClient();
-    tcpDevice->connect(ip);
+    tcpDevice->connect(cloudIp, cloudPort);
     if (!tcpDevice->connected())
     {
         return;
@@ -428,13 +433,11 @@ void ModbusKasCadaCloudTcpBridge::tcpPool()
 
 void ModbusKasCadaCloudTcpBridge::sendTCPBuffer()
 {
-    isServer = false;
     if (tcpDevice == 0)
     {
         return;
     }
-    tcpDevice->beClient();
-    tcpDevice->connect(ip);
+    tcpDevice->connect(cloudIp, cloudPort);
     if (!tcpDevice->connected())
     {
         return;
@@ -445,4 +448,10 @@ void ModbusKasCadaCloudTcpBridge::sendTCPBuffer()
     tcpDevice->write(mbapBuffer, 6);
     tcpDevice->write(buffer, bufferSize);
     bufferSize = 0;
+}
+
+void ModbusKasCadaCloudTcpBridge::setTCPDevice(FLProgTcpDevice *device)
+{
+    tcpDevice = device;
+    tcpDevice->beClient();
 }
