@@ -1,38 +1,5 @@
 #include "flprogModbusMasterRTU.h"
 
-ModbusMasterRTU::ModbusMasterRTU(ModbusSlaveInMaster *table, uint8_t size)
-{
-    slavesSize = size;
-    slaves = table;
-}
-
-ModbusMasterRTU::ModbusMasterRTU(FLProgUartBasic *uartPort, ModbusSlaveInMaster *table, uint8_t size)
-{
-    setUart(uartPort);
-    slavesSize = size;
-    slaves = table;
-}
-
-ModbusMasterRTU::ModbusMasterRTU(uint8_t portNumber, ModbusSlaveInMaster *table, uint8_t size)
-{
-    setUart(new FLProgUart(portNumber));
-    slavesSize = size;
-    slaves = table;
-}
-
-ModbusMasterRTU::ModbusMasterRTU(uint8_t size)
-{
-    slavesSize = size;
-    slaves = new ModbusSlaveInMaster[slavesSize];
-}
-
-ModbusMasterRTU::ModbusMasterRTU(FLProgUartBasic *uartPort, uint8_t size)
-{
-    slavesSize = size;
-    slaves = new ModbusSlaveInMaster[slavesSize];
-    setUart(uartPort);
-}
-
 ModbusMasterRTU::ModbusMasterRTU(uint8_t portNumber, uint8_t size)
 {
     slavesSize = size;
@@ -40,14 +7,22 @@ ModbusMasterRTU::ModbusMasterRTU(uint8_t portNumber, uint8_t size)
     setUart(new FLProgUart(portNumber));
 }
 
+ModbusMasterRTU::ModbusMasterRTU(uint8_t rxPin, uint8_t txPin, uint8_t size)
+{
+    slavesSize = size;
+    slaves = new ModbusSlaveInMaster[slavesSize];
+    setUart(new FLProgSoftwareUart(rxPin, txPin));
+}
+
 void ModbusMasterRTU::begin()
 {
     uardDevice()->begin();
-    if (!(pinPeDe < 0))
+    if (pinPeDe >= 0)
     {
         pinMode(pinPeDe, OUTPUT);
         digitalWrite(pinPeDe, LOW);
     }
+    isInit = true;
 }
 
 ModbusSlaveInMaster *ModbusMasterRTU::slave(uint8_t adr)
@@ -73,6 +48,11 @@ ModbusSlaveInMaster *ModbusMasterRTU::slaveOnIndex(uint8_t slaveIndex)
 
 void ModbusMasterRTU::pool()
 {
+    if (!isInit)
+    {
+        begin();
+        return;
+    }
 
     if (workStatus == FLPROG_MODBUS_WAITING_SENDING)
     {
@@ -595,7 +575,7 @@ bool ModbusMasterRTU::readBool(uint8_t slaveAdr, uint8_t table, int16_t startAdd
     return sl->readBool(table, startAddres);
 }
 
-void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, ModbusTable *table, bool isIndex )
+void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, ModbusTable *table, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
@@ -613,7 +593,7 @@ void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, ModbusTable *table, bool is
     sl->setDataTable(table);
 }
 
-void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, bool isIndex )
+void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
@@ -631,7 +611,7 @@ void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t 
     sl->configDataTable(_table, dataSize);
 }
 
-void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int16_t _startAdr, bool isIndex )
+void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int16_t _startAdr, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
@@ -649,7 +629,7 @@ void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t 
     sl->configDataTable(_table, dataSize, _startAdr);
 }
 
-void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses, bool isIndex )
+void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)

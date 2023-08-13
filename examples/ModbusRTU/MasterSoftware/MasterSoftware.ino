@@ -1,7 +1,7 @@
 // Подключаем необходимую библиотеку
 #include "flprogModbusRTU.h"
-// Создаём мастер на первом уарте с двумя слейвами
-ModbusMasterRTU Master1(1, 2);
+// Создаем объект непосредстредственно Модбас мастера длядвух слейвов на програмном уарте (RX пин - 10, TX пин -11)(Для Arduino Mega)
+ModbusMasterRTU Master1(10, 11, 2);
 
 // Вспомогательные переменные для демонстрации
 int tempInt;
@@ -35,9 +35,6 @@ void setup()
   Master1.configDataTable(2, FLPROG_INPUT_REGISTR, 8);
   Master1.configDataTable(2, FLPROG_COIL, 2);
   Master1.configDataTable(2, FLPROG_DISCRETE_INPUT, 2);
-
-  // Запускаем мастера
-  Master1.begin();
 }
 
 void loop()

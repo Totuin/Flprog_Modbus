@@ -7,10 +7,11 @@ class ModbusBridge
 {
 public:
     ModbusBridge(){};
-    ModbusBridge(FlprogAbstractEthernet *sourse) { tcpDevice = new FLProgTcpDevice(sourse); };
-    ModbusBridge(FLProgAbstracttWiFiInterface *sourse) { tcpDevice = new FLProgTcpDevice(sourse); };
     ModbusBridge(uint8_t portNumber, FlprogAbstractEthernet *sourse);
     ModbusBridge(uint8_t portNumber, FLProgAbstracttWiFiInterface *sourse);
+
+    ModbusBridge(uint8_t rxpin, uint8_t txpin, FlprogAbstractEthernet *sourse);
+    ModbusBridge(uint8_t rxpin, uint8_t txpin, FLProgAbstracttWiFiInterface *sourse);
 
     virtual void pool();
     virtual void setTCPDevice(FLProgTcpDevice *device) { tcpDevice = device; };
@@ -62,7 +63,7 @@ protected:
     unsigned long startSendTime;
     int timeOfSend;
     IPAddress ip = IPAddress(0, 0, 0, 0);
-    bool isInit = false;    
+    bool isInit = false;
 };
 
 class ModbusTcpBridge : public ModbusBridge
@@ -94,16 +95,19 @@ class ModbusKasCadaCloudTcpBridge : public ModbusBridge
 {
 public:
     ModbusKasCadaCloudTcpBridge(){};
-    ModbusKasCadaCloudTcpBridge(FlprogAbstractEthernet *sourse);
-    ModbusKasCadaCloudTcpBridge(FLProgAbstracttWiFiInterface *sourse);
+    
     ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FlprogAbstractEthernet *sourse);
     ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FLProgAbstracttWiFiInterface *sourse);
+
+    ModbusKasCadaCloudTcpBridge(uint8_t rxpin, uint8_t txpin, FlprogAbstractEthernet *sourse);
+    ModbusKasCadaCloudTcpBridge(uint8_t rxpin, uint8_t txpin, FLProgAbstracttWiFiInterface *sourse);
+    
     virtual void pool();
     void setKaScadaCloudIp(IPAddress newIp);
     void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
     void setKaScadaCloudPort(int port);
     void setKaScadaCloudDevceId(String id);
-      virtual void setTCPDevice(FLProgTcpDevice *device);
+    virtual void setTCPDevice(FLProgTcpDevice *device);
     virtual void byServer(){};
     virtual void byClient(){};
     virtual void begin();

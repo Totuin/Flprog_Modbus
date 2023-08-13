@@ -5,12 +5,7 @@
 class ModbusRTU : public Modbus
 {
 public:
-    ModbusRTU(){};
-    ModbusRTU(FLProgUartBasic *uartPort) { uart = uartPort; };
-    ModbusRTU(uint8_t number) { uart = new FLProgUart(number); };
-
-    void setUart(FLProgUartBasic *uartPort) { uart = uartPort; };
-
+     void setUart(FLProgUartBasic *uartPort) { uart = uartPort; };
     FLProgUartBasic *uardDevice();
 
     void setPortSpeed(uint8_t speed) { uardDevice()->setPortSpeed(speed); };
@@ -34,8 +29,6 @@ protected:
     int pinPeDe = -1;
     uint8_t lastRec = 0;
     unsigned long time;
-
-private:
     FLProgUartBasic *uart = 0;
 };
 

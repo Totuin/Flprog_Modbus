@@ -1,20 +1,25 @@
 #include "flprogModbusSlaveRTU.h"
 
-void ModbusSlaveRTU::begin(uint8_t addres)
+void ModbusSlaveRTU::begin()
 {
     uardDevice()->begin();
-    slaveAddres = addres;
     bufferSize = 0;
     lastRec = 0;
-    if (!(pinPeDe < 0))
+    if (pinPeDe >= 0)
     {
         pinMode(pinPeDe, OUTPUT);
         digitalWrite(pinPeDe, LOW);
     }
+    isInit = true;
 }
 
 void ModbusSlaveRTU::pool()
 {
+    if (!isInit)
+    {
+        begin();
+        return;
+    }
     if (workStatus == FLPROG_MODBUS_WAITING_SENDING)
     {
         if ((flprog::isTimer(startSendTime, timeOfSend)))

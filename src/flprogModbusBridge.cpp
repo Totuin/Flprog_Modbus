@@ -12,6 +12,18 @@ ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstracttWiFiInterface *sou
     uart = new FLProgUart(portNumber);
 }
 
+ModbusBridge::ModbusBridge(uint8_t rxPin, uint8_t txPin, FlprogAbstractEthernet *sourse)
+{
+    tcpDevice = new FLProgTcpDevice(sourse);
+    uart = new FLProgSoftwareUart(rxPin, txPin);
+}
+
+ModbusBridge::ModbusBridge(uint8_t rxPin, uint8_t txPin, FLProgAbstracttWiFiInterface *sourse)
+{
+    tcpDevice = new FLProgTcpDevice(sourse);
+    uart = new FLProgSoftwareUart(rxPin, txPin);
+}
+
 void ModbusBridge::pool()
 {
     if (!isInit)
@@ -86,7 +98,7 @@ void ModbusBridge::begin()
 {
     isInit = true;
     rtuDevice()->begin();
-    if (!(pinPeDe < 0))
+    if (pinPeDe >= 0)
     {
         pinMode(pinPeDe, OUTPUT);
         digitalWrite(pinPeDe, LOW);
@@ -174,7 +186,6 @@ void ModbusBridge::getRTURxBuffer()
     while (rtuDevice()->available())
     {
         buffer[bufferSize] = rtuDevice()->read();
-
         bufferSize++;
     }
 }
@@ -296,18 +307,6 @@ void ModbusRtuOverTcpBridge::sendTCPBuffer()
 
 //_______________-----------ModbusKasCadaCloudTcpBridge------------------------------
 
-ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(FlprogAbstractEthernet *sourse)
-{
-    tcpDevice = new FLProgTcpDevice(sourse);
-    tcpDevice->beClient();
-}
-
-ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(FLProgAbstracttWiFiInterface *sourse)
-{
-    tcpDevice = new FLProgTcpDevice(sourse);
-    tcpDevice->beClient();
-}
-
 ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FlprogAbstractEthernet *sourse)
 {
     tcpDevice = new FLProgTcpDevice(sourse);
@@ -318,6 +317,20 @@ ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FLP
 {
     tcpDevice = new FLProgTcpDevice(sourse);
     uart = new FLProgUart(portNumber);
+    tcpDevice->beClient();
+}
+
+ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t rxPin, uint8_t txPin, FlprogAbstractEthernet *sourse)
+{
+    tcpDevice = new FLProgTcpDevice(sourse);
+    uart = new FLProgSoftwareUart(rxPin, txPin);
+    tcpDevice->beClient();
+}
+
+ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t rxPin, uint8_t txPin, FLProgAbstracttWiFiInterface *sourse)
+{
+    tcpDevice = new FLProgTcpDevice(sourse);
+    uart = new FLProgSoftwareUart(rxPin, txPin);
     tcpDevice->beClient();
 }
 

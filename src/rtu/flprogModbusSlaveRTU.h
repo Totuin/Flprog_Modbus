@@ -4,9 +4,10 @@
 class ModbusSlaveRTU : public ModbusRTU
 {
 public:
-    using ModbusRTU::ModbusRTU;
-    void begin() { begin(slaveAddres); };
-    void begin(uint8_t addres);
+    ModbusSlaveRTU(){};
+    ModbusSlaveRTU(uint8_t number) { uart = new FLProgUart(number); };
+    ModbusSlaveRTU(uint8_t rxPin, uint8_t txPin) { uart = new FLProgSoftwareUart(rxPin, txPin); };
+    void begin();
     void pool();
     void setSlaveAddress(uint8_t adr) { slaveAddres = adr; };
     void setData(ModbusMainData *_data) { data = _data; };
@@ -14,7 +15,6 @@ public:
     void setDataTable(ModbusTable *table) { mainData()->setDataTable(table); };
     void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses) { mainData()->setDataTable(_table, dataSize, _adresses); };
     void configDataTable(uint8_t _table, uint16_t dataSize, int16_t _startAdr = 0) { mainData()->configDataTable(_table, dataSize, _startAdr); };
-    
 
     void saveLong(int32_t val, uint8_t table, int adr) { mainData()->saveLong(val, table, adr); };
     void saveUnsignedLong(uint32_t val, uint8_t table, int adr) { mainData()->saveUnsignedLong(val, table, adr); };
