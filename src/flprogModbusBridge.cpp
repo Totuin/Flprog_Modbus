@@ -14,6 +14,10 @@ ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstracttWiFiInterface *sou
 
 void ModbusBridge::pool()
 {
+    if (!isInit)
+    {
+        begin();
+    }
     if (isServer)
     {
         tcpPool();
@@ -80,6 +84,7 @@ void ModbusBridge::byClient()
 
 void ModbusBridge::begin()
 {
+    isInit = true;
     rtuDevice()->begin();
     if (!(pinPeDe < 0))
     {
@@ -291,6 +296,10 @@ void ModbusRtuOverTcpBridge::sendTCPBuffer()
 //_______________-----------ModbusKasCadaCloudTcpBridge------------------------------
 void ModbusKasCadaCloudTcpBridge::pool()
 {
+    if (!isInit)
+    {
+        begin();
+    }
     isServer = false;
     if (tcpDevice == 0)
     {
@@ -366,6 +375,7 @@ void ModbusKasCadaCloudTcpBridge::setKaScadaCloudDevceId(String id)
 }
 void ModbusKasCadaCloudTcpBridge::begin()
 {
+    isInit = true;
     isServer = false;
     rtuDevice()->begin();
     if (!(pinPeDe == 200))

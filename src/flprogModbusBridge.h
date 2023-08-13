@@ -60,6 +60,7 @@ protected:
     unsigned long startSendTime;
     int timeOfSend;
     IPAddress ip = IPAddress(0, 0, 0, 0);
+    bool isInit = false;
 
 private:
     FLProgUartBasic *uart = 0;

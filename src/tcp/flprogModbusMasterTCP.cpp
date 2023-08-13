@@ -699,7 +699,10 @@ bool ModbusMasterTCP::hasServer(uint8_t serverIndex)
 
 void ModbusMasterTCP::pool()
 {
-
+    if (!isInit)
+    {
+        begin();
+    }
     if (workStatus == FLPROG_MODBUS_WAITING_ANSWER)
     {
         checkAnswer();
@@ -1046,8 +1049,10 @@ void ModbusMasterTCP::setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster
 
 void ModbusMasterTCP::begin()
 {
+
     tcpDevice->beClient();
     tcpDevice->begin();
+    isInit = true;
 }
 
 //---------------------ModbusMasterRTUoverTCP-------------------------------------

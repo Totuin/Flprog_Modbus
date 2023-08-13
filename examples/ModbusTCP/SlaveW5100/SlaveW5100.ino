@@ -13,10 +13,6 @@ FlprogW5100Interface W5100_Interface(&spiBus, 10);
 // Так же создается слейв RTU OVER TCP
 ModbusSlaveRTUoverTCP Slave1(&W5100_Interface);
 
-// Задаем данные для интернет соеденения
-uint8_t ethernet_mac[] = {0x78, 0xAC, 0xC0, 0x77, 0xE3, 0x05};
-IPAddress ethernet_ip(192, 168, 199, 177);
-
 int _DiscreteInputAddreses[] = {8, 9, 10, 11, 12, 14, 15, 16, 17, 18};
 
 // Вспомогательные переменные для демонстрации
@@ -28,6 +24,10 @@ int lastError;
 
 void setup()
 {
+  W5100_Interface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
+  W5100_Interface.localIP(IPAddress(192, 168, 199, 177));
+  W5100_Interface.resetDhcp();
+
   // Описываем таблицы слейва
   Slave1.configDataTable(FLPROG_HOLDING_REGISTR, 10);
   Slave1.configDataTable(FLPROG_INPUT_REGISTR, 10);
@@ -54,18 +54,12 @@ void setup()
   */
 
   startTimer = millis();
-  // Задержка на старт модуля
-  delay(1000);
-
-  // Инициализируем слейв
-  Slave1.begin();
-
-  // Стартуем интерфейс
-  W5100_Interface.begin(ethernet_mac, ethernet_ip);
 }
 
 void loop()
 {
+  // Цикл работы интерфейса
+  W5100_Interface.pool();
   // Цикл работы слейва
   Slave1.pool();
 

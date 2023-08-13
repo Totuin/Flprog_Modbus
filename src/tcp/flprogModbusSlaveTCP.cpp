@@ -14,6 +14,7 @@ void ModbusSlaveTCP::begin()
 {
     tcpDevice->beServer();
     tcpDevice->begin();
+    isInit = true;
 }
 
 void ModbusSlaveTCP::begin(uint8_t address)
@@ -24,6 +25,11 @@ void ModbusSlaveTCP::begin(uint8_t address)
 
 void ModbusSlaveTCP::pool()
 {
+    if (!isInit)
+    {
+        begin();
+    }
+
     tcpDevice->connect();
     if (tcpDevice->hasClient())
     {
@@ -93,6 +99,10 @@ ModbusMainData *ModbusSlaveTCP::mainData()
 
 void ModbusSlaveRTUoverTCP::pool()
 {
+    if (!isInit)
+    {
+        begin();
+    }
     tcpDevice->connect();
     if (!tcpDevice->hasClient())
     {
@@ -213,6 +223,7 @@ void ModbusKaScadaCloud::setKaScadaCloudDevceId(String id)
 
 void ModbusKaScadaCloud::begin()
 {
+    isInit = true;
     kaScadaCloudTimeOutStartTime = millis() + 5000;
     tcpDevice->beClient();
     tcpDevice->begin();
@@ -226,6 +237,10 @@ void ModbusKaScadaCloud::begin(uint8_t address)
 
 void ModbusKaScadaCloud::pool()
 {
+    if (!isInit)
+    {
+        begin();
+    }
     if (flprog::isTimer(kaScadaCloudTimeOutStartTime, 5000))
     {
         if (tcpDevice->connected())

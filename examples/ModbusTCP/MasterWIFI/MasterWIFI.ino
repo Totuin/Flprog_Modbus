@@ -1,21 +1,14 @@
 //Подключаем необходимую библиотеку
 #include "flprogModbusTCP.h"
 
-FLProgSPI spiBus(0);
-FlprogW5100Interface W5100_Interface(&spiBus, 10);
+FLProgOnBoardWifi WifiInterface;
+
 /*  Создаем объект непосредстредственно Модбас мастера на необходимом интерфейсе
   Второй параметр - количество серверов
 */
-ModbusMasterTCP Master1(&W5100_Interface, 1);
+ModbusMasterTCP Master1(&WifiInterface, 1);
 //так же можно создать мастера RTU OVER TCP
-//ModbusMasterRTUoverTCP Master1(&W5100_Interface, 1);
-
-// Задаем данные для интернет соеденения
-byte ethernet_mac[] = {0x78, 0xAC, 0xC0, 0x77, 0xE3, 0x05};
-IPAddress ethernet_ip(192, 168, 199, 125);
-byte ethernet_dns[] = {192, 168, 199, 1};
-byte ethernet_gateway[] = {192, 168, 199, 1};
-byte ethernet_subnet[] = {255, 255, 255, 0};
+//ModbusMasterRTUoverTCP Master1(&WifiInterface, 1);
 
 //Вспомогательные переменные для демонстрации
 int tempInt;
@@ -25,6 +18,15 @@ unsigned long startTime;
 
 void setup()
 {
+
+ WifiInterface.clientOn();
+  WifiInterface.mac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28);
+  WifiInterface.localIP(IPAddress(192, 168, 199, 177));
+  WifiInterface.resetDhcp();
+  WifiInterface.setClientSsidd("totuin-router");
+  WifiInterface.setClientPassword("12345678");
+
+
   //Задаём порт для сервера
   Master1.setServerPort(0, 502);
   //Устанавливаем IP адрес сервера
@@ -92,20 +94,12 @@ void setup()
   Master1.setFloatOrder(0, 2, FLPROG_ABCD_ORDER);
   Master1.setUnsignedlongOrder(0, 2, FLPROG_ABCD_ORDER);
   Master1.setIntOrder(0, 2, FLPROG_AB_ORDER);
-
-
-  // Стартуем модуль W5100
-  W5100_Interface.begin(ethernet_mac, ethernet_ip, ethernet_dns, ethernet_gateway, ethernet_subnet);
-
-  // Задержка на старт модуля
-  delay(1000);
-
-  //Инициализируем мастер
-  Master1.begin();
 }
 
 void loop()
 {
+  // Цикл работы интерфейса
+  WifiInterface.pool();
   //Цикл работы мастера
   Master1.pool();
 

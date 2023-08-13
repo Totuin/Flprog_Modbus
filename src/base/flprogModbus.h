@@ -36,4 +36,7 @@ protected:
     virtual uint8_t validateRequest() { return 0; };
     void executeSlaveReqest(ModbusMainData *data, uint8_t address);
     uint8_t tabeTypeForFunction(uint8_t function);
+
+protected:
+    bool isInit = false;
 };
