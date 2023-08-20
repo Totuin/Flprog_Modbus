@@ -65,9 +65,8 @@ protected:
 class ModbusMasterTCP : public ModbusTCP
 {
 public:
-    ModbusMasterTCP(FlprogAbstractEthernet *sourse, uint8_t size);
-    ModbusMasterTCP(FLProgAbstracttWiFiInterface *sourse, uint8_t size);
-
+    ModbusMasterTCP(FLProgAbstractTcpInterface *sourse, uint8_t size);
+   
     ModbusTCPSlaveServer *server(uint8_t serverIndex);
 
     void setServerSlavesSize(uint8_t serverIndex, uint8_t size);
@@ -109,9 +108,9 @@ public:
     void setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster *table, int size);
 
     virtual void connect(ModbusTCPSlaveServer *server);
-    virtual uint8_t available() { return tcpDevice->available(); };
-    virtual uint8_t read() { return tcpDevice->read(); };
-    virtual void stop() { tcpDevice->stop(); };
+    virtual uint8_t available() { return client()->available(); };
+    virtual uint8_t read() { return client()->read(); };
+    virtual void stop() { client()->stop(); };
     virtual void write(ModbusTCPSlaveServer *server, uint8_t *buffer, uint8_t buferSize);
     virtual void begin();
     ModbusTCPSlaveServer *servers();
@@ -137,6 +136,7 @@ protected:
     bool nextRegistor();
     ModbusTCPSlaveServer *firstReadyServer();
     virtual void getRxBuffer();
+    Client *client();
 
     ModbusTCPSlaveServer *telegrammServer;
     ModbusSlaveInMaster *telegrammSlave;
@@ -152,6 +152,8 @@ protected:
     int currentSlaveLastAddress = -1;
     int serversSize = 1;
     ModbusTCPSlaveServer *servs = 0;
+    Client *tcpClient = 0;
+
 };
 
 class ModbusMasterRTUoverTCP : public ModbusMasterTCP

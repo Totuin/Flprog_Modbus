@@ -4,8 +4,8 @@
 class ModbusSlaveTCP : public ModbusTCP
 {
 public:
-    ModbusSlaveTCP(FlprogAbstractEthernet *sourse);
-    ModbusSlaveTCP(FLProgAbstracttWiFiInterface *sourse);
+    ModbusSlaveTCP(){};
+    ModbusSlaveTCP(FLProgAbstractTcpInterface *sourse);
 
     void setSlaveAddress(uint8_t adr) { slaveAddres = adr; };
     void setData(ModbusMainData *_data) { data = _data; };
@@ -32,15 +32,16 @@ public:
     virtual void begin();
     virtual void begin(uint8_t address);
     virtual void pool();
-    void setTcpPort(int port) { tcpDevice->setPort(port); }
+    void setTcpPort(int _port);
     ModbusMainData *mainData();
 
 protected:
     uint8_t slaveAddres = 1;
     virtual void getRxBuffer();
     virtual void sendTxBuffer();
-
-private:
+    FLProgAbstractTcpServer *server = 0;
+    Client *client = 0;
+    int port = 502;
     ModbusMainData *data = 0;
 };
 
@@ -61,7 +62,7 @@ protected:
 class ModbusKaScadaCloud : public ModbusSlaveTCP
 {
 public:
-    using ModbusSlaveTCP::ModbusSlaveTCP;
+    ModbusKaScadaCloud(FLProgAbstractTcpInterface *sourse);
     void setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond_octet, uint8_t newThird_octet, uint8_t newFourth_octet);
     void setKaScadaCloudPort(int newPort);
     void setKaScadaCloudDevceId(String id);
@@ -74,7 +75,7 @@ protected:
     virtual void sendTxBuffer();
 
 private:
-    int port = 25000;
+    int cloudPort = 25000;
     String deniceId;
     IPAddress cloudIp = IPAddress(94, 250, 249, 225);
     uint32_t kaScadaCloudTimeOutStartTime;

@@ -371,18 +371,11 @@ bool ModbusTCPSlaveServer::isReady()
 
 // ModbusMasterTCP******************
 
-ModbusMasterTCP::ModbusMasterTCP(FlprogAbstractEthernet *sourse, uint8_t size)
+ModbusMasterTCP::ModbusMasterTCP(FLProgAbstractTcpInterface *sourse, uint8_t size)
 {
     serversSize = size;
     servs = new ModbusTCPSlaveServer[serversSize];
-    tcpDevice = new FLProgTcpDevice(sourse);
-}
-
-ModbusMasterTCP::ModbusMasterTCP(FLProgAbstracttWiFiInterface *sourse, uint8_t size)
-{
-    serversSize = size;
-    servs = new ModbusTCPSlaveServer[serversSize];
-    tcpDevice = new FLProgTcpDevice(sourse);
+    interface = sourse;
 }
 
 ModbusTCPSlaveServer *ModbusMasterTCP::servers()
@@ -675,20 +668,28 @@ void ModbusMasterTCP::status(uint8_t serverIndex, uint8_t slaveAdr, bool status,
     return serv->status(slaveAdr, status, isIndex);
 }
 
+Client *ModbusMasterTCP::client()
+{
+    if (tcpClient == 0)
+    {
+        tcpClient = interface->getClient();
+    }
+    return tcpClient;
+}
 void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
 {
-    tcpDevice->connect(server->getIp(), server->getPort());
+    client()->connect(server->getIp(), server->getPort());
 }
 
 void ModbusMasterTCP::write(ModbusTCPSlaveServer *server, uint8_t *buffer, uint8_t buferSize)
 {
-    if (!tcpDevice->connected())
+    if (!client()->connected())
     {
         connect(server);
     }
-    if (tcpDevice->connected())
+    if (client()->connected())
     {
-        tcpDevice->write(buffer, buferSize);
+        client()->write(buffer, buferSize);
     }
 }
 
@@ -1050,8 +1051,8 @@ void ModbusMasterTCP::setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster
 void ModbusMasterTCP::begin()
 {
 
-    tcpDevice->beClient();
-    tcpDevice->begin();
+    //tcpDevice->beClient();
+    //tcpDevice->begin();
     isInit = true;
 }
 

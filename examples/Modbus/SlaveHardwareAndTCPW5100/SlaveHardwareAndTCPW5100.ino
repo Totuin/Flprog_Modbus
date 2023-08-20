@@ -3,13 +3,13 @@
 // Создаем объект шины
 FLProgSPI spiBus(0);
 // Создаём интерфейс W5100
-FlprogW5100Interface W5100_Interface(&spiBus, 10);
+FLProgWiznetInterface WiznetInterface(&spiBus, 10);
 
 // Создаём общий для обеих слейвов набор регистров
 ModbusMainData Data;
 
 // Создаем объект непосредстредственно Модбас слейва TCP на необходимом интерфейсе
-ModbusSlaveTCP SlaveTCP(&W5100_Interface);
+ModbusSlaveTCP SlaveTCP(&WiznetInterface);
 
 // Создаем объект непосредстредственно Модбас слейва на нулевом уарте
 ModbusSlaveRTU SlaveRTU(0);
@@ -25,9 +25,9 @@ int lastError;
 
 void setup()
 {
-  W5100_Interface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
-  W5100_Interface.localIP(IPAddress(192, 168, 199, 177));
-  W5100_Interface.resetDhcp();
+  WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
+  WiznetInterface.localIP(IPAddress(192, 168, 199, 177));
+  WiznetInterface.resetDhcp();
 
   // Конфигурируем набор регистров
   Data.configDataTable(FLPROG_HOLDING_REGISTR, 10);
@@ -43,7 +43,7 @@ void setup()
 void loop()
 {
   // Цикл работы интерфейса
-  W5100_Interface.pool();
+  WiznetInterface.pool();
 
   // Цикл работы слейва RTU
   SlaveRTU.pool();

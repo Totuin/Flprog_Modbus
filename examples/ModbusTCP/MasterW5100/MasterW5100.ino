@@ -2,13 +2,13 @@
 #include "flprogModbusTCP.h"
 
 FLProgSPI spiBus(0);
-FlprogW5100Interface W5100_Interface(&spiBus, 10);
+FLProgWiznetInterface WiznetInterface(&spiBus, 10);
 /*  Создаем объект непосредстредственно Модбас мастера на необходимом интерфейсе
   Второй параметр - количество серверов
 */
-ModbusMasterTCP Master1(&W5100_Interface, 1);
+//ModbusMasterTCP Master1(&WiznetInterface, 1);
 //так же можно создать мастера RTU OVER TCP
-//ModbusMasterRTUoverTCP Master1(&W5100_Interface, 1);
+ModbusMasterRTUoverTCP Master1(&WiznetInterface, 1);
 
 //Вспомогательные переменные для демонстрации
 int tempInt;
@@ -19,15 +19,15 @@ unsigned long startTime;
 void setup()
 {
 
-  W5100_Interface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
-  W5100_Interface.localIP(IPAddress(192, 168, 199, 177));
-  W5100_Interface.resetDhcp();
+  WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
+  WiznetInterface.localIP(IPAddress(192, 168, 1, 177));
+  WiznetInterface.resetDhcp();
 
 
   //Задаём порт для сервера
   Master1.setServerPort(0, 502);
   //Устанавливаем IP адрес сервера
-  Master1.setServerIpAdress(0, IPAddress(192, 168, 199, 95));
+  Master1.setServerIpAdress(0, IPAddress(192, 168, 1, 108));
 
   //Задаём количество слейвов на сервере
   Master1.setServerSlavesSize(0, 2);
@@ -96,7 +96,7 @@ void setup()
 void loop()
 {
   // Цикл работы интерфейса
-  W5100_Interface.pool();
+  WiznetInterface.pool();
   //Цикл работы мастера
   Master1.pool();
 

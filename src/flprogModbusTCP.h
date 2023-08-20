@@ -1,6 +1,6 @@
 #pragma once
-
-#include "tcp/tcpDevice/flprogTcpDevice.h"
+#include "flprogEthernet.h"
+#include "flprogWiFi.h"
 #include "base/flprogModbus.h"
 
 class ModbusTCP : public Modbus
@@ -8,7 +8,7 @@ class ModbusTCP : public Modbus
 
 protected:
     uint8_t mbapBuffer[6];
-    FLProgTcpDevice *tcpDevice;
+    FLProgAbstractTcpInterface *interface = 0;
 };
 
 #include "tcp/flprogModbusSlaveTCP.h"

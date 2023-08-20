@@ -21,16 +21,16 @@ void setup()
 
  WifiInterface.clientOn();
   WifiInterface.mac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28);
-  WifiInterface.localIP(IPAddress(192, 168, 199, 177));
+  WifiInterface.localIP(IPAddress(192, 168, 1, 177));
   WifiInterface.resetDhcp();
-  WifiInterface.setClientSsidd("totuin-router");
+  WifiInterface.setClientSsidd("yana");
   WifiInterface.setClientPassword("12345678");
 
 
   //Задаём порт для сервера
   Master1.setServerPort(0, 502);
   //Устанавливаем IP адрес сервера
-  Master1.setServerIpAdress(0, IPAddress(192, 168, 199, 95));
+  Master1.setServerIpAdress(0, IPAddress(192, 168, 1, 108));
 
   //Задаём количество слейвов на сервере
   Master1.setServerSlavesSize(0, 2);

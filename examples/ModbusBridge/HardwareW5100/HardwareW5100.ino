@@ -1,17 +1,17 @@
 #include "flprogModbusBridge.h"
 
 FLProgSPI spiBus(0);
-FlprogW5100Interface W5100_Interface(&spiBus, 10);
+FLProgWiznetInterface WiznetInterface(&spiBus, 10);
 
-// ModbusKasCadaCloudTcpBridge Bridge(0, &W5100_Interface);
-ModbusTcpBridge Bridge(0, &W5100_Interface);
-// ModbusRtuOverTcpBridge Bridge(0, &W5100_Interface);
+// ModbusKasCadaCloudTcpBridge Bridge(0, &WiznetInterface);
+ModbusTcpBridge Bridge(0, &WiznetInterface);
+// ModbusRtuOverTcpBridge Bridge(0, &WiznetInterface);
 
 void setup()
 {
-  W5100_Interface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
-  W5100_Interface.localIP(IPAddress(192, 168, 199, 177));
-  W5100_Interface.resetDhcp();
+  WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
+  WiznetInterface.localIP(IPAddress(192, 168, 199, 177));
+  WiznetInterface.resetDhcp();
 
   // Bridge.setRTUDevice(&RtuDevice);
   // Bridge.setTCPDevice(&TcpDevice);
@@ -25,6 +25,6 @@ void setup()
 }
 void loop()
 {
-  W5100_Interface.pool();
+  WiznetInterface.pool();
   Bridge.pool();
 }

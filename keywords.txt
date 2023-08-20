@@ -4,7 +4,7 @@
 #######################################
 # # Datatypes (KEYWORD1)
 #######################################
-FLProgTcpDevice	KEYWORD1
+flprogModus	KEYWORD1
 Modbus	KEYWORD1
 ModbusBridge	KEYWORD1
 ModbusKaScadaCloud	KEYWORD1
@@ -19,19 +19,16 @@ ModbusSlaveInMaster	KEYWORD1
 ModbusSlaveRTU	KEYWORD1
 ModbusSlaveRTUoverTCP	KEYWORD1
 ModbusSlaveTCP	KEYWORD1
-ModbusTCP	KEYWORD1
-ModbusTCPSlaveServer	KEYWORD1
 ModbusTable	KEYWORD1
+ModbusTCP	KEYWORD1
 ModbusTcpBridge	KEYWORD1
-flprogModus	KEYWORD1
+ModbusTCPSlaveServer	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 adressForIndex	KEYWORD2
 available	KEYWORD2
-beClient	KEYWORD2
-beServer	KEYWORD2
 begin	KEYWORD2
 byClient	KEYWORD2
 byServer	KEYWORD2
@@ -39,7 +36,6 @@ checkModbusAddres	KEYWORD2
 checkModbusRange	KEYWORD2
 configDataTable	KEYWORD2
 connect	KEYWORD2
-connected	KEYWORD2
 findNextStartAddres	KEYWORD2
 firstReadySlave	KEYWORD2
 firstTabe	KEYWORD2
@@ -61,8 +57,6 @@ getRtuPortSpeed	KEYWORD2
 getRtuPortStopBits	KEYWORD2
 getTimeOutTime	KEYWORD2
 hasAdress	KEYWORD2
-hasClient	KEYWORD2
-hasServer	KEYWORD2
 hasSlave	KEYWORD2
 hasSlaveOnIndex	KEYWORD2
 hasTable	KEYWORD2
@@ -91,8 +85,6 @@ readUnsignedLong	KEYWORD2
 readWorldRegister	KEYWORD2
 resetInit	KEYWORD2
 resetWriteFlag	KEYWORD2
-restart	KEYWORD2
-rtuDevice	KEYWORD2
 saveBool	KEYWORD2
 saveByte	KEYWORD2
 saveFloat	KEYWORD2
@@ -132,10 +124,9 @@ setSlaveAddress	KEYWORD2
 setSlaves	KEYWORD2
 setSlavesSize	KEYWORD2
 setSlavesToServer	KEYWORD2
-setTCPDevice	KEYWORD2
+setTcpPort	KEYWORD2
 setTCPPort	KEYWORD2
 setTCPRemoteIp	KEYWORD2
-setTcpPort	KEYWORD2
 setTimeOutTime	KEYWORD2
 setUart	KEYWORD2
 setUnsignedlongOrder	KEYWORD2
@@ -157,22 +148,16 @@ writeRegsSize	KEYWORD2
 #######################################
 # Constants (LITERAL1)
 #######################################
-FLPROG_ABCD_ORDER	LITERAL1
 FLPROG_AB_ORDER	LITERAL1
-FLPROG_ANON_INTERFACE	LITERAL1
-FLPROG_BADC_ORDER	LITERAL1
+FLPROG_ABCD_ORDER	LITERAL1
 FLPROG_BA_ORDER	LITERAL1
+FLPROG_BADC_ORDER	LITERAL1
 FLPROG_CDAB_ORDER	LITERAL1
 FLPROG_COIL	LITERAL1
 FLPROG_DCBA_ORDER	LITERAL1
 FLPROG_DISCRETE_INPUT	LITERAL1
-FLPROG_ETHERNET_INTERFACE	LITERAL1
 FLPROG_HOLDING_REGISTR	LITERAL1
 FLPROG_INPUT_REGISTR	LITERAL1
 FLPROG_MODBUS_READY	LITERAL1
 FLPROG_MODBUS_WAITING_ANSWER	LITERAL1
 FLPROG_MODBUS_WAITING_SENDING	LITERAL1
-FLPROG_TCP_SERVER_MODE	LITERAL1
-FLPROG_TSP_CLIENT_MODE	LITERAL1
-FLPROG_WIFI_INTERFACE	LITERAL1
-FLPROG_WIFI_TCP_DEVICE	LITERAL1

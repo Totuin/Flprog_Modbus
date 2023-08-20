@@ -5,13 +5,13 @@
 FLProgSPI spiBus(0);
 
 // Создаём интерфейс W5100
-FlprogW5100Interface W5100_Interface(&spiBus, 10);
+FLProgWiznetInterface WiznetInterface(&spiBus, 10);
 
 // Создаем объект непосредстредственно Модбас слейва на необходимом интерфейсе
-//ModbusSlaveTCP Slave1(&W5100_Interface);
+//ModbusSlaveTCP Slave1(&WiznetInterface);
 
 // Так же создается слейв RTU OVER TCP
-ModbusSlaveRTUoverTCP Slave1(&W5100_Interface);
+ModbusSlaveRTUoverTCP Slave1(&WiznetInterface);
 
 int _DiscreteInputAddreses[] = {8, 9, 10, 11, 12, 14, 15, 16, 17, 18};
 
@@ -24,9 +24,9 @@ int lastError;
 
 void setup()
 {
-  W5100_Interface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
-  W5100_Interface.localIP(IPAddress(192, 168, 199, 177));
-  W5100_Interface.resetDhcp();
+  WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
+  WiznetInterface.localIP(IPAddress(192, 168, 199, 177));
+  WiznetInterface.resetDhcp();
 
   // Описываем таблицы слейва
   Slave1.configDataTable(FLPROG_HOLDING_REGISTR, 10);
@@ -59,7 +59,7 @@ void setup()
 void loop()
 {
   // Цикл работы интерфейса
-  W5100_Interface.pool();
+  WiznetInterface.pool();
   // Цикл работы слейва
   Slave1.pool();
 

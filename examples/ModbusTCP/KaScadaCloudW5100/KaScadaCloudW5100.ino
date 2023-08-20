@@ -5,9 +5,9 @@
 FLProgSPI spiBus(0);
 
 // Создаём интерфейс W5100
-FlprogW5100Interface W5100_Interface(&spiBus, 10);
+FLProgWiznetInterface WiznetInterface(&spiBus, 10);
 
-ModbusKaScadaCloud Slave1(&W5100_Interface);
+ModbusKaScadaCloud Slave1(&WiznetInterface);
 
 // Вспомогательные переменные для демонстрации
 int tempInt;
@@ -16,7 +16,7 @@ unsigned long tempUnsigned;
 void setup()
 {
 
-  W5100_Interface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
+  WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
 
   // Инициализация вспомогательных переменных
   tempUnsigned = millis() - 1000;
@@ -36,7 +36,7 @@ void setup()
 void loop()
 {
   // Цикл работы интерфейса
-  W5100_Interface.pool();
+  WiznetInterface.pool();
   // Цикл работы слейва
   Slave1.pool();
 

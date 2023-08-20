@@ -15,7 +15,7 @@ void setup()
 
   WifiInterface.clientOn();
   WifiInterface.mac(0x78, 0xAC, 0xC0, 0x2C, 0x3E, 0x28);
-  WifiInterface.setClientSsidd("totuin-router");
+  WifiInterface.setClientSsidd("yana");
   WifiInterface.setClientPassword("12345678");
   // Привязываем слейв к TCP устройству
 
