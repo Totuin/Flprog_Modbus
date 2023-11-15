@@ -1,14 +1,5 @@
 #include "flprogModbusRTU.h"
 
-FLProgUartBasic *ModbusRTU::uardDevice()
-{
-    if (uart == 0)
-    {
-        uart = new FLProgUart();
-    }
-    return uart;
-}
-
 void ModbusRTU::onPeDePin()
 {
     if (pinPeDe < 0)
@@ -31,15 +22,15 @@ uint8_t ModbusRTU::rxBuffer()
 {
     bool bBuffOverflow = false;
     bufferSize = 0;
-    while (uardDevice()->available())
+    while (RT_HW_Base.uartAvailable(uartPortNumber))
     {
         if (bufferSize < 64)
         {
-            buffer[bufferSize] = uardDevice()->read();
+            buffer[bufferSize] = RT_HW_Base.uartRead(uartPortNumber);
         }
         else
         {
-            uardDevice()->read();
+            RT_HW_Base.uartRead(uartPortNumber);
             bBuffOverflow = true;
         }
         bufferSize++;
@@ -48,6 +39,7 @@ uint8_t ModbusRTU::rxBuffer()
     {
         return -3;
     }
+
     return bufferSize;
 }
 
@@ -64,8 +56,15 @@ void ModbusRTU::sendTxBuffer()
     bufferSize++;
     buffer[bufferSize] = crc & 0x00ff;
     bufferSize++;
-    uardDevice()->write(buffer, bufferSize);
-    timeOfSend = flprogModus::timeForSendBytes((uardDevice()->getPortDataBits()), (uardDevice()->getPortStopBits()), (uardDevice()->getPortParity()), (uardDevice()->getPortSpeed()), bufferSize);
+    for (uint8_t i = 0; i < bufferSize; i++)
+    {
+        RT_HW_Base.uartWrite(buffer[i], uartPortNumber);
+    }
+    uint8_t dataBits = 8;
+    uint8_t stopBits = 1;
+    uint8_t portParity = 0;
+    uint16_t portSpeed = RT_HW_Base.uartGetSpeed(uartPortNumber);
+    timeOfSend = flprogModus::timeForSendBytes(dataBits, stopBits, portParity, portSpeed, bufferSize);
     startSendTime = millis();
     workStatus = FLPROG_MODBUS_WAITING_SENDING;
     bufferSize = 0;
@@ -73,7 +72,7 @@ void ModbusRTU::sendTxBuffer()
 
 bool ModbusRTU::checkAvaliblePacage()
 {
-    uint8_t avalibleBytes = uardDevice()->available();
+     uint16_t avalibleBytes = RT_HW_Base.uartAvailable(uartPortNumber);
     if (avalibleBytes == 0)
     {
         return false;
@@ -87,7 +86,7 @@ bool ModbusRTU::checkAvaliblePacage()
             return false;
         }
     }
-    if (!(flprog::isTimer(time, flprogModus::t35TimeForSpeed(uardDevice()->getPortSpeed()))))
+    if (!(flprog::isTimer(time, flprogModus::t35TimeForSpeed(RT_HW_Base.uartGetSpeed(uartPortNumber)))))
     {
         return false;
     }

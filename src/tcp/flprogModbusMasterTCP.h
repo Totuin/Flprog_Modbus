@@ -16,11 +16,11 @@ public:
     ModbusSlaveInMaster *slaveOnIndex(uint8_t slaveIndex);
     ModbusSlaveInMaster *slave(uint8_t slaveAddr, bool isIndex = false);
 
-    void setDataTable(uint8_t slaveAdr, ModbusTable *table, bool isIndex = false);
-    void setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses, bool isIndex = false);
+    void setDataTable(uint8_t slaveAdr, ModbusTable *table);
+    void setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses);
 
-    void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, bool isIndex = false);
-    void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr, bool isIndex = false);
+    void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize);
+    void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr);
 
     void setPollingPeriod(uint8_t slaveAdr, uint32_t period, bool isIndex = false);
     void setTimeOutTime(uint8_t slaveAdr, uint32_t time, bool isIndex = false);
@@ -66,7 +66,7 @@ class ModbusMasterTCP : public ModbusTCP
 {
 public:
     ModbusMasterTCP(FLProgAbstractTcpInterface *sourse, uint8_t size);
-   
+
     ModbusTCPSlaveServer *server(uint8_t serverIndex);
 
     void setServerSlavesSize(uint8_t serverIndex, uint8_t size);
@@ -74,11 +74,11 @@ public:
     void setServerIpAdress(uint8_t serverIndex, IPAddress ip);
     void setSlaveAddress(uint8_t serverIndex, uint8_t slaveIndex, uint16_t addr);
 
-    void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, ModbusTable *table, bool isIndex = false);
-    void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses, bool isIndex = false);
+    void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, ModbusTable *table );
+    void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses);
 
-    void configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, bool isIndex = false);
-    void configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr, bool isIndex = false);
+    void configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize);
+    void configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr);
 
     void setPollingPeriod(uint8_t serverIndex, uint8_t slaveAdr, uint32_t period, bool isIndex = false);
     void setTimeOutTime(uint8_t serverIndex, uint8_t slaveAdr, uint32_t time, bool isIndex = false);
@@ -153,7 +153,6 @@ protected:
     int serversSize = 1;
     ModbusTCPSlaveServer *servs = 0;
     Client *tcpClient = 0;
-
 };
 
 class ModbusMasterRTUoverTCP : public ModbusMasterTCP

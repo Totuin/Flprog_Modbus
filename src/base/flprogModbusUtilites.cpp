@@ -23,8 +23,13 @@ int flprogModus::modbusCalcCRC(byte length, byte bufferArray[])
     return temp;
 }
 
-byte flprogModus::t35TimeForSpeed(byte speed)
+byte flprogModus::t35TimeForSpeed(int portSpeed)
 {
+    int speed = portSpeed;
+    if (speed > 100)
+    {
+        speed = flprog::codeFromSpeed(portSpeed);
+    }
     switch (speed)
     {
     case FLPROG_SPEED_300:
@@ -39,7 +44,6 @@ byte flprogModus::t35TimeForSpeed(byte speed)
     case FLPROG_SPEED_2400:
         return 19;
         break;
-
     case FLPROG_SPEED_4800:
         return 10;
         break;
@@ -47,34 +51,38 @@ byte flprogModus::t35TimeForSpeed(byte speed)
         return 5;
         break;
     case FLPROG_SPEED_14400:
-        return 4;
+        return 5;
         break;
     case FLPROG_SPEED_19200:
-        return 3;
+        return 5;
         break;
     case FLPROG_SPEED_28800:
-        return 3;
+        return 5;
         break;
-
     case FLPROG_SPEED_38400:
-        return 2;
+        return 5;
         break;
     default:
-        return 1;
+        return 5;
         break;
     }
 }
 
-int flprogModus::timeForSendBytes(byte portDataBits, byte portStopBits, byte portParity, byte portSpeed, int dataSize)
+int flprogModus::timeForSendBytes(byte portDataBits, byte portStopBits, byte portParity, int portSpeed, int dataSize)
 {
-    byte temp = 1 + portDataBits + portStopBits;
+    int speed = portSpeed;
+    uint8_t temp = 1 + portDataBits + portStopBits;
+    if (speed < 100)
+    {
+        speed = flprog::speedFromCode(portSpeed);
+    }
     if (portParity > 0)
     {
         temp = temp + 1;
     }
     float temp1 = (temp / portDataBits);
 
-    temp1 = temp1 * (flprog::speedFromCode(portSpeed));
+    temp1 = temp1 * speed;
     temp1 = 1000 / temp1;
     return (ceil(temp1 * (dataSize + 8) * 8));
 }

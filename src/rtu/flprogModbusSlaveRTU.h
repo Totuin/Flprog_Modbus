@@ -5,8 +5,7 @@ class ModbusSlaveRTU : public ModbusRTU
 {
 public:
     ModbusSlaveRTU(){};
-    ModbusSlaveRTU(uint8_t number) { uart = new FLProgUart(number); };
-    ModbusSlaveRTU(uint8_t rxPin, uint8_t txPin) { uart = new FLProgSoftwareUart(rxPin, txPin); };
+    ModbusSlaveRTU(uint8_t number) { uartPortNumber = number; };
     void begin();
     void pool();
     void setSlaveAddress(uint8_t adr) { slaveAddres = adr; };

@@ -67,7 +67,6 @@ void ModbusSlaveTCP::getRxBuffer()
     while (client->available())
     {
         readByte = client->read();
-        Serial.print(readByte);
         if (currentByteIndex < 6)
         {
             mbapBuffer[currentByteIndex] = readByte;

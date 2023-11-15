@@ -2,7 +2,7 @@
 
 void ModbusSlaveRTU::begin()
 {
-    uardDevice()->begin();
+    RT_HW_Base.uartBegin(uartPortNumber);
     bufferSize = 0;
     lastRec = 0;
     if (pinPeDe >= 0)
@@ -36,6 +36,7 @@ void ModbusSlaveRTU::pool()
     {
         return;
     }
+
     if (rxBuffer() < 7)
     {
         setLastError(2);

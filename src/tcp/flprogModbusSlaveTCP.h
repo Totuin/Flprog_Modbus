@@ -35,6 +35,11 @@ public:
     void setTcpPort(int _port);
     ModbusMainData *mainData();
 
+    void setLongOrder(uint8_t order) { mainData()->setLongOrder(order); };
+    void setFloatOrder(uint8_t order) { mainData()->setFloatOrder(order); };
+    void setUnsignedlongOrder(uint8_t order) { mainData()->setUnsignedlongOrder(order); };
+    void setIntOrder(uint8_t order) { mainData()->setIntOrder(order); };
+
 protected:
     uint8_t slaveAddres = 1;
     virtual void getRxBuffer();

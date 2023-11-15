@@ -1,3 +1,6 @@
+
+
+
 #include "flprogModbusBridge.h"
 
 FLProgOnBoardWifi WifiInterface;
@@ -16,7 +19,7 @@ void setup()
   WifiInterface.setClientPassword("12345678");
 
 
-  // Bridge.setRTUDevice(&RtuDevice);
+  // Bridge.setRTUDevice(0);
   // Bridge.setTCPDevice(&TcpDevice);
   Bridge.byClient();
   //Bridge.byServer();

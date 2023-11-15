@@ -2,32 +2,18 @@
 #include "base/flprogModbusUtilites.h"
 #include "flprogEthernet.h"
 #include "flprogWiFi.h"
-#include "flprogUart.h"
+
 
 class ModbusBridge
 {
 public:
     ModbusBridge(){};
     ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse);
-
-    ModbusBridge(uint8_t rxpin, uint8_t txpin, FLProgAbstractTcpInterface *sourse);
-
     virtual void pool();
-    void setRTUDevice(FLProgUartBasic *device) { uart = device; };
-
+    void setRTUDevice(uint8_t device) { uart = device; };
     void setTCPPort(int _port);
     void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourth);
     void setTCPRemoteIp(IPAddress newIp);
-
-    void setRtuPortSpeed(uint8_t speed) { rtuDevice()->setPortSpeed(speed); };
-    uint8_t getRtuPortSpeed() { return rtuDevice()->getPortSpeed(); };
-    void setRtuPortDataBits(uint8_t dataBits) { rtuDevice()->setPortDataBits(dataBits); };
-    uint8_t getRtuPortDataBits() { return rtuDevice()->getPortDataBits(); };
-    void setRtuPortStopBits(uint8_t stopBits) { rtuDevice()->setPortStopBits(stopBits); };
-    uint8_t getRtuPortStopBits() { return rtuDevice()->getPortStopBits(); };
-    void setRtuPortParity(uint8_t stopBits) { rtuDevice()->setPortParity(stopBits); };
-    uint8_t getRtuPortParity() { return rtuDevice()->getPortParity(); };
-    void setDeviceName(String name) { rtuDevice()->setDeviceName(name); };
     void setPinPeDe(uint8_t pin) { pinPeDe = pin; };
 
     virtual void byServer();
@@ -45,10 +31,9 @@ protected:
     void getRTURxBuffer();
     void sendRTUBuffer();
     virtual void sendTCPBuffer() = 0;
-    FLProgUartBasic *rtuDevice();
     Client *client();
 
-    FLProgUartBasic *uart = 0;
+    uint8_t uart = 0;
     int port = 502;
     bool isServer = false;
     int pinPeDe = -1;
@@ -94,7 +79,6 @@ class ModbusKasCadaCloudTcpBridge : public ModbusBridge
 public:
     ModbusKasCadaCloudTcpBridge();
     ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse);
-    ModbusKasCadaCloudTcpBridge(uint8_t rxpin, uint8_t txpin, FLProgAbstractTcpInterface *sourse);
 
     virtual void pool();
     void setKaScadaCloudIp(IPAddress newIp);

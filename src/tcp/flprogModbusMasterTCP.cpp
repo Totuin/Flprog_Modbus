@@ -53,9 +53,9 @@ ModbusSlaveInMaster *ModbusTCPSlaveServer::slave(uint8_t slaveAddr, bool isIndex
     return 0;
 }
 
-void ModbusTCPSlaveServer::setDataTable(uint8_t slaveAdr, ModbusTable *table, bool isIndex)
+void ModbusTCPSlaveServer::setDataTable(uint8_t slaveAdr, ModbusTable *table)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+    ModbusSlaveInMaster *sl = slave(slaveAdr, false);
     if (sl == 0)
     {
         return;
@@ -63,9 +63,9 @@ void ModbusTCPSlaveServer::setDataTable(uint8_t slaveAdr, ModbusTable *table, bo
     sl->setDataTable(table);
 }
 
-void ModbusTCPSlaveServer::setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses, bool isIndex)
+void ModbusTCPSlaveServer::setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+    ModbusSlaveInMaster *sl = slave(slaveAdr, false);
     if (sl == 0)
     {
         return;
@@ -73,9 +73,9 @@ void ModbusTCPSlaveServer::setDataTable(uint8_t slaveAdr, uint8_t _table, int16_
     sl->setDataTable(_table, dataSize, _adresses);
 }
 
-void ModbusTCPSlaveServer::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, bool isIndex)
+void ModbusTCPSlaveServer::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+    ModbusSlaveInMaster *sl = slave(slaveAdr, false);
     if (sl == 0)
     {
         return;
@@ -83,9 +83,9 @@ void ModbusTCPSlaveServer::configDataTable(uint8_t slaveAdr, uint8_t _table, int
     sl->configDataTable(_table, dataSize);
 }
 
-void ModbusTCPSlaveServer::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr, bool isIndex)
+void ModbusTCPSlaveServer::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+    ModbusSlaveInMaster *sl = slave(slaveAdr, false);
     if (sl == 0)
     {
         return;
@@ -428,44 +428,44 @@ void ModbusMasterTCP::setSlaveAddress(uint8_t serverIndex, uint8_t slaveIndex, u
     }
 }
 
-void ModbusMasterTCP::setDataTable(uint8_t serverIndex, uint8_t slaveAdr, ModbusTable *table, bool isIndex)
+void ModbusMasterTCP::setDataTable(uint8_t serverIndex, uint8_t slaveAdr, ModbusTable *table)
 {
     ModbusTCPSlaveServer *serv = server(serverIndex);
     if (serv == 0)
     {
         return;
     }
-    serv->setDataTable(slaveAdr, table, isIndex);
+    serv->setDataTable(slaveAdr, table);
 }
 
-void ModbusMasterTCP::setDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses, bool isIndex)
+void ModbusMasterTCP::setDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses)
 {
     ModbusTCPSlaveServer *serv = server(serverIndex);
     if (serv == 0)
     {
         return;
     }
-    serv->setDataTable(slaveAdr, _table, dataSize, _adresses, isIndex);
+    serv->setDataTable(slaveAdr, _table, dataSize, _adresses);
 }
 
-void ModbusMasterTCP::configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, bool isIndex)
+void ModbusMasterTCP::configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize)
 {
     ModbusTCPSlaveServer *serv = server(serverIndex);
     if (serv == 0)
     {
         return;
     }
-    serv->configDataTable(slaveAdr, _table, dataSize, isIndex);
+    serv->configDataTable(slaveAdr, _table, dataSize);
 }
 
-void ModbusMasterTCP::configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr, bool isIndex)
+void ModbusMasterTCP::configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr)
 {
     ModbusTCPSlaveServer *serv = server(serverIndex);
     if (serv == 0)
     {
         return;
     }
-    serv->configDataTable(slaveAdr, _table, dataSize, _startAdr, isIndex);
+    serv->configDataTable(slaveAdr, _table, dataSize, _startAdr);
 }
 
 void ModbusMasterTCP::setPollingPeriod(uint8_t serverIndex, uint8_t slaveAdr, uint32_t period, bool isIndex)
@@ -1050,9 +1050,6 @@ void ModbusMasterTCP::setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster
 
 void ModbusMasterTCP::begin()
 {
-
-    //tcpDevice->beClient();
-    //tcpDevice->begin();
     isInit = true;
 }
 

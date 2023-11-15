@@ -18,8 +18,6 @@
 namespace flprogModus
 {
     int modbusCalcCRC(byte length, byte bufferArray[]);
-    byte t35TimeForSpeed(byte speed);
-    int timeForSendBytes(byte portDataBits, byte portStopBits, byte portParity, byte portSpeed, int dataSize);
+    byte t35TimeForSpeed(int portSpeed);
+    int timeForSendBytes(byte portDataBits, byte portStopBits, byte portParity, int portSpeed, int dataSize);
 };
-
-

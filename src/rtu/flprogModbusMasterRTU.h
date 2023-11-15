@@ -7,15 +7,14 @@ class ModbusMasterRTU : public ModbusRTU
 public:
     ModbusMasterRTU(){};
     ModbusMasterRTU(uint8_t portNumber, uint8_t size);
-    ModbusMasterRTU(uint8_t rxPin, uint8_t txPin, uint8_t size);
 
     void pool();
     void begin();
 
-    void setDataTable(uint8_t slaveAdr, ModbusTable *table, bool isIndex = false);
-    void setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses, bool isIndex = false);
-    void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, bool isIndex = false);
-    void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int16_t _startAdr, bool isIndex = false);
+    void setDataTable(uint8_t slaveAdr, ModbusTable *table);
+    void setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses);
+    void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize);
+    void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int16_t _startAdr);
 
     void setSlaveAddress(uint8_t slaveIndex, uint8_t adr);
     bool hasSlaveOnIndex(uint8_t slaveIndex);

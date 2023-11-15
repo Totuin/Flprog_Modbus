@@ -3,13 +3,7 @@
 ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse)
 {
     interface = sourse;
-    uart = new FLProgUart(portNumber);
-}
-
-ModbusBridge::ModbusBridge(uint8_t rxPin, uint8_t txPin, FLProgAbstractTcpInterface *sourse)
-{
-    interface = sourse;
-    uart = new FLProgSoftwareUart(rxPin, txPin);
+    uart = portNumber;
 }
 
 void ModbusBridge::pool()
@@ -78,7 +72,7 @@ void ModbusBridge::byClient()
 void ModbusBridge::begin()
 {
     isInit = true;
-    rtuDevice()->begin();
+    RT_HW_Base.uartBegin(uart);
     if (pinPeDe >= 0)
     {
         pinMode(pinPeDe, OUTPUT);
@@ -92,15 +86,6 @@ void ModbusBridge::begin()
     {
         tcpClient = interface->getClient();
     }
-}
-
-FLProgUartBasic *ModbusBridge::rtuDevice()
-{
-    if (uart == 0)
-    {
-        uart = new FLProgUart();
-    }
-    return uart;
 }
 
 void ModbusBridge::onPeDePin()
@@ -136,7 +121,7 @@ void ModbusBridge::rtuPool()
             return;
         }
     }
-    uint8_t avalibleBytes = rtuDevice()->available();
+    uint8_t avalibleBytes = RT_HW_Base.uartAvailable(uart);
     if (avalibleBytes == 0)
         return;
     if (avalibleBytes != lastRec)
@@ -145,7 +130,7 @@ void ModbusBridge::rtuPool()
         startT35 = millis();
         return;
     }
-    if (!(flprog::isTimer(startT35, (flprogModus::t35TimeForSpeed(rtuDevice()->getPortSpeed())))))
+    if (!(flprog::isTimer(startT35, (flprogModus::t35TimeForSpeed(RT_HW_Base.uartGetSpeed(uart))))))
         return;
     lastRec = 0;
     getRTURxBuffer();
@@ -159,9 +144,9 @@ void ModbusBridge::rtuPool()
 void ModbusBridge::getRTURxBuffer()
 {
     bufferSize = 0;
-    while (rtuDevice()->available())
+    while (RT_HW_Base.uartAvailable(uart))
     {
-        buffer[bufferSize] = rtuDevice()->read();
+        buffer[bufferSize] = RT_HW_Base.uartRead(uart);
         bufferSize++;
     }
 }
@@ -174,8 +159,15 @@ void ModbusBridge::sendRTUBuffer()
     bufferSize++;
     buffer[bufferSize] = crc & 0x00ff;
     bufferSize++;
-    rtuDevice()->write(buffer, bufferSize);
-    timeOfSend = flprogModus::timeForSendBytes((rtuDevice()->getPortDataBits()), (rtuDevice()->getPortStopBits()), (rtuDevice()->getPortParity()), (rtuDevice()->getPortSpeed()), bufferSize);
+    for (uint8_t i = 0; i < bufferSize; i++)
+    {
+        RT_HW_Base.uartWrite(buffer[i], uart);
+    }
+    uint8_t dataBits = 8;
+    uint8_t stopBits = 1;
+    uint8_t portParity = 0;
+    uint16_t portSpeed = RT_HW_Base.uartGetSpeed(uart);
+    timeOfSend = flprogModus::timeForSendBytes(dataBits, stopBits, portParity, portSpeed, bufferSize);
     startSendTime = millis();
     workStatus = FLPROG_MODBUS_WAITING_SENDING;
     bufferSize = 0;
@@ -325,15 +317,7 @@ ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge()
 ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse)
 {
     interface = sourse;
-    uart = new FLProgUart(portNumber);
-    port = 25000;
-    ip = IPAddress(94, 250, 249, 225);
-}
-
-ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t rxPin, uint8_t txPin, FLProgAbstractTcpInterface *sourse)
-{
-    interface = sourse;
-    uart = new FLProgSoftwareUart(rxPin, txPin);
+    uart = portNumber;
     port = 25000;
     ip = IPAddress(94, 250, 249, 225);
 }
@@ -389,7 +373,7 @@ void ModbusKasCadaCloudTcpBridge::setKaScadaCloudDevceId(String id)
 void ModbusKasCadaCloudTcpBridge::begin()
 {
     isInit = true;
-    rtuDevice()->begin();
+    RT_HW_Base.uartBegin(uart);
     if (pinPeDe >= 0)
     {
         pinMode(pinPeDe, OUTPUT);
