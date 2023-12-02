@@ -668,11 +668,11 @@ void ModbusMasterTCP::status(uint8_t serverIndex, uint8_t slaveAddres, bool stat
     return serv->status(slaveAddres, status, isIndex);
 }
 
-Client *ModbusMasterTCP::client()
+FLProgEthernetClient *ModbusMasterTCP::client()
 {
     if (_tcpClient == 0)
     {
-        _tcpClient = _interface->getClient();
+        //_tcpClient = _interface->getClient();
     }
     return _tcpClient;
 }

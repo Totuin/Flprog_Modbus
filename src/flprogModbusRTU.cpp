@@ -21,53 +21,53 @@ void ModbusRTU::offPeDePin()
 uint8_t ModbusRTU::rxBuffer()
 {
     bool bBuffOverflow = false;
-    bufferSize = 0;
+    _bufferSize = 0;
     while (RT_HW_Base.uartAvailable(_uartPortNumber))
     {
-        if (bufferSize < 64)
+        if (_bufferSize < 64)
         {
-            buffer[bufferSize] = RT_HW_Base.uartRead(_uartPortNumber);
+            _buffer[_bufferSize] = RT_HW_Base.uartRead(_uartPortNumber);
         }
         else
         {
             RT_HW_Base.uartRead(_uartPortNumber);
             bBuffOverflow = true;
         }
-        bufferSize++;
+        _bufferSize++;
     }
     if (bBuffOverflow)
     {
         return -3;
     }
 
-    return bufferSize;
+    return _bufferSize;
 }
 
 void ModbusRTU::sendTxBuffer()
 {
-    if (buffer[0] == 0)
+    if (_buffer[0] == 0)
     {
-        bufferSize = 0;
+        _bufferSize = 0;
         return;
     }
     onPeDePin();
-    int crc = flprogModus::modbusCalcCRC(bufferSize, buffer);
-    buffer[bufferSize] = crc >> 8;
-    bufferSize++;
-    buffer[bufferSize] = crc & 0x00ff;
-    bufferSize++;
-    for (uint8_t i = 0; i < bufferSize; i++)
+    int crc = flprogModus::modbusCalcCRC(_bufferSize, _buffer);
+    _buffer[_bufferSize] = crc >> 8;
+    _bufferSize++;
+    _buffer[_bufferSize] = crc & 0x00ff;
+    _bufferSize++;
+    for (uint8_t i = 0; i < _bufferSize; i++)
     {
-        RT_HW_Base.uartWrite(buffer[i], _uartPortNumber);
+        RT_HW_Base.uartWrite(_buffer[i], _uartPortNumber);
     }
     uint8_t dataBits = 8;
     uint8_t stopBits = 1;
     uint8_t portParity = 0;
     uint16_t portSpeed = RT_HW_Base.uartGetSpeed(_uartPortNumber);
-    timeOfSend = flprogModus::timeForSendBytes(dataBits, stopBits, portParity, portSpeed, bufferSize);
-    startSendTime = millis();
-    workStatus = FLPROG_MODBUS_WAITING_SENDING;
-    bufferSize = 0;
+    _timeOfSend = flprogModus::timeForSendBytes(dataBits, stopBits, portParity, portSpeed, _bufferSize);
+    _startSendTime = millis();
+    _status = FLPROG_MODBUS_WAITING_SENDING;
+    _bufferSize = 0;
 }
 
 bool ModbusRTU::checkAvaliblePacage()

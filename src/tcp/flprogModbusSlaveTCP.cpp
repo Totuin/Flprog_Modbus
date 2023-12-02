@@ -3,6 +3,7 @@
 ModbusSlaveTCP::ModbusSlaveTCP(FLProgAbstractTcpInterface *sourse)
 {
     _interface = sourse;
+    _server.setSourse(sourse);
     _server.setPort(_port);
 }
 
@@ -14,11 +15,8 @@ void ModbusSlaveTCP::setTcpPort(int port)
 
 void ModbusSlaveTCP::begin()
 {
-    if (_server != 0)
-    {
-        _server.setPort(_port);
-        _isInit = true;
-    }
+    _server.setPort(_port);
+    _isInit = true;
 }
 
 void ModbusSlaveTCP::begin(uint8_t address)
@@ -35,18 +33,23 @@ void ModbusSlaveTCP::pool()
     }
     if (!_interface->isReady())
     {
+        if (_serverIsConnect)
+        {
+            _server.stop();
+            _serverIsConnect = false;
+        }
+    }
+    if (!_server.connected())
+    {
+        if (_serverIsConnect)
+        {
+            _server.stopConnection();
+            _serverIsConnect = false;
+        }
         return;
     }
-    if (client->connected())
-    {
-        getRxBuffer();
-    }
-    else
-    {
-        _server->setClient();
-        client = _server->client();
-        return;
-    }
+    _serverIsConnect = true;
+    getRxBuffer();
     if (_bufferSize == 0)
     {
         return;
@@ -59,9 +62,9 @@ void ModbusSlaveTCP::getRxBuffer()
     uint8_t currentByteIndex = 0;
     uint8_t readByte;
     _bufferSize = 0;
-    while (client->available())
+    while (_server.available())
     {
-        readByte = client->read();
+        readByte = _server.read();
         if (currentByteIndex < 6)
         {
             _mbapBuffer[currentByteIndex] = readByte;
@@ -75,7 +78,7 @@ void ModbusSlaveTCP::getRxBuffer()
             }
             else
             {
-                client->read();
+                _server.read();
             }
         }
         currentByteIndex++;
@@ -90,8 +93,8 @@ void ModbusSlaveTCP::sendTxBuffer()
     }
     _mbapBuffer[4] = highByte(_bufferSize);
     _mbapBuffer[5] = lowByte(_bufferSize);
-    client->write(_mbapBuffer, 6);
-    client->write(_buffer, _bufferSize);
+    _server.write(_mbapBuffer, 6);
+    _server.write(_buffer, _bufferSize);
     _bufferSize = 0;
 }
 
@@ -112,22 +115,10 @@ void ModbusSlaveRTUoverTCP::pool()
     {
         begin();
     }
-    if (_server == 0)
+    if (!_interface->isReady())
     {
         return;
     }
-    if (client == 0)
-    {
-        _server->setClient();
-        client = _server->client();
-    }
-    if (!client->connected())
-    {
-        _server->setClient();
-        client = _server->client();
-        return;
-    }
-
     if (_status == FLPROG_MODBUS_WAITING_SENDING)
     {
         if ((flprog::isTimer(_startSendTime, _timeOfSend)))
@@ -163,7 +154,7 @@ uint8_t ModbusSlaveRTUoverTCP::validateRequest()
 
 bool ModbusSlaveRTUoverTCP::checkAvaliblePacage()
 {
-    uint8_t avalibleBytes = client->available();
+    uint8_t avalibleBytes = _server.available();
     if (avalibleBytes == 0)
         return false;
     return true;
@@ -173,13 +164,9 @@ uint8_t ModbusSlaveRTUoverTCP::rxBuffer()
 {
     bool bBuffOverflow = false;
     _bufferSize = 0;
-    if (_server == 0)
+    while (_server.available())
     {
-        return 0;
-    }
-    while (client->available())
-    {
-        _buffer[_bufferSize] = client->read();
+        _buffer[_bufferSize] = _server.read();
         _bufferSize++;
         if (_bufferSize >= 64)
             bBuffOverflow = true;
@@ -203,7 +190,7 @@ void ModbusSlaveRTUoverTCP::sendTxBuffer()
     _bufferSize++;
     _buffer[_bufferSize] = crc & 0x00ff;
     _bufferSize++;
-    client->write(_buffer, _bufferSize);
+    _server.write(_buffer, _bufferSize);
     _status = FLPROG_MODBUS_READY;
     _bufferSize = 0;
 }
@@ -212,7 +199,6 @@ void ModbusSlaveRTUoverTCP::sendTxBuffer()
 ModbusKaScadaCloud::ModbusKaScadaCloud(FLProgAbstractTcpInterface *sourse)
 {
     _interface = sourse;
-    client = _interface->getClient();
 }
 
 void ModbusKaScadaCloud::setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond_octet, uint8_t newThird_octet, uint8_t newFourth_octet)
@@ -226,11 +212,7 @@ void ModbusKaScadaCloud::setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSe
     _cloudIp[1] = newFirst_octet;
     _cloudIp[2] = newFirst_octet;
     _cloudIp[3] = newFirst_octet;
-    if (client == 0)
-    {
-        return;
-    }
-    client->stop();
+    _client.stop();
 }
 
 void ModbusKaScadaCloud::setKaScadaCloudPort(int newPort)
@@ -241,11 +223,7 @@ void ModbusKaScadaCloud::setKaScadaCloudPort(int newPort)
         return;
     }
     _cloudPort = newPort;
-    if (client == 0)
-    {
-        return;
-    }
-    client->stop();
+    _client.stop();
 }
 
 void ModbusKaScadaCloud::setKaScadaCloudDevceId(String id)
@@ -256,11 +234,7 @@ void ModbusKaScadaCloud::setKaScadaCloudDevceId(String id)
         return;
     }
     _deniceId = id;
-    if (client == 0)
-    {
-        return;
-    }
-    client->stop();
+    _client.stop();
 }
 
 void ModbusKaScadaCloud::begin()
@@ -281,25 +255,25 @@ void ModbusKaScadaCloud::pool()
     {
         begin();
     }
-    if (client == 0)
+    if (!_interface->isReady())
     {
         return;
     }
     if (flprog::isTimer(_kaScadaCloudTimeOutStartTime, 5000))
     {
-        if (client->connected())
+        if (_client.connected())
         {
-            client->print(_deniceId);
+            _client.print(_deniceId);
             _kaScadaCloudTimeOutStartTime = millis();
             return;
         }
         else
         {
-            client->connect(_cloudIp, _cloudPort);
+            _client.connect(_cloudIp, _cloudPort);
             return;
         }
     }
-    if (!client->connected())
+    if (!_client.connected())
     {
         return;
     }
@@ -318,15 +292,11 @@ void ModbusKaScadaCloud::sendTxBuffer()
     {
         return;
     }
-    if (client == 0)
-    {
-        return;
-    }
     String stringBuffer = "";
     _mbapBuffer[4] = highByte(_bufferSize);
     _mbapBuffer[5] = lowByte(_bufferSize);
-    client->write(_mbapBuffer, 6);
-    client->write(_buffer, _bufferSize);
+    _client.write(_mbapBuffer, 6);
+    _client.write(_buffer, _bufferSize);
     _bufferSize = 0;
 }
 
@@ -335,13 +305,9 @@ void ModbusKaScadaCloud::getRxBuffer()
     uint8_t currentByte = 0;
     uint8_t currentByteIndex = 0;
     _bufferSize = 0;
-    if (client == 0)
+    while (_client.available())
     {
-        return;
-    }
-    while (client->available())
-    {
-        currentByte = client->read();
+        currentByte = _client.read();
         if (currentByteIndex < 6)
 
         {

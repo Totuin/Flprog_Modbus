@@ -1,7 +1,6 @@
 #pragma once
 #include "base/flprogModbusUtilites.h"
 #include "flprogEthernet.h"
-#include "flprogWiFi.h"
 
 
 class ModbusBridge
@@ -31,7 +30,7 @@ protected:
     void getRTURxBuffer();
     void sendRTUBuffer();
     virtual void sendTCPBuffer() = 0;
-    Client *client();
+    FLProgEthernetClient *client();
 
     uint8_t _uart = 0;
     int _port = 502;
@@ -47,8 +46,8 @@ protected:
     IPAddress _ip = FLPROG_INADDR_NONE;
     bool _isInit = false;
     FLProgAbstractTcpInterface *_interface;
-    FLProgAbstractTcpServer *_server = 0;
-    Client *_tcpClient = 0;
+    FLProgEthernetServer *_server = 0;
+    FLProgEthernetClient *_tcpClient = 0;
 };
 
 class ModbusTcpBridge : public ModbusBridge

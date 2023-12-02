@@ -80,11 +80,11 @@ void ModbusBridge::begin()
     }
     if (_isServer)
     {
-        _server = _interface->getServer(_port);
+       // _server = _interface->getServer(_port);
     }
     else
     {
-        _tcpClient = _interface->getClient();
+       //_tcpClient = _interface->getClient();
     }
 }
 
@@ -173,7 +173,7 @@ void ModbusBridge::sendRTUBuffer()
     _bufferSize = 0;
 }
 
-Client *ModbusBridge::client()
+FLProgEthernetClient *ModbusBridge::client()
 {
     if (_tcpClient != 0)
     {
@@ -186,14 +186,14 @@ Client *ModbusBridge::client()
     {
         if (_server == 0)
         {
-            _server = _interface->getServer(_port);
+            //_server = _interface->getServer(_port);
         }
-        _server->setClient();
-        _tcpClient = _server->client();
+       // _server->setClient();
+       // _tcpClient = _server->client();
     }
     if (_tcpClient == 0)
     {
-        _tcpClient = _interface->getClient();
+       // _tcpClient = _interface->getClient();
     }
     return _tcpClient;
 }

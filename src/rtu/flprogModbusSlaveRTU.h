@@ -8,7 +8,7 @@ public:
     ModbusSlaveRTU(uint8_t number) { _uartPortNumber = number; };
     void begin();
     void pool();
-    void setSlaveAddress(uint8_t adr) { slaveAddres = adr; };
+    void setSlaveAddress(uint8_t adr) { _slaveAddres = adr; };
     void setData(ModbusMainData *data) { _data = data; };
 
     void setDataTable(ModbusTable *table) { mainData()->setDataTable(table); };

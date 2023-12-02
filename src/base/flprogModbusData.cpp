@@ -2,24 +2,24 @@
 
 //------------------- ModbusTable--------------------------------------
 
-ModbusTable::ModbusTable(uint8_t _table, uint16_t dataSize, uint16_t startAddres)
+ModbusTable::ModbusTable(uint8_t table, uint16_t dataSize, uint16_t startAddres)
 {
     if (_table > 4)
     {
         return;
     }
-    table = _table;
+    _table = table;
     _startAddres = startAddres;
     init(dataSize);
 }
 
-ModbusTable::ModbusTable(uint8_t _table, uint16_t dataSize, int *adresses)
+ModbusTable::ModbusTable(uint8_t table, uint16_t dataSize, int *adresses)
 {
     if (_table > 4)
     {
         return;
     }
-    table = _table;
+    _table = table;
     init(dataSize);
     _adresses = adresses;
 }
@@ -48,7 +48,7 @@ void ModbusTable::init(int16_t dataSize, uint16_t startAddres)
 void ModbusTable::init(int16_t dataSize)
 {
     _tableSize = dataSize;
-    if ((table == FLPROG_INPUT_REGISTR) || (table == FLPROG_HOLDING_REGISTR))
+    if ((_table == FLPROG_INPUT_REGISTR) || (_table == FLPROG_HOLDING_REGISTR))
     {
         _worldData = new int16_t[_tableSize];
     }
@@ -65,7 +65,7 @@ void ModbusTable::init(int16_t dataSize)
 
 void ModbusTable::setData(int16_t adress, bool value)
 {
-    if ((table == FLPROG_HOLDING_REGISTR) || (table == FLPROG_INPUT_REGISTR))
+    if ((_table == FLPROG_HOLDING_REGISTR) || (_table == FLPROG_INPUT_REGISTR))
     {
         return;
     }
@@ -87,7 +87,7 @@ void ModbusTable::setData(int16_t adress, bool value)
 
 void ModbusTable::setData(int16_t adress, int16_t value)
 {
-    if ((table == FLPROG_COIL) || (table == FLPROG_DISCRETE_INPUT))
+    if ((_table == FLPROG_COIL) || (_table == FLPROG_DISCRETE_INPUT))
     {
         return;
     }
@@ -110,7 +110,7 @@ void ModbusTable::setData(int16_t adress, int16_t value)
 
 void ModbusTable::writeRegister(int16_t adress, bool value)
 {
-    if ((table == FLPROG_HOLDING_REGISTR) || (table == FLPROG_INPUT_REGISTR))
+    if ((_table == FLPROG_HOLDING_REGISTR) || (_table == FLPROG_INPUT_REGISTR))
     {
         return;
     }
@@ -123,7 +123,7 @@ void ModbusTable::writeRegister(int16_t adress, bool value)
 
 void ModbusTable::writeRegister(int16_t adress, int16_t value)
 {
-    if ((table == FLPROG_COIL) || (table == FLPROG_DISCRETE_INPUT))
+    if ((_table == FLPROG_COIL) || (_table == FLPROG_DISCRETE_INPUT))
     {
         return;
     }
@@ -136,7 +136,7 @@ void ModbusTable::writeRegister(int16_t adress, int16_t value)
 
 int16_t ModbusTable::readWorldRegister(int16_t adress)
 {
-    if ((table == FLPROG_COIL) || (table == FLPROG_DISCRETE_INPUT))
+    if ((_table == FLPROG_COIL) || (_table == FLPROG_DISCRETE_INPUT))
     {
         return 0;
     }
@@ -150,7 +150,7 @@ int16_t ModbusTable::readWorldRegister(int16_t adress)
 
 bool ModbusTable::readBoolRegister(int16_t adress)
 {
-    if ((table == FLPROG_HOLDING_REGISTR) || (table == FLPROG_INPUT_REGISTR))
+    if ((_table == FLPROG_HOLDING_REGISTR) || (_table == FLPROG_INPUT_REGISTR))
     {
         return false;
     }
@@ -957,7 +957,7 @@ bool ModbusSlaveInMaster::isReady()
     {
         return false;
     }
-    if (!initFlag)
+    if (!_initFlag)
     {
         return true;
     }

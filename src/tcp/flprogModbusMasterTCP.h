@@ -136,7 +136,7 @@ protected:
     bool nextRegistor();
     ModbusTCPSlaveServer *firstReadyServer();
     virtual void getRxBuffer();
-    Client *client();
+    FLProgEthernetClient *client();
 
     ModbusTCPSlaveServer *_telegrammServer;
     ModbusSlaveInMaster *_telegrammSlave;
@@ -152,7 +152,7 @@ protected:
     int _currentSlaveLastAddress = -1;
     int _serversSize = 1;
     ModbusTCPSlaveServer *_servs = 0;
-    Client *_tcpClient = 0;
+    FLProgEthernetClient *_tcpClient = 0;
 };
 
 class ModbusMasterRTUoverTCP : public ModbusMasterTCP

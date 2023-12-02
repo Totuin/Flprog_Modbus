@@ -45,6 +45,7 @@ protected:
     uint8_t _slaveAddres = 1;
     virtual void getRxBuffer();
     virtual void sendTxBuffer();
+    bool _serverIsConnect = false;
     FLProgEthernetServer _server;
     int _port = 502;
     ModbusMainData *_data = 0;
@@ -80,6 +81,7 @@ protected:
     virtual void sendTxBuffer();
 
 private:
+    FLProgEthernetClient _client;
     int _cloudPort = 25000;
     String _deniceId;
     IPAddress _cloudIp = IPAddress(94, 250, 249, 225);

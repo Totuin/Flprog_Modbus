@@ -30,7 +30,7 @@ public:
     void writeRegister(int16_t adress, int16_t value);
     int16_t readWorldRegister(int16_t adress);
     bool readBoolRegister(int16_t adress);
-    uint8_t tableType() { return table; };
+    uint8_t tableType() { return _table; };
 
 private:
     int16_t recursiveWriteRegsSize(int16_t startAddres, int16_t result);
@@ -105,7 +105,7 @@ public:
     void status(bool status);
     bool status() { return _isActive; };
 
-    void lastReqest(uint32_t time) { _lastReqestTime = _time; };
+    void lastReqest(uint32_t time) { _lastReqestTime = time; };
     uint32_t lastReqest() { return _lastReqestTime; };
 
     bool isInit() { return _initFlag; };
