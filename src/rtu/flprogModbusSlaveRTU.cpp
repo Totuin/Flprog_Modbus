@@ -2,29 +2,29 @@
 
 void ModbusSlaveRTU::begin()
 {
-    RT_HW_Base.uartBegin(uartPortNumber);
-    bufferSize = 0;
-    lastRec = 0;
-    if (pinPeDe >= 0)
+    RT_HW_Base.uartBegin(_uartPortNumber);
+    _bufferSize = 0;
+    _lastRec = 0;
+    if (_pinPeDe >= 0)
     {
-        pinMode(pinPeDe, OUTPUT);
-        digitalWrite(pinPeDe, LOW);
+        pinMode(_pinPeDe, OUTPUT);
+        digitalWrite(_pinPeDe, LOW);
     }
-    isInit = true;
+    _isInit = true;
 }
 
 void ModbusSlaveRTU::pool()
 {
-    if (!isInit)
+    if (!_isInit)
     {
         begin();
         return;
     }
-    if (workStatus == FLPROG_MODBUS_WAITING_SENDING)
+    if (_status == FLPROG_MODBUS_WAITING_SENDING)
     {
-        if ((flprog::isTimer(startSendTime, timeOfSend)))
+        if ((flprog::isTimer(_startSendTime, _timeOfSend)))
         {
-            workStatus = FLPROG_MODBUS_READY;
+            _status = FLPROG_MODBUS_READY;
             offPeDePin();
         }
         else
@@ -44,15 +44,15 @@ void ModbusSlaveRTU::pool()
         sendTxBuffer();
         return;
     }
-    executeSlaveReqest(mainData(), slaveAddres);
+    executeSlaveReqest(mainData(), _slaveAddres);
 }
 
 uint8_t ModbusSlaveRTU::validateRequest()
 {
 
     int msgCRC =
-        ((buffer[bufferSize - 2] << 8) | buffer[bufferSize - 1]);
-    if (flprogModus::modbusCalcCRC(bufferSize - 2, buffer) != msgCRC)
+        ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
+    if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
     {
         return 255;
     }
@@ -61,9 +61,9 @@ uint8_t ModbusSlaveRTU::validateRequest()
 
 ModbusMainData *ModbusSlaveRTU::mainData()
 {
-    if (data == 0)
+    if (_data == 0)
     {
-        data = new ModbusMainData();
+        _data = new ModbusMainData();
     }
-    return data;
+    return _data;
 }

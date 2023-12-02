@@ -1,14 +1,13 @@
 #pragma once
 #include "flprogEthernet.h"
-#include "flprogWiFi.h"
 #include "base/flprogModbus.h"
 
 class ModbusTCP : public Modbus
 {
 
 protected:
-    uint8_t mbapBuffer[6];
-    FLProgAbstractTcpInterface *interface = 0;
+    uint8_t _mbapBuffer[6];
+    FLProgAbstractTcpInterface *_interface = 0;
 };
 
 #include "tcp/flprogModbusSlaveTCP.h"

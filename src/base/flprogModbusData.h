@@ -4,10 +4,10 @@
 class ModbusTable
 {
 public:
-    ModbusTable(uint8_t _table, uint16_t dataSize, uint16_t _startAdr = 0);
+    ModbusTable(uint8_t _table, uint16_t dataSize, uint16_t startAddres = 0);
     ModbusTable(uint8_t _table, uint16_t dataSize, int *_adresses);
 
-    void init(int16_t dataSize, uint16_t _startAdr);
+    void init(int16_t dataSize, uint16_t startAddres);
 
     void init(int16_t dataSize, int *_adresses);
 
@@ -36,24 +36,24 @@ private:
     int16_t recursiveWriteRegsSize(int16_t startAddres, int16_t result);
     int16_t recursiveReadRegsSize(int16_t startAddres, int16_t result);
 
-    int16_t minAdress = -1;
-    int16_t maxAdress = -1;
-    uint8_t table = 0;
-    int16_t tableSize = 0;
-    int16_t startAdr = -1;
-    int *adresses = 0;
-    int16_t *worldData;
-    bool *boolData;
-    bool *sendRegisters;
+    int16_t _minAdress = -1;
+    int16_t _maxAdress = -1;
+    uint8_t _table = 0;
+    int16_t _tableSize = 0;
+    int16_t _startAddres = -1;
+    int *_adresses = 0;
+    int16_t *_worldData;
+    bool *_boolData;
+    bool *_sendRegisters;
 };
 
 class ModbusMainData
 {
 public:
     ModbusMainData(){};
-    void setDataTable(ModbusTable *table);
+    void setDataTable(ModbusTable *_table);
     void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses);
-    void configDataTable(uint8_t _table, uint16_t dataSize, int16_t _startAdr = 0);
+    void configDataTable(uint8_t _table, uint16_t dataSize, int16_t startAddres = 0);
 
     void setIntOrder(uint8_t order);
     void setLongOrder(uint8_t order);
@@ -79,14 +79,14 @@ public:
     bool hasTable(uint8_t table);
 
 protected:
-    ModbusTable *tableCoil = 0;
-    ModbusTable *tableDiscreteInput = 0;
-    ModbusTable *tableInputRegistr = 0;
-    ModbusTable *tableHoldingRegistr = 0;
-    uint8_t intOrder = 1;
-    uint8_t longOrder = 1;
-    uint8_t floatOrder = 1;
-    uint8_t unsignedlongOrder = 1;
+    ModbusTable *_tableCoil = 0;
+    ModbusTable *_tableDiscreteInput = 0;
+    ModbusTable *_tableInputRegistr = 0;
+    ModbusTable *_tableHoldingRegistr = 0;
+    uint8_t _intOrder = 1;
+    uint8_t _longOrder = 1;
+    uint8_t _floatOrder = 1;
+    uint8_t _unsignedlongOrder = 1;
     void saveForByteWithOrder(unsigned char *sourse, uint8_t table, int16_t startAddres, uint8_t order);
     void modbusOrderAray(uint8_t *orderArray, uint8_t order);
     void sortTwoWordRegistors(uint8_t *orderArray, uint8_t order, uint8_t *data, uint16_t w1, uint16_t w2);
@@ -103,14 +103,14 @@ public:
     uint8_t getLastError();
 
     void status(bool status);
-    bool status() { return isActive; };
+    bool status() { return _isActive; };
 
-    void lastReqest(uint32_t time) { lastReqestTime = time; };
-    uint32_t lastReqest() { return lastReqestTime; };
+    void lastReqest(uint32_t time) { _lastReqestTime = _time; };
+    uint32_t lastReqest() { return _lastReqestTime; };
 
-    bool isInit() { return initFlag; };
-    void setInit() { initFlag = true; };
-    void resetInit() { initFlag = false; };
+    bool isInit() { return _initFlag; };
+    void setInit() { _initFlag = true; };
+    void resetInit() { _initFlag = false; };
 
     void setPollingPeriod(uint32_t period);
     void setTimeOutTime(uint32_t time);
@@ -124,15 +124,15 @@ public:
     ModbusTable *nextTable(ModbusTable *table);
     bool isReady();
     void setSlaveAddress(uint8_t adr);
-    uint8_t slaveAddres() { return slaveAdr; };
+    uint8_t slaveAddres() { return _slaveAddres; };
 
 protected:
-    bool isActive = true;
-    uint32_t lastReqestTime;
-    bool initFlag = false;
-    uint8_t slaveAdr = 1;
-    uint8_t lastError;
-    uint32_t pollingPeriod = 1000;
-    uint32_t timeOutTime = 1000;
+    bool _isActive = true;
+    uint32_t _lastReqestTime;
+    bool _initFlag = false;
+    uint8_t _slaveAddres = 1;
+    uint8_t _lastError;
+    uint32_t _pollingPeriod = 1000;
+    uint32_t _timeOutTime = 1000;
     virtual bool canSaveTable(uint8_t table);
 };

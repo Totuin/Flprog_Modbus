@@ -2,35 +2,35 @@
 
 void ModbusRTU::onPeDePin()
 {
-    if (pinPeDe < 0)
+    if (_pinPeDe < 0)
     {
         return;
     }
-    digitalWrite(pinPeDe, HIGH);
+    digitalWrite(_pinPeDe, HIGH);
 }
 
 void ModbusRTU::offPeDePin()
 {
-    if (pinPeDe < 0)
+    if (_pinPeDe < 0)
     {
         return;
     }
-    digitalWrite(pinPeDe, LOW);
+    digitalWrite(_pinPeDe, LOW);
 }
 
 uint8_t ModbusRTU::rxBuffer()
 {
     bool bBuffOverflow = false;
     bufferSize = 0;
-    while (RT_HW_Base.uartAvailable(uartPortNumber))
+    while (RT_HW_Base.uartAvailable(_uartPortNumber))
     {
         if (bufferSize < 64)
         {
-            buffer[bufferSize] = RT_HW_Base.uartRead(uartPortNumber);
+            buffer[bufferSize] = RT_HW_Base.uartRead(_uartPortNumber);
         }
         else
         {
-            RT_HW_Base.uartRead(uartPortNumber);
+            RT_HW_Base.uartRead(_uartPortNumber);
             bBuffOverflow = true;
         }
         bufferSize++;
@@ -58,12 +58,12 @@ void ModbusRTU::sendTxBuffer()
     bufferSize++;
     for (uint8_t i = 0; i < bufferSize; i++)
     {
-        RT_HW_Base.uartWrite(buffer[i], uartPortNumber);
+        RT_HW_Base.uartWrite(buffer[i], _uartPortNumber);
     }
     uint8_t dataBits = 8;
     uint8_t stopBits = 1;
     uint8_t portParity = 0;
-    uint16_t portSpeed = RT_HW_Base.uartGetSpeed(uartPortNumber);
+    uint16_t portSpeed = RT_HW_Base.uartGetSpeed(_uartPortNumber);
     timeOfSend = flprogModus::timeForSendBytes(dataBits, stopBits, portParity, portSpeed, bufferSize);
     startSendTime = millis();
     workStatus = FLPROG_MODBUS_WAITING_SENDING;
@@ -72,24 +72,24 @@ void ModbusRTU::sendTxBuffer()
 
 bool ModbusRTU::checkAvaliblePacage()
 {
-     uint16_t avalibleBytes = RT_HW_Base.uartAvailable(uartPortNumber);
+     uint16_t avalibleBytes = RT_HW_Base.uartAvailable(_uartPortNumber);
     if (avalibleBytes == 0)
     {
         return false;
     }
 
-    if (avalibleBytes != lastRec)
+    if (avalibleBytes != _lastRec)
     {
-        lastRec = avalibleBytes;
-        time = millis();
+        _lastRec = avalibleBytes;
+        _time = millis();
         {
             return false;
         }
     }
-    if (!(flprog::isTimer(time, flprogModus::t35TimeForSpeed(RT_HW_Base.uartGetSpeed(uartPortNumber)))))
+    if (!(flprog::isTimer(_time, flprogModus::t35TimeForSpeed(RT_HW_Base.uartGetSpeed(_uartPortNumber)))))
     {
         return false;
     }
-    lastRec = 0;
+    _lastRec = 0;
     return true;
 }

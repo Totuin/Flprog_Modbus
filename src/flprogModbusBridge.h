@@ -10,11 +10,11 @@ public:
     ModbusBridge(){};
     ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse);
     virtual void pool();
-    void setRTUDevice(uint8_t device) { uart = device; };
+    void setRTUDevice(uint8_t device) { _uart = device; };
     void setTCPPort(int _port);
-    void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourth);
+    void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
     void setTCPRemoteIp(IPAddress newIp);
-    void setPinPeDe(uint8_t pin) { pinPeDe = pin; };
+    void setPinPeDe(uint8_t pin) { _pinPeDe = pin; };
 
     virtual void byServer();
     virtual void byClient();
@@ -33,22 +33,22 @@ protected:
     virtual void sendTCPBuffer() = 0;
     Client *client();
 
-    uint8_t uart = 0;
-    int port = 502;
-    bool isServer = false;
-    int pinPeDe = -1;
-    uint8_t bufferSize = 0;
-    uint8_t buffer[64];
-    uint8_t lastRec = 0;
-    uint8_t workStatus = FLPROG_MODBUS_READY;
-    unsigned long startT35;
-    unsigned long startSendTime;
-    int timeOfSend;
-    IPAddress ip = IPAddress(0, 0, 0, 0);
-    bool isInit = false;
-    FLProgAbstractTcpInterface *interface;
-    FLProgAbstractTcpServer *server = 0;
-    Client *tcpClient = 0;
+    uint8_t _uart = 0;
+    int _port = 502;
+    bool _isServer = false;
+    int _pinPeDe = -1;
+    uint8_t _bufferSize = 0;
+    uint8_t _buffer[64];
+    uint8_t _lastRec = 0;
+    uint8_t _status = FLPROG_MODBUS_READY;
+    unsigned long _startT35;
+    unsigned long _startSendTime;
+    int _timeOfSend;
+    IPAddress _ip = FLPROG_INADDR_NONE;
+    bool _isInit = false;
+    FLProgAbstractTcpInterface *_interface;
+    FLProgAbstractTcpServer *_server = 0;
+    Client *_tcpClient = 0;
 };
 
 class ModbusTcpBridge : public ModbusBridge
@@ -61,7 +61,7 @@ protected:
     virtual void sendTCPBuffer();
 
 private:
-    uint8_t mbapBuffer[6];
+    uint8_t _mbapBuffer[6];
 };
 
 class ModbusRtuOverTcpBridge : public ModbusBridge
@@ -94,7 +94,7 @@ protected:
     virtual void sendTCPBuffer();
 
 private:
-    uint8_t mbapBuffer[6];
-    String deniceId;
-    unsigned long kaScadaCloudTimeStartTime;
+    uint8_t _mbapBuffer[6];
+    String _deniceId;
+    unsigned long _kaScadaCloudTimeStartTime;
 };

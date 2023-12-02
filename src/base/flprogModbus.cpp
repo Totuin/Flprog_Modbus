@@ -8,68 +8,68 @@ void Modbus::process_modbus_FC1(ModbusMainData *data, uint8_t table)
     uint8_t bytesNo, bitsNo;
     int16_t currentCoil, coil;
     bool value;
-    int16_t startCoil = word(buffer[2], buffer[3]);
-    int16_t coilNo = word(buffer[4], buffer[5]);
+    int16_t startCoil = word(_buffer[2], _buffer[3]);
+    int16_t coilNo = word(_buffer[4], _buffer[5]);
     bytesNo = uint8_t(coilNo / 8);
     if (coilNo % 8 != 0)
         bytesNo++;
-    buffer[2] = bytesNo;
-    bufferSize = 3;
+    _buffer[2] = bytesNo;
+    _bufferSize = 3;
     bitsNo = 0;
     for (currentCoil = 0; currentCoil < coilNo; currentCoil++)
     {
         coil = startCoil + currentCoil;
         value = dataTable->readBoolRegister(coil);
-        bitWrite(buffer[bufferSize], bitsNo, value);
+        bitWrite(_buffer[_bufferSize], bitsNo, value);
         bitsNo++;
         if (bitsNo > 7)
         {
             bitsNo = 0;
-            bufferSize++;
+            _bufferSize++;
         }
     }
     if (coilNo % 8 != 0)
-        bufferSize++;
+        _bufferSize++;
     sendTxBuffer();
 }
 
 void Modbus::process_modbus_FC3(ModbusMainData *data, uint8_t table)
 {
     ModbusTable *dataTable = data->tableForType(table);
-    int16_t startAddr = word(buffer[2], buffer[3]);
-    int16_t byteRegsno = word(buffer[4], buffer[5]);
+    int16_t startAddr = word(_buffer[2], _buffer[3]);
+    int16_t byteRegsno = word(_buffer[4], _buffer[5]);
     int16_t i;
     int16_t value;
-    buffer[2] = byteRegsno * 2;
-    bufferSize = 3;
+    _buffer[2] = byteRegsno * 2;
+    _bufferSize = 3;
     for (i = startAddr; i < startAddr + byteRegsno; i++)
     {
         value = dataTable->readWorldRegister(i);
-        buffer[bufferSize] = highByte(value);
-        bufferSize++;
-        buffer[bufferSize] = lowByte(value);
-        bufferSize++;
+        _buffer[_bufferSize] = highByte(value);
+        _bufferSize++;
+        _buffer[_bufferSize] = lowByte(value);
+        _bufferSize++;
     }
     sendTxBuffer();
 }
 
 void Modbus::process_modbus_FC5(ModbusMainData *data)
 {
-    int16_t addres = word(buffer[2], buffer[3]);
+    int16_t addres = word(_buffer[2], _buffer[3]);
     ModbusTable *table = data->tableForType(FLPROG_COIL);
-    bool value = (buffer[4] == 0xff);
+    bool value = (_buffer[4] == 0xff);
     table->writeRegister(addres, value);
-    bufferSize = 6;
+    _bufferSize = 6;
     sendTxBuffer();
 }
 
 void Modbus::process_modbus_FC6(ModbusMainData *data)
 {
-    int16_t addres = word(buffer[2], buffer[3]);
+    int16_t addres = word(_buffer[2], _buffer[3]);
     ModbusTable *table = data->tableForType(FLPROG_HOLDING_REGISTR);
-    int16_t value = word(buffer[4], buffer[5]);
+    int16_t value = word(_buffer[4], _buffer[5]);
     table->writeRegister(addres, value);
-    bufferSize = 6;
+    _bufferSize = 6;
     sendTxBuffer();
 }
 
@@ -78,8 +78,8 @@ void Modbus::process_modbus_FC15(ModbusMainData *data)
     uint8_t frameByte, bitsNo;
     uint8_t currentCoil;
     int16_t addres;
-    int16_t startCoil = word(buffer[2], buffer[3]);
-    int16_t coilNo = word(buffer[4], buffer[5]);
+    int16_t startCoil = word(_buffer[2], _buffer[3]);
+    int16_t coilNo = word(_buffer[4], _buffer[5]);
     bitsNo = 0;
     frameByte = 7;
     bool value;
@@ -87,7 +87,7 @@ void Modbus::process_modbus_FC15(ModbusMainData *data)
     for (currentCoil = 0; currentCoil < coilNo; currentCoil++)
     {
         addres = startCoil + currentCoil;
-        value = bitRead(buffer[frameByte], bitsNo);
+        value = bitRead(_buffer[frameByte], bitsNo);
         table->writeRegister(addres, value);
         bitsNo++;
         if (bitsNo > 7)
@@ -96,7 +96,7 @@ void Modbus::process_modbus_FC15(ModbusMainData *data)
             frameByte++;
         }
     }
-    bufferSize = 6;
+    _bufferSize = 6;
     sendTxBuffer();
 }
 
@@ -104,16 +104,16 @@ void Modbus::process_modbus_FC16(ModbusMainData *data)
 {
     int16_t value, addres;
     ModbusTable *table = data->tableForType(FLPROG_HOLDING_REGISTR);
-    int16_t startAddr = buffer[2] << 8 | buffer[3];
-    int16_t byteRegsno = buffer[4] << 8 | buffer[5];
+    int16_t startAddr = _buffer[2] << 8 | _buffer[3];
+    int16_t byteRegsno = _buffer[4] << 8 | _buffer[5];
     int16_t i;
-    buffer[4] = 0;
-    buffer[5] = byteRegsno;
-    bufferSize = 6;
+    _buffer[4] = 0;
+    _buffer[5] = byteRegsno;
+    _bufferSize = 6;
     for (i = 0; i < byteRegsno; i++)
     {
         addres = startAddr + i;
-        value = word(buffer[7 + i * 2], buffer[8 + i * 2]);
+        value = word(_buffer[7 + i * 2], _buffer[8 + i * 2]);
         table->writeRegister(addres, value);
     }
     sendTxBuffer();
@@ -146,13 +146,13 @@ uint8_t Modbus::validateSlaveReqest(ModbusMainData *data)
     {
         return 1;
     }
-    if (!(data->isSupportFunction(buffer[1])))
+    if (!(data->isSupportFunction(_buffer[1])))
     {
         return 1;
     }
-    uint16_t startAdr = word(buffer[2], buffer[3]);
+    uint16_t startAdr = word(_buffer[2], _buffer[3]);
     uint16_t count;
-    uint8_t function = buffer[1];
+    uint8_t function = _buffer[1];
     uint8_t workTableType = tabeTypeForFunction(function);
     if (workTableType == 100)
     {
@@ -167,7 +167,7 @@ uint8_t Modbus::validateSlaveReqest(ModbusMainData *data)
     }
     else
     {
-        count = word(buffer[4], buffer[5]);
+        count = word(_buffer[4], _buffer[5]);
         if (count > 25)
         {
             return 2;
@@ -182,7 +182,7 @@ uint8_t Modbus::validateSlaveReqest(ModbusMainData *data)
 
 void Modbus::executeSlaveReqest(ModbusMainData *data, uint8_t address)
 {
-    if ((buffer[0] != address) && (buffer[0] != 0))
+    if ((_buffer[0] != address) && (_buffer[0] != 0))
         return;
     uint8_t exception = validateRequest();
     if (exception > 0)
@@ -196,44 +196,44 @@ void Modbus::executeSlaveReqest(ModbusMainData *data, uint8_t address)
         return;
     }
     setLastError(0);
-    if (buffer[1] == 1)
+    if (_buffer[1] == 1)
     {
         process_modbus_FC1(data, FLPROG_COIL);
         return;
     }
-    if (buffer[1] == 2)
+    if (_buffer[1] == 2)
     {
         process_modbus_FC1(data, FLPROG_DISCRETE_INPUT);
         return;
     }
-    if (buffer[1] == 5)
+    if (_buffer[1] == 5)
     {
         process_modbus_FC5(data);
         return;
     }
 
-    if (buffer[1] == 15)
+    if (_buffer[1] == 15)
     {
         process_modbus_FC15(data);
         return;
     }
 
-    if (buffer[1] == 3)
+    if (_buffer[1] == 3)
     {
         process_modbus_FC3(data, FLPROG_HOLDING_REGISTR);
         return;
     }
-    if (buffer[1] == 4)
+    if (_buffer[1] == 4)
     {
         process_modbus_FC3(data, FLPROG_INPUT_REGISTR);
         return;
     }
-    if (buffer[1] == 6)
+    if (_buffer[1] == 6)
     {
         process_modbus_FC6(data);
         return;
     }
-    if (buffer[1] == 16)
+    if (_buffer[1] == 16)
     {
         process_modbus_FC16(data);
         return;
@@ -242,11 +242,11 @@ void Modbus::executeSlaveReqest(ModbusMainData *data, uint8_t address)
 
 void Modbus::buildException(uint8_t exception)
 {
-    uint8_t func = buffer[1];
-    buffer[0] = 1;
-    buffer[1] = func + 0x80;
-    buffer[2] = exception;
-    bufferSize = 3;
+    uint8_t func = _buffer[1];
+    _buffer[0] = 1;
+    _buffer[1] = func + 0x80;
+    _buffer[2] = exception;
+    _bufferSize = 3;
 }
 
 void Modbus::get_FC1(ModbusTable *table, int16_t startAddress, int16_t numberRegs)
@@ -257,7 +257,7 @@ void Modbus::get_FC1(ModbusTable *table, int16_t startAddress, int16_t numberReg
     int16_t currentIndex = startAddress;
     for (uint8_t i = 0; i < numberRegs; i++)
     {
-        value = bitRead(buffer[currentByte], currentBit);
+        value = bitRead(_buffer[currentByte], currentBit);
         table->writeRegister(currentIndex, value);
         currentIndex++;
         currentBit++;
@@ -276,7 +276,7 @@ void Modbus::get_FC3(ModbusTable *table, int16_t startAddress, int16_t numberReg
     int16_t value;
     for (int16_t i = 0; i < numberRegs; i++)
     {
-        value = word(buffer[currentByte], buffer[currentByte + 1]);
+        value = word(_buffer[currentByte], _buffer[currentByte + 1]);
         table->writeRegister((currentIndex + i), value);
         currentByte += 2;
     }
@@ -284,39 +284,39 @@ void Modbus::get_FC3(ModbusTable *table, int16_t startAddress, int16_t numberReg
 
 void Modbus::create_Read(int16_t numberRegs)
 {
-    buffer[4] = highByte(numberRegs);
-    buffer[5] = lowByte(numberRegs);
-    bufferSize = bufferSize + 2;
+    _buffer[4] = highByte(numberRegs);
+    _buffer[5] = lowByte(numberRegs);
+    _bufferSize = _bufferSize + 2;
 }
 
 void Modbus::create_Write_FC5(ModbusTable *table, int16_t startAddress)
 {
     if (table->readBoolRegister(startAddress))
     {
-        buffer[4] = 0xFF;
+        _buffer[4] = 0xFF;
     }
     else
     {
-        buffer[4] = 0;
+        _buffer[4] = 0;
     }
-    buffer[5] = 0;
-    bufferSize = bufferSize + 2;
+    _buffer[5] = 0;
+    _bufferSize = _bufferSize + 2;
 }
 
 void Modbus::create_Write_FC6(ModbusTable *table, int16_t startAddress)
 {
     int16_t value = table->readWorldRegister(startAddress);
-    buffer[4] = highByte(value);
-    buffer[5] = lowByte(value);
-    bufferSize = bufferSize + 2;
+    _buffer[4] = highByte(value);
+    _buffer[5] = lowByte(value);
+    _bufferSize = _bufferSize + 2;
 }
 
 void Modbus::create_Write_FC15(ModbusTable *table, int16_t startAddress, int16_t numberRegs)
 {
     bool value;
-    buffer[4] = highByte(numberRegs);
-    buffer[5] = lowByte(numberRegs);
-    bufferSize = bufferSize + 3;
+    _buffer[4] = highByte(numberRegs);
+    _buffer[5] = lowByte(numberRegs);
+    _bufferSize = _bufferSize + 3;
     uint8_t byteCounter = 0;
     uint8_t bitCounter = 0;
     uint8_t temp = 0;
@@ -324,8 +324,8 @@ void Modbus::create_Write_FC15(ModbusTable *table, int16_t startAddress, int16_t
     {
         if (bitCounter == 7)
         {
-            buffer[7 + byteCounter] = temp;
-            bufferSize++;
+            _buffer[7 + byteCounter] = temp;
+            _bufferSize++;
             byteCounter++;
             bitCounter = 0;
             temp = 0;
@@ -336,52 +336,52 @@ void Modbus::create_Write_FC15(ModbusTable *table, int16_t startAddress, int16_t
     }
     if (bitCounter < 7)
     {
-        buffer[7 + byteCounter] = temp;
-        bufferSize++;
+        _buffer[7 + byteCounter] = temp;
+        _bufferSize++;
     }
-    buffer[6] = byteCounter + 1;
+    _buffer[6] = byteCounter + 1;
 }
 
 void Modbus::create_Write_FC16(ModbusTable *table, int16_t startAddress, int16_t numberRegs)
 {
     int16_t value;
-    buffer[4] = highByte(numberRegs);
-    buffer[5] = lowByte(numberRegs);
-    buffer[6] = numberRegs * 2;
-    bufferSize = bufferSize + 3;
+    _buffer[4] = highByte(numberRegs);
+    _buffer[5] = lowByte(numberRegs);
+    _buffer[6] = numberRegs * 2;
+    _bufferSize = _bufferSize + 3;
     uint8_t byteCounter = 0;
     for (int16_t i = 0; i < numberRegs; i++)
     {
         value = table->readWorldRegister(startAddress + i);
-        buffer[7 + byteCounter] = highByte(value);
-        buffer[8 + byteCounter] = lowByte(value);
-        bufferSize = bufferSize + 2;
+        _buffer[7 + byteCounter] = highByte(value);
+        _buffer[8 + byteCounter] = lowByte(value);
+        _bufferSize = _bufferSize + 2;
         byteCounter = byteCounter + 2;
     }
 }
 
 void Modbus::create_PDU(ModbusTable *table, int16_t startAddress, int16_t numberRegs)
 {
-    buffer[2] = highByte(startAddress);
-    buffer[3] = lowByte(startAddress);
-    bufferSize = 4;
-    if (buffer[1] < 5)
+    _buffer[2] = highByte(startAddress);
+    _buffer[3] = lowByte(startAddress);
+    _bufferSize = 4;
+    if (_buffer[1] < 5)
     {
         create_Read(numberRegs);
     }
-    if (buffer[1] == 5)
+    if (_buffer[1] == 5)
     {
         create_Write_FC5(table, startAddress);
     }
-    if (buffer[1] == 6)
+    if (_buffer[1] == 6)
     {
         create_Write_FC6(table, startAddress);
     }
-    if (buffer[1] == 15)
+    if (_buffer[1] == 15)
     {
         create_Write_FC15(table, startAddress, numberRegs);
     }
-    if (buffer[1] == 16)
+    if (_buffer[1] == 16)
     {
         create_Write_FC16(table, startAddress, numberRegs);
     }
@@ -390,17 +390,17 @@ void Modbus::create_PDU(ModbusTable *table, int16_t startAddress, int16_t number
 
 void Modbus::writeMaserData(ModbusTable *table, int16_t startAddress, int16_t numberRegs)
 {
-    if ((buffer[1] == 1) || (buffer[1] == 2))
+    if ((_buffer[1] == 1) || (_buffer[1] == 2))
     {
         get_FC1(table, startAddress, numberRegs);
-        workStatus = FLPROG_MODBUS_READY;
+        _status = FLPROG_MODBUS_READY;
         return;
     }
-    if ((buffer[1] == 3) || (buffer[1] == 4))
+    if ((_buffer[1] == 3) || (_buffer[1] == 4))
     {
         get_FC3(table, startAddress, numberRegs);
-        workStatus = FLPROG_MODBUS_READY;
+        _status = FLPROG_MODBUS_READY;
         return;
     }
-    workStatus = FLPROG_MODBUS_READY;
+    _status = FLPROG_MODBUS_READY;
 }

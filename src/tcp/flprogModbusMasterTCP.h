@@ -8,7 +8,7 @@ public:
     void setSlaves(ModbusSlaveInMaster *_table, uint8_t size);
     void setSlavesSize(uint8_t size);
 
-    void setPort(int16_t serverPort) { port = serverPort; };
+    void setPort(int16_t serverPort) { _port = serverPort; };
     void setIpAdress(IPAddress ip) { serverIp = ip; };
     void setSlaveAddress(uint8_t slaveIndex, uint16_t addr);
     bool hasSlave(uint8_t slaveIndex);
@@ -53,10 +53,10 @@ public:
 
     bool hasWriteRegisters();
     bool isReady();
-    int getPort() { return port; };
+    int getPort() { return _port; };
 
 protected:
-    int port = 502;
+    int _port = 502;
     IPAddress serverIp;
     uint8_t slavesSize = 5;
     ModbusSlaveInMaster *slaves = 0;
@@ -138,21 +138,21 @@ protected:
     virtual void getRxBuffer();
     Client *client();
 
-    ModbusTCPSlaveServer *telegrammServer;
-    ModbusSlaveInMaster *telegrammSlave;
-    ModbusTable *telegrammTable;
-    uint8_t telegrammFunction;
-    int telegrammStartAddres;
-    int telegrammNumbeRegs;
-    int telegrammAnswerId = 1;
-    ModbusTCPSlaveServer *currentServer;
-    ModbusSlaveInMaster *currentSlave;
-    ModbusTable *currentSlaveTable;
-    int currentSlaveStartAddress = -1;
-    int currentSlaveLastAddress = -1;
-    int serversSize = 1;
-    ModbusTCPSlaveServer *servs = 0;
-    Client *tcpClient = 0;
+    ModbusTCPSlaveServer *_telegrammServer;
+    ModbusSlaveInMaster *_telegrammSlave;
+    ModbusTable *_telegrammTable;
+    uint8_t _telegrammFunction;
+    int _telegrammStartAddres;
+    int _telegrammNumbeRegs;
+    int _telegrammAnswerId = 1;
+    ModbusTCPSlaveServer *_currentServer;
+    ModbusSlaveInMaster *_currentSlave;
+    ModbusTable *_currentSlaveTable;
+    int _currentSlaveStartAddress = -1;
+    int _currentSlaveLastAddress = -1;
+    int _serversSize = 1;
+    ModbusTCPSlaveServer *_servs = 0;
+    Client *_tcpClient = 0;
 };
 
 class ModbusMasterRTUoverTCP : public ModbusMasterTCP

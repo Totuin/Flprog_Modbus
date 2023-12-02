@@ -1,5 +1,6 @@
 #pragma once
 #include "flprogModbusTCP.h"
+#include "flprogEthernet.h"
 
 class ModbusSlaveTCP : public ModbusTCP
 {
@@ -7,8 +8,8 @@ public:
     ModbusSlaveTCP(){};
     ModbusSlaveTCP(FLProgAbstractTcpInterface *sourse);
 
-    void setSlaveAddress(uint8_t adr) { slaveAddres = adr; };
-    void setData(ModbusMainData *_data) { data = _data; };
+    void setSlaveAddress(uint8_t adr) { _slaveAddres = adr; };
+    void setData(ModbusMainData *data) { _data = data; };
 
     void setDataTable(ModbusTable *table) { mainData()->setDataTable(table); };
     void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses) { mainData()->setDataTable(_table, dataSize, _adresses); };
@@ -41,13 +42,12 @@ public:
     void setIntOrder(uint8_t order) { mainData()->setIntOrder(order); };
 
 protected:
-    uint8_t slaveAddres = 1;
+    uint8_t _slaveAddres = 1;
     virtual void getRxBuffer();
     virtual void sendTxBuffer();
-    FLProgAbstractTcpServer *server = 0;
-    Client *client = 0;
-    int port = 502;
-    ModbusMainData *data = 0;
+    FLProgEthernetServer _server;
+    int _port = 502;
+    ModbusMainData *_data = 0;
 };
 
 class ModbusSlaveRTUoverTCP : public ModbusSlaveTCP
@@ -80,8 +80,8 @@ protected:
     virtual void sendTxBuffer();
 
 private:
-    int cloudPort = 25000;
-    String deniceId;
-    IPAddress cloudIp = IPAddress(94, 250, 249, 225);
-    uint32_t kaScadaCloudTimeOutStartTime;
+    int _cloudPort = 25000;
+    String _deniceId;
+    IPAddress _cloudIp = IPAddress(94, 250, 249, 225);
+    uint32_t _kaScadaCloudTimeOutStartTime;
 };

@@ -5,11 +5,11 @@ class ModbusSlaveRTU : public ModbusRTU
 {
 public:
     ModbusSlaveRTU(){};
-    ModbusSlaveRTU(uint8_t number) { uartPortNumber = number; };
+    ModbusSlaveRTU(uint8_t number) { _uartPortNumber = number; };
     void begin();
     void pool();
     void setSlaveAddress(uint8_t adr) { slaveAddres = adr; };
-    void setData(ModbusMainData *_data) { data = _data; };
+    void setData(ModbusMainData *data) { _data = data; };
 
     void setDataTable(ModbusTable *table) { mainData()->setDataTable(table); };
     void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses) { mainData()->setDataTable(_table, dataSize, _adresses); };
@@ -37,9 +37,9 @@ public:
     ModbusMainData *mainData();
 
 protected:
-    uint8_t slaveAddres = 1;
+    uint8_t _slaveAddres = 1;
     virtual uint8_t validateRequest();
 
 private:
-    ModbusMainData *data;
+    ModbusMainData *_data;
 };

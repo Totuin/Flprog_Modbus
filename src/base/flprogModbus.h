@@ -4,17 +4,17 @@
 class Modbus
 {
 public:
-    void setLastError(uint8_t error) { lastError = error; };
+    void setLastError(uint8_t error) { _lastError = error; };
     virtual void begin() = 0;
-    uint8_t getLastError() { return lastError; };
+    uint8_t getLastError() { return _lastError; };
 
 protected:
-    uint8_t lastError = 0;
-    uint8_t workStatus = FLPROG_MODBUS_READY;
-    uint8_t bufferSize = 0;
-    uint8_t buffer[64];
-    unsigned long startSendTime;
-    unsigned long timeOfSend;
+    uint8_t _lastError = 0;
+    uint8_t _status = FLPROG_MODBUS_READY;
+    uint8_t _bufferSize = 0;
+    uint8_t _buffer[64];
+    unsigned long _startSendTime;
+    unsigned long _timeOfSend;
     virtual void sendTxBuffer() = 0;
     void process_modbus_FC1(ModbusMainData *data, uint8_t table);
     void process_modbus_FC3(ModbusMainData *data, uint8_t table);
@@ -38,5 +38,5 @@ protected:
     uint8_t tabeTypeForFunction(uint8_t function);
 
 protected:
-    bool isInit = false;
+    bool _isInit = false;
 };

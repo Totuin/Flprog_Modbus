@@ -2,18 +2,18 @@
 
 //------------------- ModbusTable--------------------------------------
 
-ModbusTable::ModbusTable(uint8_t _table, uint16_t dataSize, uint16_t _startAdr)
+ModbusTable::ModbusTable(uint8_t _table, uint16_t dataSize, uint16_t startAddres)
 {
     if (_table > 4)
     {
         return;
     }
     table = _table;
-    startAdr = _startAdr;
+    _startAddres = startAddres;
     init(dataSize);
 }
 
-ModbusTable::ModbusTable(uint8_t _table, uint16_t dataSize, int *_adresses)
+ModbusTable::ModbusTable(uint8_t _table, uint16_t dataSize, int *adresses)
 {
     if (_table > 4)
     {
@@ -21,45 +21,45 @@ ModbusTable::ModbusTable(uint8_t _table, uint16_t dataSize, int *_adresses)
     }
     table = _table;
     init(dataSize);
-    adresses = _adresses;
+    _adresses = adresses;
 }
 
-void ModbusTable::init(int16_t dataSize, int *_adresses)
+void ModbusTable::init(int16_t dataSize, int *adresses)
 {
-    if (adresses != 0)
+    if (_adresses != 0)
     {
-        adresses = 0;
+        _adresses = 0;
     }
-    adresses = _adresses;
-    startAdr = -1;
+    _adresses = adresses;
+    _startAddres = -1;
     init(dataSize);
 }
 
-void ModbusTable::init(int16_t dataSize, uint16_t _startAdr)
+void ModbusTable::init(int16_t dataSize, uint16_t startAddres)
 {
-    if (adresses != 0)
+    if (_adresses != 0)
     {
-        adresses = 0;
+        _adresses = 0;
     }
-    startAdr = _startAdr;
+    _startAddres = startAddres;
     init(dataSize);
 }
 
 void ModbusTable::init(int16_t dataSize)
 {
-    tableSize = dataSize;
+    _tableSize = dataSize;
     if ((table == FLPROG_INPUT_REGISTR) || (table == FLPROG_HOLDING_REGISTR))
     {
-        worldData = new int16_t[tableSize];
+        _worldData = new int16_t[_tableSize];
     }
     else
     {
-        boolData = new bool[tableSize];
+        _boolData = new bool[_tableSize];
     }
-    sendRegisters = new bool[tableSize];
-    for (int16_t i = 0; i < tableSize; i++)
+    _sendRegisters = new bool[_tableSize];
+    for (int16_t i = 0; i < _tableSize; i++)
     {
-        sendRegisters[i] = false;
+        _sendRegisters[i] = false;
     }
 }
 
@@ -74,15 +74,15 @@ void ModbusTable::setData(int16_t adress, bool value)
     {
         return;
     }
-    if (value == boolData[index])
+    if (value == _boolData[index])
     {
         return;
     }
-    if (sendRegisters != 0)
+    if (_sendRegisters != 0)
     {
-        sendRegisters[index] = true;
+        _sendRegisters[index] = true;
     }
-    boolData[index] = value;
+    _boolData[index] = value;
 }
 
 void ModbusTable::setData(int16_t adress, int16_t value)
@@ -97,15 +97,15 @@ void ModbusTable::setData(int16_t adress, int16_t value)
         return;
     }
 
-    if (value == worldData[index])
+    if (value == _worldData[index])
     {
         return;
     }
-    if (sendRegisters != 0)
+    if (_sendRegisters != 0)
     {
-        sendRegisters[index] = true;
+        _sendRegisters[index] = true;
     }
-    worldData[index] = value;
+    _worldData[index] = value;
 }
 
 void ModbusTable::writeRegister(int16_t adress, bool value)
@@ -117,7 +117,7 @@ void ModbusTable::writeRegister(int16_t adress, bool value)
     int16_t index = indexForAddres(adress);
     if (index != -1)
     {
-        boolData[index] = value;
+        _boolData[index] = value;
     }
 }
 
@@ -130,7 +130,7 @@ void ModbusTable::writeRegister(int16_t adress, int16_t value)
     int16_t index = indexForAddres(adress);
     if (index != -1)
     {
-        worldData[index] = value;
+        _worldData[index] = value;
     }
 }
 
@@ -145,7 +145,7 @@ int16_t ModbusTable::readWorldRegister(int16_t adress)
     {
         return 0;
     }
-    return worldData[index];
+    return _worldData[index];
 }
 
 bool ModbusTable::readBoolRegister(int16_t adress)
@@ -160,15 +160,15 @@ bool ModbusTable::readBoolRegister(int16_t adress)
         return false;
     }
 
-    return boolData[index];
+    return _boolData[index];
 }
 
 int16_t ModbusTable::indexForAddres(int16_t addr)
 {
-    if ((adresses == 0) && (!(startAdr < 0)))
+    if ((_adresses == 0) && (!(_startAddres < 0)))
     {
-        int16_t ind = addr - startAdr;
-        if (ind < tableSize)
+        int16_t ind = addr - _startAddres;
+        if (ind < _tableSize)
         {
             return ind;
         }
@@ -177,7 +177,7 @@ int16_t ModbusTable::indexForAddres(int16_t addr)
             return -1;
         }
     }
-    for (int16_t i = 0; i < tableSize; i++)
+    for (int16_t i = 0; i < _tableSize; i++)
     {
         if (adressForIndex(i) == addr)
         {
@@ -190,30 +190,30 @@ int16_t ModbusTable::indexForAddres(int16_t addr)
 int16_t ModbusTable::adressForIndex(int16_t index)
 {
 
-    if (!(index < tableSize))
+    if (!(index < _tableSize))
     {
         return -1;
     }
-    if (adresses == 0)
+    if (_adresses == 0)
     {
-        if (startAdr < 0)
+        if (_startAddres < 0)
         {
             return -1;
         }
-        return startAdr + index;
+        return _startAddres + index;
     }
-    return adresses[index];
+    return _adresses[index];
 }
 
 int16_t ModbusTable::firstWriteAddress()
 {
-    if (sendRegisters == 0)
+    if (_sendRegisters == 0)
     {
         return -1;
     }
-    for (int16_t i = 0; i < tableSize; i++)
+    for (int16_t i = 0; i < _tableSize; i++)
     {
-        if (sendRegisters[i])
+        if (_sendRegisters[i])
         {
             return adressForIndex(i);
         }
@@ -238,7 +238,7 @@ int16_t ModbusTable::recursiveWriteRegsSize(int16_t startAddres, int16_t result)
     {
         return result;
     }
-    if (!sendRegisters[indexForAddres(newAddress)])
+    if (!_sendRegisters[indexForAddres(newAddress)])
     {
         return result;
     }
@@ -274,7 +274,7 @@ int16_t ModbusTable::findNextStartAddres(int16_t result)
         return -1;
     }
 
-    for (int16_t i = 0; i < tableSize; i++)
+    for (int16_t i = 0; i < _tableSize; i++)
     {
         if (adressForIndex(i) == nextAddres)
         {
@@ -286,43 +286,43 @@ int16_t ModbusTable::findNextStartAddres(int16_t result)
 
 int16_t ModbusTable::getMinAdress()
 {
-    if (minAdress == -1)
+    if (_minAdress == -1)
     {
-        minAdress = 1000;
+        _minAdress = 1000;
     }
     else
     {
-        return minAdress;
+        return _minAdress;
     }
-    for (int16_t i = 0; i < tableSize; i++)
+    for (int16_t i = 0; i < _tableSize; i++)
     {
-        if (adressForIndex(i) < minAdress)
+        if (adressForIndex(i) < _minAdress)
         {
-            minAdress = adressForIndex(i);
+            _minAdress = adressForIndex(i);
         }
     }
-    return minAdress;
+    return _minAdress;
 }
 
 int16_t ModbusTable::getMaxAdress()
 {
-    if (maxAdress != -1)
+    if (_maxAdress != -1)
     {
-        return maxAdress;
+        return _maxAdress;
     }
-    for (int16_t i = 0; i < tableSize; i++)
+    for (int16_t i = 0; i < _tableSize; i++)
     {
-        if (adressForIndex(i) > maxAdress)
+        if (adressForIndex(i) > _maxAdress)
         {
-            maxAdress = adressForIndex(i);
+            _maxAdress = adressForIndex(i);
         }
     }
-    return maxAdress;
+    return _maxAdress;
 }
 
 void ModbusTable::resetWriteFlag(int16_t addres)
 {
-    sendRegisters[indexForAddres(addres)] = false;
+    _sendRegisters[indexForAddres(addres)] = false;
 }
 
 bool ModbusTable::hasAdress(int16_t address)
@@ -335,35 +335,35 @@ void ModbusMainData::setDataTable(ModbusTable *table)
 {
     if (table->tableType() == FLPROG_HOLDING_REGISTR)
     {
-        tableHoldingRegistr = table;
+        _tableHoldingRegistr = table;
         return;
     }
     if (table->tableType() == FLPROG_INPUT_REGISTR)
     {
-        tableInputRegistr = table;
+        _tableInputRegistr = table;
         return;
     }
     if (table->tableType() == FLPROG_COIL)
     {
-        tableCoil = table;
+        _tableCoil = table;
         return;
     }
     if (table->tableType() == FLPROG_DISCRETE_INPUT)
     {
-        tableDiscreteInput = table;
+        _tableDiscreteInput = table;
         return;
     }
 }
 
-void ModbusMainData::configDataTable(uint8_t _table, uint16_t dataSize, int16_t _startAdr)
+void ModbusMainData::configDataTable(uint8_t _table, uint16_t dataSize, int16_t startAddres)
 {
     ModbusTable *table = tableForType(_table);
     if (table == 0)
     {
-        setDataTable(new ModbusTable(_table, dataSize, _startAdr));
+        setDataTable(new ModbusTable(_table, dataSize, startAddres));
         return;
     }
-    table->init(dataSize, _startAdr);
+    table->init(dataSize, startAddres);
 }
 
 void ModbusMainData::setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses)
@@ -382,16 +382,16 @@ bool ModbusMainData::hasTable(uint8_t table)
     switch (table)
     {
     case FLPROG_COIL:
-        return tableCoil != 0;
+        return _tableCoil != 0;
         break;
     case FLPROG_DISCRETE_INPUT:
-        return tableDiscreteInput != 0;
+        return _tableDiscreteInput != 0;
         break;
     case FLPROG_INPUT_REGISTR:
-        return tableInputRegistr != 0;
+        return _tableInputRegistr != 0;
         break;
     case FLPROG_HOLDING_REGISTR:
-        return tableHoldingRegistr != 0;
+        return _tableHoldingRegistr != 0;
         break;
     default:
         return false;
@@ -402,41 +402,41 @@ bool ModbusMainData::hasTable(uint8_t table)
 
 void ModbusMainData::setIntOrder(uint8_t order)
 {
-    intOrder = order;
+    _intOrder = order;
 }
 
 void ModbusMainData::setLongOrder(uint8_t order)
 {
-    longOrder = order;
+    _longOrder = order;
 }
 
 void ModbusMainData::setFloatOrder(uint8_t order)
 {
-    floatOrder = order;
+    _floatOrder = order;
 }
 
 void ModbusMainData::setUnsignedlongOrder(uint8_t order)
 {
-    unsignedlongOrder = order;
+    _unsignedlongOrder = order;
 }
 
 ModbusTable *ModbusMainData::tableForType(uint8_t table)
 {
     if (table == FLPROG_HOLDING_REGISTR)
     {
-        return tableHoldingRegistr;
+        return _tableHoldingRegistr;
     }
     if (table == FLPROG_INPUT_REGISTR)
     {
-        return tableInputRegistr;
+        return _tableInputRegistr;
     }
     if (table == FLPROG_COIL)
     {
-        return tableCoil;
+        return _tableCoil;
     }
     if (table == FLPROG_DISCRETE_INPUT)
     {
-        return tableDiscreteInput;
+        return _tableDiscreteInput;
     }
     return 0;
 }
@@ -500,21 +500,21 @@ void ModbusMainData::saveLong(int32_t value, uint8_t table, int16_t startAddres)
 {
     unsigned char sourse[4];
     memcpy(sourse, &value, 4);
-    saveForByteWithOrder(sourse, table, startAddres, longOrder);
+    saveForByteWithOrder(sourse, table, startAddres, _longOrder);
 }
 
 void ModbusMainData::saveUnsignedLong(uint32_t value, uint8_t table, int16_t startAddres)
 {
     unsigned char sourse[4];
     memcpy(sourse, &value, 4);
-    saveForByteWithOrder(sourse, table, startAddres, unsignedlongOrder);
+    saveForByteWithOrder(sourse, table, startAddres, _unsignedlongOrder);
 }
 
 void ModbusMainData::saveFloat(float value, uint8_t table, int16_t startAddres)
 {
     unsigned char sourse[4];
     memcpy(sourse, &value, 4);
-    saveForByteWithOrder(sourse, table, startAddres, floatOrder);
+    saveForByteWithOrder(sourse, table, startAddres, _floatOrder);
 }
 
 void ModbusMainData::saveInteger(int16_t value, uint8_t table, int16_t startAddres)
@@ -530,7 +530,7 @@ void ModbusMainData::saveInteger(int16_t value, uint8_t table, int16_t startAddr
     }
     int16_t w1;
     int16_t index = tableData->indexForAddres(startAddres);
-    if (intOrder == 1)
+    if (_intOrder == 1)
     {
         w1 = value;
         tableData->setData(startAddres, w1);
@@ -612,7 +612,7 @@ int16_t ModbusMainData::readInteger(uint8_t table, int16_t startAddres)
         return 0;
     }
     int16_t w1 = tableData->readWorldRegister(startAddres);
-    if (intOrder == FLPROG_AB_ORDER)
+    if (_intOrder == FLPROG_AB_ORDER)
     {
         return w1;
     }
@@ -624,7 +624,7 @@ float ModbusMainData::readFloat(uint8_t table, int16_t startAddres)
 {
     float result;
     unsigned char sourse[4];
-    readForByteWithOrder(sourse, table, startAddres, floatOrder);
+    readForByteWithOrder(sourse, table, startAddres, _floatOrder);
     memcpy(&result, sourse, 4);
     return result;
 }
@@ -633,7 +633,7 @@ int32_t ModbusMainData::readLong(uint8_t table, int16_t startAddres)
 {
     int32_t result;
     unsigned char sourse[4];
-    readForByteWithOrder(sourse, table, startAddres, longOrder);
+    readForByteWithOrder(sourse, table, startAddres, _longOrder);
     memcpy(&result, sourse, 4);
     return result;
 }
@@ -642,7 +642,7 @@ uint32_t ModbusMainData::readUnsignedLong(uint8_t table, int16_t startAddres)
 {
     uint32_t result;
     unsigned char sourse[4];
-    readForByteWithOrder(sourse, table, startAddres, unsignedlongOrder);
+    readForByteWithOrder(sourse, table, startAddres, _unsignedlongOrder);
     memcpy(&result, sourse, 4);
     return result;
 }
@@ -681,35 +681,35 @@ bool ModbusMainData::isSupportFunction(uint8_t function)
 {
     if (function == 1)
     {
-        return tableCoil != 0;
+        return _tableCoil != 0;
     }
     if (function == 2)
     {
-        return tableDiscreteInput != 0;
+        return _tableDiscreteInput != 0;
     }
     if (function == 3)
     {
-        return tableHoldingRegistr != 0;
+        return _tableHoldingRegistr != 0;
     }
     if (function == 4)
     {
-        return tableInputRegistr != 0;
+        return _tableInputRegistr != 0;
     }
     if (function == 5)
     {
-        return tableCoil != 0;
+        return _tableCoil != 0;
     }
     if (function == 6)
     {
-        return tableHoldingRegistr != 0;
+        return _tableHoldingRegistr != 0;
     }
     if (function == 15)
     {
-        return tableCoil != 0;
+        return _tableCoil != 0;
     }
     if (function == 16)
     {
-        return tableHoldingRegistr != 0;
+        return _tableHoldingRegistr != 0;
     }
     return false;
 }
@@ -767,32 +767,32 @@ void ModbusMainData::sortTwoWordRegistors(uint8_t *orderArray, uint8_t order, ui
 // ModbusSlaveInMaster******************************8
 uint8_t ModbusSlaveInMaster::getLastError()
 {
-    return lastError;
+    return _lastError;
 }
 
 void ModbusSlaveInMaster::status(bool status)
 {
-    isActive = status;
+    _isActive = status;
 }
 
 void ModbusSlaveInMaster::setPollingPeriod(uint32_t period)
 {
-    pollingPeriod = period;
+    _pollingPeriod = period;
 }
 
 void ModbusSlaveInMaster::setTimeOutTime(uint32_t time)
 {
-    timeOutTime = time;
+    _timeOutTime = time;
 }
 
 uint32_t ModbusSlaveInMaster::getTimeOutTime()
 {
-    return timeOutTime;
+    return _timeOutTime;
 }
 
 void ModbusSlaveInMaster::setLastError(uint8_t error)
 {
-    lastError = error;
+    _lastError = error;
 }
 
 bool ModbusSlaveInMaster::canSaveTable(uint8_t table)
@@ -953,7 +953,7 @@ int16_t ModbusSlaveInMaster::nextTable(int16_t table)
 
 bool ModbusSlaveInMaster::isReady()
 {
-    if (!isActive)
+    if (!_isActive)
     {
         return false;
     }
@@ -961,7 +961,7 @@ bool ModbusSlaveInMaster::isReady()
     {
         return true;
     }
-    if (flprog::isTimer(lastReqestTime, pollingPeriod))
+    if (flprog::isTimer(_lastReqestTime, _pollingPeriod))
     {
         return true;
     }
@@ -970,5 +970,5 @@ bool ModbusSlaveInMaster::isReady()
 
 void ModbusSlaveInMaster::setSlaveAddress(uint8_t adr)
 {
-    slaveAdr = adr;
+    _slaveAddres = adr;
 }

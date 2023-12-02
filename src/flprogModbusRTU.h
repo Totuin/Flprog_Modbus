@@ -4,7 +4,7 @@
 class ModbusRTU : public Modbus
 {
 public:
-    void setUart(uint8_t uartPort) { uartPortNumber = uartPort; };
+    void setUart(uint8_t uartPort) { _uartPortNumber = uartPort; };
     
 protected:
     void onPeDePin();
@@ -12,10 +12,10 @@ protected:
     virtual uint8_t rxBuffer();
     virtual void sendTxBuffer();
     virtual bool checkAvaliblePacage();
-    int pinPeDe = -1;
-    uint8_t lastRec = 0;
-    unsigned long time;
-    uint8_t uartPortNumber = 0;
+    int _pinPeDe = -1;
+    uint8_t _lastRec = 0;
+    unsigned long _time;
+    uint8_t _uartPortNumber = 0;
 };
 
 #include "rtu/flprogModbusSlaveRTU.h"

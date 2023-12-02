@@ -9,13 +9,13 @@ ModbusMasterRTU::ModbusMasterRTU(uint8_t portNumber, uint8_t size)
 
 void ModbusMasterRTU::begin()
 {
-    RT_HW_Base.uartBegin(uartPortNumber);
-    if (pinPeDe >= 0)
+    RT_HW_Base.uartBegin(_uartPortNumber);
+    if (_pinPeDe >= 0)
     {
-        pinMode(pinPeDe, OUTPUT);
-        digitalWrite(pinPeDe, LOW);
+        pinMode(_pinPeDe, OUTPUT);
+        digitalWrite(_pinPeDe, LOW);
     }
-    isInit = true;
+    _isInit = true;
 }
 
 ModbusSlaveInMaster *ModbusMasterRTU::slave(uint8_t adr)
@@ -41,18 +41,18 @@ ModbusSlaveInMaster *ModbusMasterRTU::slaveOnIndex(uint8_t slaveIndex)
 
 void ModbusMasterRTU::pool()
 {
-    if (!isInit)
+    if (!_isInit)
     {
         begin();
         return;
     }
 
-    if (workStatus == FLPROG_MODBUS_WAITING_SENDING)
+    if (_status == FLPROG_MODBUS_WAITING_SENDING)
     {
-        if (flprog::isTimer(startSendTime, timeOfSend))
+        if (flprog::isTimer(_startSendTime, _timeOfSend))
         {
-            workStatus = FLPROG_MODBUS_WAITING_ANSWER;
-            startSendTime = millis();
+            _status = FLPROG_MODBUS_WAITING_ANSWER;
+            _startSendTime = millis();
             offPeDePin();
         }
         else
@@ -61,11 +61,11 @@ void ModbusMasterRTU::pool()
         }
     }
 
-    if (workStatus == FLPROG_MODBUS_WAITING_ANSWER)
+    if (_status == FLPROG_MODBUS_WAITING_ANSWER)
     {
         checkAnswer();
     }
-    if (workStatus == FLPROG_MODBUS_READY)
+    if (_status == FLPROG_MODBUS_READY)
     {
         nextQuery();
     }
@@ -73,10 +73,10 @@ void ModbusMasterRTU::pool()
 
 void ModbusMasterRTU::checkAnswer()
 {
-    if (flprog::isTimer(startSendTime, (telegrammSlave->getTimeOutTime())))
+    if (flprog::isTimer(_startSendTime, (_telegrammSlave->getTimeOutTime())))
     {
-        telegrammSlave->setLastError(244);
-        workStatus = FLPROG_MODBUS_READY;
+        _telegrammSlave->setLastError(244);
+        _status = FLPROG_MODBUS_READY;
         return;
     }
     if (!(checkAvaliblePacage()))
@@ -84,33 +84,33 @@ void ModbusMasterRTU::checkAnswer()
     uint8_t state = rxBuffer();
     if (state < 5)
     {
-        telegrammSlave->setLastError(255);
-        workStatus = FLPROG_MODBUS_READY;
+        _telegrammSlave->setLastError(255);
+        _status = FLPROG_MODBUS_READY;
         return;
     }
     uint8_t exception = validateRequest();
     if (exception > 0)
     {
-        telegrammSlave->setLastError(exception);
-        workStatus = FLPROG_MODBUS_READY;
+        _telegrammSlave->setLastError(exception);
+        _status = FLPROG_MODBUS_READY;
         return;
     }
-    telegrammSlave->setLastError(0);
-    writeMaserData(telegrammTable, telegrammStartAddres, telegrammNumbeRegs);
+    _telegrammSlave->setLastError(0);
+    writeMaserData(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
 }
 
 uint8_t ModbusMasterRTU::validateRequest()
 {
-    int16_t msgCRC = ((buffer[bufferSize - 2] << 8) | buffer[bufferSize - 1]);
-    if (flprogModus::modbusCalcCRC(bufferSize - 2, buffer) != msgCRC)
+    int16_t msgCRC = ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
+    if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
     {
         return 255;
     }
-    if ((buffer[1] & 0x80) != 0)
+    if ((_buffer[1] & 0x80) != 0)
     {
-        return buffer[2];
+        return _buffer[2];
     }
-    if (!(telegrammSlave->isSupportFunction(buffer[1])))
+    if (!(_telegrammSlave->isSupportFunction(_buffer[1])))
     {
         return 1;
     }
@@ -172,61 +172,61 @@ bool ModbusMasterRTU::createNewTelegramm()
 
 bool ModbusMasterRTU::createReadTelegram()
 {
-    telegrammSlave = currentSlave;
-    telegrammTable = currentSlaveTable;
-    telegrammStartAddres = currentSlaveStartAddress;
-    telegrammNumbeRegs = telegrammTable->readRegsSize(telegrammStartAddres);
-    currentSlaveLastAddress = telegrammStartAddres + telegrammNumbeRegs - 1;
-    if (currentSlaveTable->tableType() == FLPROG_COIL)
+    _telegrammSlave = _currentSlave;
+    _telegrammTable = _currentSlaveTable;
+    _telegrammStartAddres = _currentSlaveStartAddress;
+    _telegrammNumbeRegs = _telegrammTable->readRegsSize(_telegrammStartAddres);
+    _currentSlaveLastAddress = _telegrammStartAddres + _telegrammNumbeRegs - 1;
+    if (_currentSlaveTable->tableType() == FLPROG_COIL)
     {
-        telegrammFunction = 1;
+        _telegrammFunction = 1;
     }
-    if (telegrammTable->tableType() == FLPROG_DISCRETE_INPUT)
+    if (_telegrammTable->tableType() == FLPROG_DISCRETE_INPUT)
     {
-        telegrammFunction = 2;
+        _telegrammFunction = 2;
     }
-    if (telegrammTable->tableType() == FLPROG_INPUT_REGISTR)
+    if (_telegrammTable->tableType() == FLPROG_INPUT_REGISTR)
     {
-        telegrammFunction = 4;
+        _telegrammFunction = 4;
     }
-    if (telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
+    if (_telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
     {
-        telegrammFunction = 3;
+        _telegrammFunction = 3;
     }
     return true;
 }
 
 bool ModbusMasterRTU::createWriteTelegramm()
 {
-    telegrammSlave = firstWriteSlave();
-    telegrammTable = telegrammSlave->firstWriteTable();
-    telegrammStartAddres = telegrammTable->firstWriteAddress();
-    telegrammNumbeRegs = telegrammTable->writeRegsSize(telegrammStartAddres);
-    if (telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
+    _telegrammSlave = firstWriteSlave();
+    _telegrammTable = _telegrammSlave->firstWriteTable();
+    _telegrammStartAddres = _telegrammTable->firstWriteAddress();
+    _telegrammNumbeRegs = _telegrammTable->writeRegsSize(_telegrammStartAddres);
+    if (_telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
     {
-        if (telegrammNumbeRegs == 1)
+        if (_telegrammNumbeRegs == 1)
         {
-            telegrammFunction = 6;
+            _telegrammFunction = 6;
         }
         else
         {
-            telegrammFunction = 16;
+            _telegrammFunction = 16;
         }
     }
     else
     {
-        if (telegrammNumbeRegs == 1)
+        if (_telegrammNumbeRegs == 1)
         {
-            telegrammFunction = 5;
+            _telegrammFunction = 5;
         }
         else
         {
-            telegrammFunction = 15;
+            _telegrammFunction = 15;
         }
     }
-    for (uint8_t i = 0; i < telegrammNumbeRegs; i++)
+    for (uint8_t i = 0; i < _telegrammNumbeRegs; i++)
     {
-        telegrammTable->resetWriteFlag(telegrammStartAddres + i);
+        _telegrammTable->resetWriteFlag(_telegrammStartAddres + i);
     }
 
     return true;
@@ -234,9 +234,9 @@ bool ModbusMasterRTU::createWriteTelegramm()
 
 void ModbusMasterRTU::sendQuery()
 {
-    buffer[0] = telegrammSlave->slaveAddres();
-    buffer[1] = telegrammFunction;
-    create_PDU(telegrammTable, telegrammStartAddres, telegrammNumbeRegs);
+    _buffer[0] = _telegrammSlave->slaveAddres();
+    _buffer[1] = _telegrammFunction;
+    create_PDU(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
 }
 
 bool ModbusMasterRTU::nextStep()
@@ -245,11 +245,11 @@ bool ModbusMasterRTU::nextStep()
     {
         return false;
     }
-    if (currentSlave == 0)
+    if (_currentSlave == 0)
     {
-        currentSlave = firstReadySlave();
-        currentSlaveTable = currentSlave->firstTabe();
-        currentSlaveStartAddress = currentSlaveTable->getMinAdress();
+        _currentSlave = firstReadySlave();
+        _currentSlaveTable = _currentSlave->firstTabe();
+        _currentSlaveStartAddress = _currentSlaveTable->getMinAdress();
         return true;
     }
     return nextRegistor();
@@ -270,8 +270,8 @@ ModbusSlaveInMaster *ModbusMasterRTU::firstReadySlave()
 
 bool ModbusMasterRTU::nextRegistor()
 {
-    currentSlaveStartAddress = currentSlaveTable->findNextStartAddres(currentSlaveLastAddress);
-    if (currentSlaveStartAddress == -1)
+    _currentSlaveStartAddress = _currentSlaveTable->findNextStartAddres(_currentSlaveLastAddress);
+    if (_currentSlaveStartAddress == -1)
     {
         return nextTable();
     }
@@ -280,18 +280,18 @@ bool ModbusMasterRTU::nextRegistor()
 
 bool ModbusMasterRTU::nextSlave()
 {
-    if (currentSlave != 0)
+    if (_currentSlave != 0)
     {
-        currentSlave->lastReqest(millis());
-        currentSlave->setInit();
+        _currentSlave->lastReqest(millis());
+        _currentSlave->setInit();
     }
-    currentSlave = nextSlave(currentSlave);
-    if (currentSlave == 0)
+    _currentSlave = nextSlave(_currentSlave);
+    if (_currentSlave == 0)
     {
         return false;
     }
-    currentSlaveTable = currentSlave->firstTabe();
-    currentSlaveStartAddress = currentSlaveTable->getMinAdress();
+    _currentSlaveTable = _currentSlave->firstTabe();
+    _currentSlaveStartAddress = _currentSlaveTable->getMinAdress();
     return true;
 }
 
@@ -320,13 +320,13 @@ ModbusSlaveInMaster *ModbusMasterRTU::nextSlave(ModbusSlaveInMaster *currentTemp
 
 bool ModbusMasterRTU::nextTable()
 {
-    currentSlaveTable = currentSlave->nextTable(currentSlaveTable);
-    if (currentSlaveTable == 0)
+    _currentSlaveTable = _currentSlave->nextTable(_currentSlaveTable);
+    if (_currentSlaveTable == 0)
     {
         return nextSlave();
     }
 
-    currentSlaveStartAddress = currentSlaveTable->getMinAdress();
+    _currentSlaveStartAddress = _currentSlaveTable->getMinAdress();
     return true;
 }
 
@@ -347,16 +347,16 @@ bool ModbusMasterRTU::hasSlaveOnIndex(uint8_t slaveIndex)
     return slaveIndex < slavesSize;
 }
 
-void ModbusMasterRTU::saveLong(uint8_t slaveAdr, int32_t value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveLong(uint8_t slaveAddres, int32_t value, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -366,16 +366,16 @@ void ModbusMasterRTU::saveLong(uint8_t slaveAdr, int32_t value, uint8_t table, i
     sl->saveLong(value, table, startAddres);
 }
 
-void ModbusMasterRTU::saveUnsignedLong(uint8_t slaveAdr, uint32_t value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveUnsignedLong(uint8_t slaveAddres, uint32_t value, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -385,16 +385,16 @@ void ModbusMasterRTU::saveUnsignedLong(uint8_t slaveAdr, uint32_t value, uint8_t
     sl->saveUnsignedLong(value, table, startAddres);
 }
 
-void ModbusMasterRTU::saveFloat(uint8_t slaveAdr, float value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveFloat(uint8_t slaveAddres, float value, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -404,16 +404,16 @@ void ModbusMasterRTU::saveFloat(uint8_t slaveAdr, float value, uint8_t table, in
     sl->saveFloat(value, table, startAddres);
 }
 
-void ModbusMasterRTU::saveInteger(uint8_t slaveAdr, int16_t value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveInteger(uint8_t slaveAddres, int16_t value, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -423,16 +423,16 @@ void ModbusMasterRTU::saveInteger(uint8_t slaveAdr, int16_t value, uint8_t table
     sl->saveInteger(value, table, startAddres);
 }
 
-void ModbusMasterRTU::saveByte(uint8_t slaveAdr, uint8_t value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveByte(uint8_t slaveAddres, uint8_t value, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -441,16 +441,16 @@ void ModbusMasterRTU::saveByte(uint8_t slaveAdr, uint8_t value, uint8_t table, i
     sl->saveByte(value, table, startAddres);
 }
 
-void ModbusMasterRTU::saveBool(uint8_t slaveAdr, bool val, uint8_t table, int16_t adr, bool isIndex)
+void ModbusMasterRTU::saveBool(uint8_t slaveAddres, bool val, uint8_t table, int16_t adr, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -459,16 +459,16 @@ void ModbusMasterRTU::saveBool(uint8_t slaveAdr, bool val, uint8_t table, int16_
     sl->saveBool(val, table, adr);
 }
 
-uint8_t ModbusMasterRTU::readByte(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+uint8_t ModbusMasterRTU::readByte(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -477,17 +477,17 @@ uint8_t ModbusMasterRTU::readByte(uint8_t slaveAdr, uint8_t table, int16_t start
     return sl->readByte(table, startAddres);
 }
 
-int16_t ModbusMasterRTU::readInteger(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+int16_t ModbusMasterRTU::readInteger(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
 
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -496,16 +496,16 @@ int16_t ModbusMasterRTU::readInteger(uint8_t slaveAdr, uint8_t table, int16_t st
     return sl->readInteger(table, startAddres);
 }
 
-float ModbusMasterRTU::readFloat(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+float ModbusMasterRTU::readFloat(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -514,16 +514,16 @@ float ModbusMasterRTU::readFloat(uint8_t slaveAdr, uint8_t table, int16_t startA
     return sl->readFloat(table, startAddres);
 }
 
-int32_t ModbusMasterRTU::readLong(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+int32_t ModbusMasterRTU::readLong(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -532,16 +532,16 @@ int32_t ModbusMasterRTU::readLong(uint8_t slaveAdr, uint8_t table, int16_t start
     return sl->readLong(table, startAddres);
 }
 
-uint32_t ModbusMasterRTU::readUnsignedLong(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+uint32_t ModbusMasterRTU::readUnsignedLong(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -550,16 +550,16 @@ uint32_t ModbusMasterRTU::readUnsignedLong(uint8_t slaveAdr, uint8_t table, int1
     return sl->readUnsignedLong(table, startAddres);
 }
 
-bool ModbusMasterRTU::readBool(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+bool ModbusMasterRTU::readBool(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -568,10 +568,10 @@ bool ModbusMasterRTU::readBool(uint8_t slaveAdr, uint8_t table, int16_t startAdd
     return sl->readBool(table, startAddres);
 }
 
-void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, ModbusTable *table)
+void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, ModbusTable *table)
 {
     ModbusSlaveInMaster *sl;
-    sl = slave(slaveAdr);
+    sl = slave(slaveAddres);
     if (sl == 0)
     {
         return;
@@ -579,10 +579,10 @@ void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, ModbusTable *table)
     sl->setDataTable(table);
 }
 
-void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses)
+void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int *_adresses)
 {
     ModbusSlaveInMaster *sl;
-    sl = slave(slaveAdr);
+    sl = slave(slaveAddres);
     if (sl == 0)
     {
         return;
@@ -590,10 +590,10 @@ void ModbusMasterRTU::setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dat
     sl->setDataTable(_table, dataSize, _adresses);
 }
 
-void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize)
+void ModbusMasterRTU::configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize)
 {
     ModbusSlaveInMaster *sl;
-    sl = slave(slaveAdr);
+    sl = slave(slaveAddres);
     if (sl == 0)
     {
         return;
@@ -601,10 +601,10 @@ void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t 
     sl->configDataTable(_table, dataSize);
 }
 
-void ModbusMasterRTU::configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int16_t _startAdr)
+void ModbusMasterRTU::configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int16_t _startAdr)
 {
     ModbusSlaveInMaster *sl;
-    sl = slave(slaveAdr);
+    sl = slave(slaveAddres);
     if (sl == 0)
     {
         return;
@@ -620,16 +620,16 @@ void ModbusMasterRTU::setSlaveAddress(uint8_t slaveIndex, uint8_t address)
     }
 }
 
-void ModbusMasterRTU::setPollingPeriod(uint8_t slaveAdr, uint32_t period, bool isIndex)
+void ModbusMasterRTU::setPollingPeriod(uint8_t slaveAddres, uint32_t period, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -638,16 +638,16 @@ void ModbusMasterRTU::setPollingPeriod(uint8_t slaveAdr, uint32_t period, bool i
     sl->setPollingPeriod(period);
 }
 
-void ModbusMasterRTU::setTimeOutTime(uint8_t slaveAdr, uint32_t time, bool isIndex)
+void ModbusMasterRTU::setTimeOutTime(uint8_t slaveAddres, uint32_t time, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -656,16 +656,16 @@ void ModbusMasterRTU::setTimeOutTime(uint8_t slaveAdr, uint32_t time, bool isInd
     sl->setTimeOutTime(time);
 }
 
-void ModbusMasterRTU::setLongOrder(uint8_t slaveAdr, uint8_t order, bool isIndex)
+void ModbusMasterRTU::setLongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -674,16 +674,16 @@ void ModbusMasterRTU::setLongOrder(uint8_t slaveAdr, uint8_t order, bool isIndex
     sl->setLongOrder(order);
 }
 
-void ModbusMasterRTU::setFloatOrder(uint8_t slaveAdr, uint8_t order, bool isIndex)
+void ModbusMasterRTU::setFloatOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -692,16 +692,16 @@ void ModbusMasterRTU::setFloatOrder(uint8_t slaveAdr, uint8_t order, bool isInde
     sl->setFloatOrder(order);
 }
 
-void ModbusMasterRTU::setUnsignedlongOrder(uint8_t slaveAdr, uint8_t order, bool isIndex)
+void ModbusMasterRTU::setUnsignedlongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -710,16 +710,16 @@ void ModbusMasterRTU::setUnsignedlongOrder(uint8_t slaveAdr, uint8_t order, bool
     sl->setUnsignedlongOrder(order);
 }
 
-void ModbusMasterRTU::setIntOrder(uint8_t slaveAdr, uint8_t order, bool isIndex)
+void ModbusMasterRTU::setIntOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -728,16 +728,16 @@ void ModbusMasterRTU::setIntOrder(uint8_t slaveAdr, uint8_t order, bool isIndex)
     sl->setIntOrder(order);
 }
 
-uint8_t ModbusMasterRTU::getLastError(uint8_t slaveAdr, bool isIndex)
+uint8_t ModbusMasterRTU::getLastError(uint8_t slaveAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
@@ -746,16 +746,16 @@ uint8_t ModbusMasterRTU::getLastError(uint8_t slaveAdr, bool isIndex)
     return sl->getLastError();
 }
 
-void ModbusMasterRTU::status(uint8_t slaveAdr, bool status, bool isIndex)
+void ModbusMasterRTU::status(uint8_t slaveAddres, bool status, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
     if (isIndex)
     {
-        sl = slaveOnIndex(slaveAdr);
+        sl = slaveOnIndex(slaveAddres);
     }
     else
     {
-        sl = slave(slaveAdr);
+        sl = slave(slaveAddres);
     }
     if (sl == 0)
     {
