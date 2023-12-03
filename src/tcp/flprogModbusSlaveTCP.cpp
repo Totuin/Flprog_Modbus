@@ -31,24 +31,10 @@ void ModbusSlaveTCP::pool()
     {
         begin();
     }
-    if (!_interface->isReady())
-    {
-        if (_serverIsConnect)
-        {
-            _server.stop();
-            _serverIsConnect = false;
-        }
-    }
     if (!_server.connected())
     {
-        if (_serverIsConnect)
-        {
-            _server.stopConnection();
-            _serverIsConnect = false;
-        }
         return;
     }
-    _serverIsConnect = true;
     getRxBuffer();
     if (_bufferSize == 0)
     {

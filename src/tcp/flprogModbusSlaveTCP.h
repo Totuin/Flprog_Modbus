@@ -45,7 +45,6 @@ protected:
     uint8_t _slaveAddres = 1;
     virtual void getRxBuffer();
     virtual void sendTxBuffer();
-    bool _serverIsConnect = false;
     FLProgEthernetServer _server;
     int _port = 502;
     ModbusMainData *_data = 0;

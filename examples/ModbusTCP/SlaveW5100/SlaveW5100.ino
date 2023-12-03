@@ -29,67 +29,118 @@ FLProgWiznetInterface WiznetInterface;
 */
 // FLProgWiznetInterface WiznetInterface(10, 0);
 
-// Создаем объект непосредстредственно Модбас слейва на необходимом интерфейсе
+/*
+  -----------------------------------------------------------------------------------------
+     Создаем объект непосредстредственно Модбас слейва на необходимом интерфейсе
+  -----------------------------------------------------------------------------------------
+*/
 ModbusSlaveTCP Slave1(&WiznetInterface);
 
-// Так же создается слейв RTU OVER TCP
-//ModbusSlaveRTUoverTCP Slave1(&WiznetInterface);
+/*
+  -----------------------------------------------------------------------------------------
+      Так же создается слейв RTU OVER TCP
+  -----------------------------------------------------------------------------------------
+*/
+// ModbusSlaveRTUoverTCP Slave1(&WiznetInterface);
 
+/*
+  -----------------------------------------------------------------------------------------
+     Создаем таблицу адресов (необходимо при неупорядоченном порядке адресов регисторов)
+  -----------------------------------------------------------------------------------------
+*/
 int _DiscreteInputAddreses[] = {8, 9, 10, 11, 12, 14, 15, 16, 17, 18};
 
-// Вспомогательные переменные для демонстрации
-
+/*
+  -----------------------------------------------------------------------------------------
+          Определение рабочих параметров и функций
+  -----------------------------------------------------------------------------------------
+*/
 int counter = -10;
 bool blinkVar = 0;
 uint32_t startTimer;
 int lastError;
 
-
 uint32_t blinkStartTime = 0;
+
+uint8_t ethernetStatus = 255;
+uint8_t ethernetError = 255;
+
+bool isNeedSendConnectMessage = true;
+bool isNeedSendDisconnectMessage = true;
+
+//=================================================================================================
 void setup()
 {
+  /*
+    -----------------------------------------------------------------------------------------
+         Настройка интерфейса
+    -----------------------------------------------------------------------------------------
+  */
   WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
   WiznetInterface.localIP(IPAddress(192, 168, 199, 177));
   WiznetInterface.resetDhcp();
 
-  // Описываем таблицы слейва
+  /*
+    -----------------------------------------------------------------------------------------
+          Описываем таблицы слейва
+    -----------------------------------------------------------------------------------------
+  */
   Slave1.configDataTable(FLPROG_HOLDING_REGISTR, 10);
   Slave1.configDataTable(FLPROG_INPUT_REGISTR, 10);
   Slave1.configDataTable(FLPROG_COIL, 10, 5);
   Slave1.setDataTable(FLPROG_DISCRETE_INPUT, 10, _DiscreteInputAddreses);
 
   /*
-    Задаем последовательность байтов для хранения различных типов данных
-    Возможные знаыения:
+    -----------------------------------------------------------------------------------------
+      Задаем последовательность байтов для хранения различных типов данных
+      Возможные знаыения:
 
-    Для Integer:
-    FLPROG_AB_ORDER
-    FLPROG_BA_ORDER
+      Для Integer:
+      FLPROG_AB_ORDER
+      FLPROG_BA_ORDER
 
-    Для остальных типов:
-    FLPROG_ABCD_ORDER
-    FLPROG_CDAB_ORDER
-    FLPROG_BADC_ORDER
-    FLPROG_DCBA_ORDER
+      Для остальных типов:
+      FLPROG_ABCD_ORDER
+      FLPROG_CDAB_ORDER
+      FLPROG_BADC_ORDER
+      FLPROG_DCBA_ORDER
 
-    Вызов данных функций не обязателен.
-    По умолчанию заданны  значения  FLPROG_AB_ORDER  и FLPROG_ABCD_ORDER
-    Вызов данных функций возможен в любое время если необходимо изменить эти значения в режиме выполнения программы
+      Вызов данных функций не обязателен.
+      По умолчанию заданны  значения  FLPROG_AB_ORDER  и FLPROG_ABCD_ORDER
+      Вызов данных функций возможен в любое время если необходимо изменить эти значения в режиме выполнения программы
+      -----------------------------------------------------------------------------------------
   */
+
+  Serial.begin(115200);
+  while (!Serial)
+  {
+  }
+
+  flprog::printConsole(" Тест Modbus Slave TCP - WizNet ");
+
+  Serial.print("CS - ");
+  Serial.println(WiznetInterface.pinCs());
+  Serial.print("SPI BUS - ");
+  Serial.println(WiznetInterface.spiBus());
 
   startTimer = millis();
   pinMode(LED_BUILTIN, OUTPUT);
-
 }
 
+//=================================================================================================
 void loop()
 {
-  // Цикл работы интерфейса
-  WiznetInterface.pool();
-  // Цикл работы слейва
-  Slave1.pool();
-  blinkLed();
 
+  WiznetInterface.pool(); // Цикл работы интерфейса
+  Slave1.pool();          // Цикл работы слейва
+  printStatusMessages();
+  blinkLed();
+  workModbus();
+}
+
+//=================================================================================================
+void workModbus()
+{
   /*
     Играемся с регистрами
 
@@ -152,7 +203,6 @@ void loop()
   lastError = Slave1.getLastError();
 }
 
-
 void blinkLed()
 {
   if (flprog::isTimer(blinkStartTime, 50))
@@ -160,4 +210,69 @@ void blinkLed()
     blinkStartTime = millis();
     digitalWrite(LED_BUILTIN, !(digitalRead(LED_BUILTIN)));
   }
+}
+
+void printStatusMessages()
+{
+  if (WiznetInterface.getStatus() != ethernetStatus)
+  {
+    ethernetStatus = WiznetInterface.getStatus();
+    Serial.println();
+    Serial.print("Статус интерфейса - ");
+    Serial.println(flprog::flprogStatusCodeName(ethernetStatus));
+  }
+  if (WiznetInterface.getError() != ethernetError)
+  {
+    ethernetError = WiznetInterface.getError();
+    if (ethernetError != FLPROG_NOT_ERROR)
+    {
+      Serial.println();
+      Serial.print("Ошибка интерфейса - ");
+      Serial.println(flprog::flprogErrorCodeName(ethernetError));
+    }
+  }
+  printConnectMessages();
+  printDisconnectMessages();
+}
+
+void printConnectMessages()
+{
+  if (!WiznetInterface.isReady())
+  {
+    return;
+  }
+  if (!isNeedSendConnectMessage)
+  {
+    return;
+  }
+  Serial.println("Ethernet подключён!");
+  Serial.print("Ip - ");
+  Serial.println(WiznetInterface.localIP());
+  Serial.print("DNS - ");
+  Serial.println(WiznetInterface.dns());
+  Serial.print("Subnet - ");
+  Serial.println(WiznetInterface.subnet());
+  Serial.print("Gateway - ");
+  Serial.println(WiznetInterface.gateway());
+  isNeedSendConnectMessage = false;
+  isNeedSendDisconnectMessage = true;
+}
+
+void printDisconnectMessages()
+{
+  if (WiznetInterface.isReady())
+  {
+    return;
+  }
+  if (isNeedSendConnectMessage)
+  {
+    return;
+  }
+  if (!isNeedSendDisconnectMessage)
+  {
+    return;
+  }
+  Serial.println("Ethernet отключён!");
+  isNeedSendConnectMessage = true;
+  isNeedSendDisconnectMessage = false;
 }
