@@ -1,46 +1,81 @@
 //Подключаем необходимую библиотеку
 #include "flprogModbusTCP.h"
+/*
+  -------------------------------------------------------------------------------------------------
+        Создание интерфейса для работы с чипом W5100(W5200,W5500)
+        Шина SPI и пин CS берутся из  RT_HW_Base.device.spi.busETH и RT_HW_Base.device.spi.csETH
+  -------------------------------------------------------------------------------------------------
+*/
+FLProgWiznetInterface WiznetInterface;
 
+/*
+  -------------------------------------------------------------------------------------------------
+        Второй вариант cоздания интерфейса для работы с чипом W5100(W5200,W5500).
+        С непосредственной привязкой  пину.
+        Пин CS - 10
+        Шина SPI берётся из RT_HW_Base.device.spi.busETH
+  -------------------------------------------------------------------------------------------------
+*/
+// FLProgWiznetInterface WiznetInterface(10);
 
-//-------------------------------------------------------------------------------------------------
-//         Вариант с  шиной (SPI0) и пином(10) по умолчаниюю. Пин потом можно поменять.
-//         Но если на этой шине висит ещё какое то устройство лучше применять второй вариант
-//-------------------------------------------------------------------------------------------------
-FLProgWiznetInterface WiznetInterface; //--Создание интерфейса для работы с чипом W5100(W5200,W5500) (по умолчанию CS pin - 10,  Шина SPI - 0);
+/*
+  -------------------------------------------------------------------------------------------------
+      Третий вариант cоздания интерфейса для работы с чипом W5100(W5200,W5500).
+      С непосредственной привязкой  пину и шине.
+      Пин CS - 10
+      Шина SPI - 0
+  -------------------------------------------------------------------------------------------------
+*/
 
-//-------------------------------------------------------------------------------------------------
-//        Второй вариант с непосредственной привязкой к шине и пину.
-//-------------------------------------------------------------------------------------------------
- //FLProgWiznetInterface WiznetInterface(10, 0); //--Создание интерфейса для работы с чипом W5100(W5200,W5500) CS pin - 10, Шина SPI - 0;
- //FLProgWiznetInterface WiznetInterface(10); //--Создание интерфейса для работы с чипом W5100(W5200,W5500) CS pin - 10, (по умолчанию Шина SPI - 0);
- 
-ModbusMasterRTUoverTCP Master1(&WiznetInterface, 1);
+/*
+  -----------------------------------------------------------------------------------------
+     Создаем объект непосредстредственно Модбас мастера на необходимом интерфейсе
+  -----------------------------------------------------------------------------------------
+*/
+ModbusMasterTCP Master1(&WiznetInterface, 1);
+//ModbusMasterRTUoverTCP Master1(&WiznetInterface, 1);
 
-//Вспомогательные переменные для демонстрации
+/*
+  -----------------------------------------------------------------------------------------
+          Определение рабочих параметров и функций
+  -----------------------------------------------------------------------------------------
+*/
+
 int tempInt;
 bool tempBool;
 int value, oldValue;
 unsigned long startTime;
 
+uint32_t blinkStartTime = 0;
+
+uint8_t ethernetStatus = 255;
+uint8_t ethernetError = 255;
+
+bool isNeedSendConnectMessage = true;
+bool isNeedSendDisconnectMessage = true;
+
+//=================================================================================================
 void setup()
 {
-
+  /*
+    -----------------------------------------------------------------------------------------
+         Настройка интерфейса
+    -----------------------------------------------------------------------------------------
+  */
   WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
   WiznetInterface.localIP(IPAddress(192, 168, 1, 177));
   WiznetInterface.resetDhcp();
 
-
-  //Задаём порт для сервера
-  Master1.setServerPort(0, 502);
-  //Устанавливаем IP адрес сервера
-  Master1.setServerIpAdress(0, IPAddress(192, 168, 1, 108));
-
-  //Задаём количество слейвов на сервере
-  Master1.setServerSlavesSize(0, 2);
-
-  //Задаём адреса для слейвов
-  Master1.setSlaveAddress(0, 0, 1);
-  Master1.setSlaveAddress(0, 1, 2);
+  /*
+     -----------------------------------------------------------------------------------------
+          Настройка модбас мастера
+     -----------------------------------------------------------------------------------------
+  */
+  Master1.setServerPort(0, 502); //Задаём порт для сервера
+  Master1.setServerIpAdress(0, IPAddress(192, 168, 1, 1));  //Устанавливаем IP адрес сервера
+  Master1.setServerSlavesSize(0, 2); //Задаём количество слейвов на сервере
+  Master1.setSlaveAddress(0, 0, 1);  //Задаём адреса для слейвов
+  Master1.setSlaveAddress(0, 1, 2);  //Задаём адреса для слейвов
 
   //задаём таблицы для  слейва с адресом 1 на сервере 0
   Master1.configDataTable(0, 1, FLPROG_HOLDING_REGISTR,  8);
@@ -59,8 +94,8 @@ void setup()
     Вызов не обязятелен, значение по умолчанию - 1000 миллисекунд
     значение можно изменять в режиме выполнения программы
   */
-  Master1.setPollingPeriod(0, 1, 1000);
-  Master1.setPollingPeriod(0, 2, 1000);
+  Master1.setPollingPeriod(0, 1, 2000);
+  Master1.setPollingPeriod(0, 2, 2000);
 
   /*
     Устанавливаем период таймаута для слейва
@@ -97,14 +132,38 @@ void setup()
   Master1.setFloatOrder(0, 2, FLPROG_ABCD_ORDER);
   Master1.setUnsignedlongOrder(0, 2, FLPROG_ABCD_ORDER);
   Master1.setIntOrder(0, 2, FLPROG_AB_ORDER);
+
+
+  Serial.begin(115200);
+  while (!Serial)
+  {
+  }
+
+  flprog::printConsole(" Тест Modbus Slave TCP - WizNet ");
+
+  Serial.print("CS - ");
+  Serial.println(WiznetInterface.pinCs());
+  Serial.print("SPI BUS - ");
+  Serial.println(WiznetInterface.spiBus());
+
+  startTime = millis();
+  pinMode(LED_BUILTIN, OUTPUT);
 }
 
+
+//=================================================================================================
 void loop()
 {
-  // Цикл работы интерфейса
-  WiznetInterface.pool();
-  //Цикл работы мастера
-  Master1.pool();
+  WiznetInterface.pool();  // Цикл работы интерфейса
+  Master1.pool();//Цикл работы мастера
+  printStatusMessages();
+  blinkLed();
+  workModbus();
+}
+
+//=================================================================================================
+void workModbus()
+{
 
   //Демонстрационная логика - раз в секунду изменяем значение переменной.
   if ((startTime + 1000) < millis())
@@ -148,3 +207,79 @@ void loop()
   Master1.saveInteger(0, 1, value, FLPROG_HOLDING_REGISTR, 0);
   Master1.saveInteger(0, 2, value, FLPROG_HOLDING_REGISTR, 0);
 }
+
+
+void blinkLed()
+{
+  if (flprog::isTimer(blinkStartTime, 50))
+  {
+    blinkStartTime = millis();
+    digitalWrite(LED_BUILTIN, !(digitalRead(LED_BUILTIN)));
+  }
+}
+
+void printStatusMessages()
+{
+  if (WiznetInterface.getStatus() != ethernetStatus)
+  {
+    ethernetStatus = WiznetInterface.getStatus();
+    Serial.println();
+    Serial.print("Статус интерфейса - ");
+    Serial.println(flprog::flprogStatusCodeName(ethernetStatus));
+  }
+  if (WiznetInterface.getError() != ethernetError)
+  {
+    ethernetError = WiznetInterface.getError();
+    if (ethernetError != FLPROG_NOT_ERROR)
+    {
+      Serial.println();
+      Serial.print("Ошибка интерфейса - ");
+      Serial.println(flprog::flprogErrorCodeName(ethernetError));
+    }
+  }
+  printConnectMessages();
+  printDisconnectMessages();
+}
+
+void printConnectMessages()
+{
+  if (!WiznetInterface.isReady())
+  {
+    return;
+  }
+  if (!isNeedSendConnectMessage)
+  {
+    return;
+  }
+  Serial.println("Ethernet подключён!");
+  Serial.print("Ip - ");
+  Serial.println(WiznetInterface.localIP());
+  Serial.print("DNS - ");
+  Serial.println(WiznetInterface.dns());
+  Serial.print("Subnet - ");
+  Serial.println(WiznetInterface.subnet());
+  Serial.print("Gateway - ");
+  Serial.println(WiznetInterface.gateway());
+  isNeedSendConnectMessage = false;
+  isNeedSendDisconnectMessage = true;
+}
+
+void printDisconnectMessages()
+{
+  if (WiznetInterface.isReady())
+  {
+    return;
+  }
+  if (isNeedSendConnectMessage)
+  {
+    return;
+  }
+  if (!isNeedSendDisconnectMessage)
+  {
+    return;
+  }
+  Serial.println("Ethernet отключён!");
+  isNeedSendConnectMessage = true;
+  isNeedSendDisconnectMessage = false;
+}
+

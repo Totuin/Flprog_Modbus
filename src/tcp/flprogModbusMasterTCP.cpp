@@ -376,6 +376,7 @@ ModbusMasterTCP::ModbusMasterTCP(FLProgAbstractTcpInterface *sourse, uint8_t siz
     _serversSize = size;
     _servs = new ModbusTCPSlaveServer[_serversSize];
     _interface = sourse;
+    _tcpClient.setSourse(sourse);
 }
 
 ModbusTCPSlaveServer *ModbusMasterTCP::servers()
@@ -668,29 +669,26 @@ void ModbusMasterTCP::status(uint8_t serverIndex, uint8_t slaveAddres, bool stat
     return serv->status(slaveAddres, status, isIndex);
 }
 
-FLProgEthernetClient *ModbusMasterTCP::client()
-{
-    if (_tcpClient == 0)
-    {
-        //_tcpClient = _interface->getClient();
-    }
-    return _tcpClient;
-}
 void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
 {
-    client()->connect(server->getIp(), server->getPort());
-}
-
-void ModbusMasterTCP::write(ModbusTCPSlaveServer *server, uint8_t *buffer, uint8_t buferSize)
-{
-    if (!client()->connected())
+    if (!_tcpClient.connected())
     {
-        connect(server);
+        uint8_t result = _tcpClient.connect(server->getIp(), server->getPort());
+        if (result == FLPROG_WITE)
+        {
+            _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
+            return;
+        }
+        if (result == FLPROG_ERROR)
+        {
+            _telegrammSlave->setLastError(244);
+            _status = FLPROG_MODBUS_READY;
+            return;
+        }
     }
-    if (client()->connected())
-    {
-        client()->write(_buffer, buferSize);
-    }
+    _tcpClient.write(resultBuffer, resultBufferSize);
+    _status = FLPROG_MODBUS_WAITING_ANSWER;
+    _bufferSize = 0;
 }
 
 bool ModbusMasterTCP::hasServer(uint8_t serverIndex)
@@ -703,6 +701,10 @@ void ModbusMasterTCP::pool()
     if (!_isInit)
     {
         begin();
+    }
+    if (_status == FLPROG_MODBUS_WAITING_CONNECT_CLIENT)
+    {
+        connect(_telegrammServer);
     }
     if (_status == FLPROG_MODBUS_WAITING_ANSWER)
     {
@@ -753,9 +755,9 @@ void ModbusMasterTCP::getRxBuffer()
 
     uint8_t currentByteIndex = 0;
     _bufferSize = 0;
-    while (available())
+    while (_tcpClient.available())
     {
-        currentByte = read();
+        currentByte = _tcpClient.read();
         if (currentByteIndex < 6)
 
         {
@@ -896,7 +898,7 @@ bool ModbusMasterTCP::nextSlave()
 
 bool ModbusMasterTCP::nextServer()
 {
-    stop();
+    _tcpClient.stop();
     _currentServer = nextReadyServer(_currentServer);
 
     if (_currentServer == 0)
@@ -968,7 +970,7 @@ void ModbusMasterTCP::sendQuery()
     _buffer[1] = _telegrammFunction;
     create_PDU(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
     _startSendTime = millis();
-    _status = FLPROG_MODBUS_WAITING_ANSWER;
+    //_status = FLPROG_MODBUS_WAITING_ANSWER;
 }
 
 bool ModbusMasterTCP::createWriteTelegramm(ModbusTCPSlaveServer *writeServer)
@@ -1021,8 +1023,8 @@ ModbusTCPSlaveServer *ModbusMasterTCP::firstWriteServer()
 
 void ModbusMasterTCP::sendTxBuffer()
 {
-    uint8_t resultBuffer[70];
-    uint8_t resultBufferSize = 0;
+    memset(resultBuffer, 0, 70);
+    resultBufferSize = 0;
     _mbapBuffer[4] = highByte(_bufferSize);
     _mbapBuffer[5] = lowByte(_bufferSize);
     for (int i = 0; i < 6; i++)
@@ -1036,8 +1038,6 @@ void ModbusMasterTCP::sendTxBuffer()
         resultBufferSize++;
     }
     connect(_telegrammServer);
-    write(_telegrammServer, resultBuffer, resultBufferSize);
-    _bufferSize = 0;
 }
 
 void ModbusMasterTCP::setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster table[], int size)
@@ -1101,16 +1101,16 @@ void ModbusMasterRTUoverTCP::getRxBuffer()
 {
 
     _bufferSize = 0;
-    while (available())
+    while (_tcpClient.available())
     {
         if (_bufferSize < 64)
         {
-            _buffer[_bufferSize] = read();
+            _buffer[_bufferSize] = _tcpClient.read();
             _bufferSize++;
         }
         else
         {
-            read();
+            _tcpClient.read();
         }
     }
 }
@@ -1124,6 +1124,6 @@ void ModbusMasterRTUoverTCP::sendTxBuffer()
     _buffer[_bufferSize] = crc & 0x00ff;
     _bufferSize++;
     connect(_telegrammServer);
-    write(_telegrammServer, _buffer, _bufferSize);
-    _bufferSize = 0;
+    //.write(_telegrammServer, _buffer, _bufferSize);
+    //_bufferSize = 0;
 }

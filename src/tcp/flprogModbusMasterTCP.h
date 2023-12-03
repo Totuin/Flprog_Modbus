@@ -74,7 +74,7 @@ public:
     void setServerIpAdress(uint8_t serverIndex, IPAddress ip);
     void setSlaveAddress(uint8_t serverIndex, uint8_t slaveIndex, uint16_t addr);
 
-    void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, ModbusTable *table );
+    void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, ModbusTable *table);
     void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses);
 
     void configDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize);
@@ -108,10 +108,6 @@ public:
     void setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster *table, int size);
 
     virtual void connect(ModbusTCPSlaveServer *server);
-    virtual uint8_t available() { return client()->available(); };
-    virtual uint8_t read() { return client()->read(); };
-    virtual void stop() { client()->stop(); };
-    virtual void write(ModbusTCPSlaveServer *server, uint8_t *buffer, uint8_t buferSize);
     virtual void begin();
     ModbusTCPSlaveServer *servers();
     virtual void pool();
@@ -136,7 +132,6 @@ protected:
     bool nextRegistor();
     ModbusTCPSlaveServer *firstReadyServer();
     virtual void getRxBuffer();
-    FLProgEthernetClient *client();
 
     ModbusTCPSlaveServer *_telegrammServer;
     ModbusSlaveInMaster *_telegrammSlave;
@@ -152,7 +147,9 @@ protected:
     int _currentSlaveLastAddress = -1;
     int _serversSize = 1;
     ModbusTCPSlaveServer *_servs = 0;
-    FLProgEthernetClient *_tcpClient = 0;
+    FLProgEthernetClient _tcpClient = 0;
+    uint8_t resultBuffer[70];
+    uint8_t resultBufferSize = 0;
 };
 
 class ModbusMasterRTUoverTCP : public ModbusMasterTCP

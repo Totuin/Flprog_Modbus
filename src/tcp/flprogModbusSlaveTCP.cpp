@@ -101,7 +101,7 @@ void ModbusSlaveRTUoverTCP::pool()
     {
         begin();
     }
-    if (!_interface->isReady())
+    if (!_server.connected())
     {
         return;
     }
