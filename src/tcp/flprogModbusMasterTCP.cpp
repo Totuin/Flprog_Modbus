@@ -1138,6 +1138,12 @@ void ModbusMasterRTUoverTCP::sendTxBuffer()
     _bufferSize++;
     _buffer[_bufferSize] = crc & 0x00ff;
     _bufferSize++;
+    resultBufferSize = 0;
+    for (int i = 0; i < _bufferSize; i++)
+    {
+        resultBuffer[resultBufferSize] = _buffer[i];
+        resultBufferSize++;
+    }
     connect(_telegrammServer);
     //.write(_telegrammServer, _buffer, _bufferSize);
     //_bufferSize = 0;

@@ -94,8 +94,8 @@ void setup()
     Вызов не обязятелен, значение по умолчанию - 1000 миллисекунд
     значение можно изменять в режиме выполнения программы
   */
-  Master1.setPollingPeriod(0, 1, 2000);
-  Master1.setPollingPeriod(0, 2, 2000);
+  Master1.setPollingPeriod(0, 1, 100);
+  Master1.setPollingPeriod(0, 2, 100);
 
   /*
     Устанавливаем период таймаута для слейва
@@ -282,4 +282,3 @@ void printDisconnectMessages()
   isNeedSendConnectMessage = true;
   isNeedSendDisconnectMessage = false;
 }
-
