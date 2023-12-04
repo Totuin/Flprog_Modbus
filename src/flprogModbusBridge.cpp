@@ -4,13 +4,38 @@ ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sours
 {
     _interface = sourse;
     _uart = portNumber;
+    _server.setSourse(sourse);
+    _tcpClient.setSourse(sourse);
 }
 
 void ModbusBridge::pool()
 {
+    if (_interface == 0)
+    {
+        return;
+    }
+    if (!_interface->isReady())
+    {
+        return;
+    }
+
     if (!_isInit)
     {
         begin();
+    }
+    if (_status == FLPROG_MODBUS_WAITING_CONNECT_CLIENT)
+    {
+        connect();
+        return;
+    }
+   
+    if (!_isServer)
+    {
+        if (!_tcpClient.connected())
+        {
+            connect();
+            return;
+        }
     }
     if (_isServer)
     {
@@ -72,6 +97,7 @@ void ModbusBridge::byClient()
 void ModbusBridge::begin()
 {
     _isInit = true;
+    _status = FLPROG_MODBUS_READY;
     RT_HW_Base.uartBegin(_uart);
     if (_pinPeDe >= 0)
     {
@@ -80,11 +106,11 @@ void ModbusBridge::begin()
     }
     if (_isServer)
     {
-       // _server = _interface->getServer(_port);
+        _server.setPort(_port);
     }
     else
     {
-       //_tcpClient = _interface->getClient();
+        _tcpClient.stop();
     }
 }
 
@@ -108,7 +134,6 @@ void ModbusBridge::offPeDePin()
 
 void ModbusBridge::rtuPool()
 {
-
     if (_status == FLPROG_MODBUS_WAITING_SENDING)
     {
         if ((flprog::isTimer(_startSendTime, _timeOfSend)))
@@ -123,7 +148,9 @@ void ModbusBridge::rtuPool()
     }
     uint8_t avalibleBytes = RT_HW_Base.uartAvailable(_uart);
     if (avalibleBytes == 0)
+    {
         return;
+    }
     if (avalibleBytes != _lastRec)
     {
         _lastRec = avalibleBytes;
@@ -131,7 +158,9 @@ void ModbusBridge::rtuPool()
         return;
     }
     if (!(flprog::isTimer(_startT35, (flprogModus::t35TimeForSpeed(RT_HW_Base.uartGetSpeed(_uart))))))
+    {
         return;
+    }
     _lastRec = 0;
     getRTURxBuffer();
     if (_bufferSize < 5)
@@ -173,61 +202,69 @@ void ModbusBridge::sendRTUBuffer()
     _bufferSize = 0;
 }
 
-FLProgEthernetClient *ModbusBridge::client()
+void ModbusBridge::connect()
 {
-    if (_tcpClient != 0)
+    if (_tcpClient.connected())
     {
-        if (_tcpClient->connected())
-        {
-            return _tcpClient;
-        }
+
+        _status = FLPROG_MODBUS_READY;
+        return;
     }
-    if (_isServer)
+    uint8_t result = _tcpClient.connect(_ip, _port);
+    if (result == FLPROG_WITE)
     {
-        if (_server == 0)
-        {
-            //_server = _interface->getServer(_port);
-        }
-       // _server->setClient();
-       // _tcpClient = _server->client();
+        _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
+        return;
     }
-    if (_tcpClient == 0)
-    {
-       // _tcpClient = _interface->getClient();
-    }
-    return _tcpClient;
+    _status = FLPROG_MODBUS_READY;
 }
 
 //------------------------------------ModbusTcpBridge---------------------------------------------
 
 void ModbusTcpBridge::tcpPool()
 {
-    if (!_isServer)
+    if (_isServer)
     {
-        if (!client()->connected())
+        if (!_server.connected())
         {
-            client()->connect(_ip, _port);
+            return;
         }
-    }
-
-    if (!client()->connected())
-    {
+        _bufferSize = 0;
+        uint8_t byteIndex = 0;
+        if (_server.available())
+        {
+            while (_server.available())
+            {
+                if (byteIndex < 6)
+                {
+                    _mbapBuffer[byteIndex] = _server.read();
+                    byteIndex++;
+                }
+                else
+                {
+                    _buffer[_bufferSize] = _server.read();
+                    _bufferSize++;
+                }
+            }
+            sendRTUBuffer();
+        }
         return;
     }
+
     _bufferSize = 0;
     uint8_t byteIndex = 0;
-    if (client()->available())
+    if (_tcpClient.available())
     {
-        while (client()->available())
+        while (_tcpClient.available())
         {
             if (byteIndex < 6)
             {
-                _mbapBuffer[byteIndex] = client()->read();
+                _mbapBuffer[byteIndex] = _tcpClient.read();
                 byteIndex++;
             }
             else
             {
-                _buffer[_bufferSize] = client()->read();
+                _buffer[_bufferSize] = _tcpClient.read();
                 _bufferSize++;
             }
         }
@@ -237,28 +274,38 @@ void ModbusTcpBridge::tcpPool()
 
 void ModbusTcpBridge::sendTCPBuffer()
 {
-    if (!_isServer)
+    if (_isServer)
     {
-        if (!client()->connected())
+        if (!_server.connected())
         {
-            client()->connect(_ip, _port);
+            return;
         }
+        _bufferSize -= 2;
+        _mbapBuffer[4] = highByte(_bufferSize);
+        _mbapBuffer[5] = lowByte(_bufferSize);
+        _server.write(_mbapBuffer, 6);
+        _server.write(_buffer, _bufferSize);
+        _bufferSize = 0;
+        return;
     }
-    if (!client()->connected())
+
+    if (!_tcpClient.connected())
     {
+        connect();
         return;
     }
     _bufferSize -= 2;
     _mbapBuffer[4] = highByte(_bufferSize);
     _mbapBuffer[5] = lowByte(_bufferSize);
-    client()->write(_mbapBuffer, 6);
-    client()->write(_buffer, _bufferSize);
+    _tcpClient.write(_mbapBuffer, 6);
+    _tcpClient.write(_buffer, _bufferSize);
     _bufferSize = 0;
 }
 
 // --------------------------------ModbusRtuOverTcpBridge------------------------------------
 void ModbusRtuOverTcpBridge::tcpPool()
 {
+    /*
     if (!_isServer)
     {
         if (!client()->connected())
@@ -287,10 +334,12 @@ void ModbusRtuOverTcpBridge::tcpPool()
         }
         sendRTUBuffer();
     }
+    */
 }
 
 void ModbusRtuOverTcpBridge::sendTCPBuffer()
 {
+    /*
     if (!_isServer)
     {
         if (!client()->connected())
@@ -304,6 +353,7 @@ void ModbusRtuOverTcpBridge::sendTCPBuffer()
     }
     client()->write(_buffer, _bufferSize);
     _bufferSize = 0;
+    */
 }
 
 //-----------ModbusKasCadaCloudTcpBridge------------------------------
@@ -324,6 +374,7 @@ ModbusKasCadaCloudTcpBridge::ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FLP
 
 void ModbusKasCadaCloudTcpBridge::pool()
 {
+    /*
     if (!_isInit)
     {
         begin();
@@ -348,6 +399,7 @@ void ModbusKasCadaCloudTcpBridge::pool()
     }
     tcpPool();
     rtuPool();
+    */
 }
 
 void ModbusKasCadaCloudTcpBridge::setKaScadaCloudIp(IPAddress newIp)
@@ -383,6 +435,7 @@ void ModbusKasCadaCloudTcpBridge::begin()
 }
 void ModbusKasCadaCloudTcpBridge::tcpPool()
 {
+    /*
     if (!client()->connected())
     {
         return;
@@ -408,10 +461,12 @@ void ModbusKasCadaCloudTcpBridge::tcpPool()
         }
         sendRTUBuffer();
     }
+    */
 }
 
 void ModbusKasCadaCloudTcpBridge::sendTCPBuffer()
 {
+    /*
     if (!client()->connected())
     {
         return;
@@ -422,4 +477,5 @@ void ModbusKasCadaCloudTcpBridge::sendTCPBuffer()
     client()->write(_mbapBuffer, 6);
     client()->write(_buffer, _bufferSize);
     _bufferSize = 0;
+    */
 }

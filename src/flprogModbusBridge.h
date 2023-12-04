@@ -2,7 +2,6 @@
 #include "base/flprogModbusUtilites.h"
 #include "flprogEthernet.h"
 
-
 class ModbusBridge
 {
 public:
@@ -30,8 +29,8 @@ protected:
     void getRTURxBuffer();
     void sendRTUBuffer();
     virtual void sendTCPBuffer() = 0;
-    FLProgEthernetClient *client();
-
+    virtual void connect();
+    uint8_t _status = FLPROG_MODBUS_READY;
     uint8_t _uart = 0;
     int _port = 502;
     bool _isServer = false;
@@ -39,15 +38,14 @@ protected:
     uint8_t _bufferSize = 0;
     uint8_t _buffer[64];
     uint8_t _lastRec = 0;
-    uint8_t _status = FLPROG_MODBUS_READY;
     unsigned long _startT35;
     unsigned long _startSendTime;
     int _timeOfSend;
     IPAddress _ip = FLPROG_INADDR_NONE;
     bool _isInit = false;
     FLProgAbstractTcpInterface *_interface;
-    FLProgEthernetServer *_server = 0;
-    FLProgEthernetClient *_tcpClient = 0;
+    FLProgEthernetServer _server;
+    FLProgEthernetClient _tcpClient;
 };
 
 class ModbusTcpBridge : public ModbusBridge
