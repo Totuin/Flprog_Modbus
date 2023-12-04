@@ -725,11 +725,13 @@ void ModbusMasterTCP::pool()
     }
     if (_status == FLPROG_MODBUS_WAITING_CONNECT_CLIENT)
     {
-        return connect(_telegrammServer);
+        connect(_telegrammServer);
+        return;
     }
     if (_status == FLPROG_MODBUS_WAITING_ANSWER)
     {
-        return checkAnswer();
+        checkAnswer();
+        return;
     }
     if (_status == FLPROG_MODBUS_READY)
     {

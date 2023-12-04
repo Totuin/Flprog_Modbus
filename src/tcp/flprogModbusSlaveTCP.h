@@ -78,9 +78,10 @@ public:
 protected:
     void getRxBuffer();
     virtual void sendTxBuffer();
+    void connect();
 
 private:
-    FLProgEthernetClient _client;
+    FLProgEthernetClient _tcpClient;
     int _cloudPort = 25000;
     String _deniceId;
     IPAddress _cloudIp = IPAddress(94, 250, 249, 225);

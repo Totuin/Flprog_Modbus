@@ -185,6 +185,7 @@ void ModbusSlaveRTUoverTCP::sendTxBuffer()
 ModbusKaScadaCloud::ModbusKaScadaCloud(FLProgAbstractTcpInterface *sourse)
 {
     _interface = sourse;
+    _tcpClient.setSourse(sourse);
 }
 
 void ModbusKaScadaCloud::setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond_octet, uint8_t newThird_octet, uint8_t newFourth_octet)
@@ -198,7 +199,7 @@ void ModbusKaScadaCloud::setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSe
     _cloudIp[1] = newFirst_octet;
     _cloudIp[2] = newFirst_octet;
     _cloudIp[3] = newFirst_octet;
-    _client.stop();
+    _tcpClient.stop();
 }
 
 void ModbusKaScadaCloud::setKaScadaCloudPort(int newPort)
@@ -209,7 +210,7 @@ void ModbusKaScadaCloud::setKaScadaCloudPort(int newPort)
         return;
     }
     _cloudPort = newPort;
-    _client.stop();
+    _tcpClient.stop();
 }
 
 void ModbusKaScadaCloud::setKaScadaCloudDevceId(String id)
@@ -220,7 +221,7 @@ void ModbusKaScadaCloud::setKaScadaCloudDevceId(String id)
         return;
     }
     _deniceId = id;
-    _client.stop();
+    _tcpClient.stop();
 }
 
 void ModbusKaScadaCloud::begin()
@@ -237,30 +238,42 @@ void ModbusKaScadaCloud::begin(uint8_t address)
 
 void ModbusKaScadaCloud::pool()
 {
-    if (!_isInit)
+    if (_interface == 0)
     {
-        begin();
+        return;
     }
+
     if (!_interface->isReady())
     {
         return;
     }
+    if (!_isInit)
+    {
+        begin();
+        return;
+    }
+    if (_status == FLPROG_MODBUS_WAITING_CONNECT_CLIENT)
+    {
+        connect();
+        return;
+    }
     if (flprog::isTimer(_kaScadaCloudTimeOutStartTime, 5000))
     {
-        if (_client.connected())
+        if (_tcpClient.connected())
         {
-            _client.print(_deniceId);
+            _tcpClient.print(_deniceId);
             _kaScadaCloudTimeOutStartTime = millis();
             return;
         }
         else
         {
-            _client.connect(_cloudIp, _cloudPort);
+            connect();
             return;
         }
     }
-    if (!_client.connected())
+    if (!_tcpClient.connected())
     {
+        connect();
         return;
     }
     getRxBuffer();
@@ -272,17 +285,41 @@ void ModbusKaScadaCloud::pool()
     _kaScadaCloudTimeOutStartTime = millis();
 }
 
+void ModbusKaScadaCloud::connect()
+{
+    if (_tcpClient.connected())
+    {
+        _status = FLPROG_MODBUS_READY;
+        return;
+    }
+    uint8_t result = _tcpClient.connect(_cloudIp, _cloudPort);
+    if (result == FLPROG_WITE)
+    {
+        _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
+        return;
+    }
+    if (result == FLPROG_ERROR)
+    {
+        _status = FLPROG_MODBUS_READY;
+        return;
+    }
+    _status = FLPROG_MODBUS_READY;
+}
+
 void ModbusKaScadaCloud::sendTxBuffer()
 {
+    if (!_tcpClient.connected())
+    {
+        return;
+    }
     if (_buffer[0] == 0)
     {
         return;
     }
-    String stringBuffer = "";
     _mbapBuffer[4] = highByte(_bufferSize);
     _mbapBuffer[5] = lowByte(_bufferSize);
-    _client.write(_mbapBuffer, 6);
-    _client.write(_buffer, _bufferSize);
+    _tcpClient.write(_mbapBuffer, 6);
+    _tcpClient.write(_buffer, _bufferSize);
     _bufferSize = 0;
 }
 
@@ -291,9 +328,13 @@ void ModbusKaScadaCloud::getRxBuffer()
     uint8_t currentByte = 0;
     uint8_t currentByteIndex = 0;
     _bufferSize = 0;
-    while (_client.available())
+    if (!_tcpClient.connected())
     {
-        currentByte = _client.read();
+        return;
+    }
+    while (_tcpClient.available())
+    {
+        currentByte = _tcpClient.read();
         if (currentByteIndex < 6)
 
         {
