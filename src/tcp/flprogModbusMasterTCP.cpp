@@ -671,9 +671,21 @@ void ModbusMasterTCP::status(uint8_t serverIndex, uint8_t slaveAddres, bool stat
 
 void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
 {
+    if (_tempCurrentServer != server)
+    {
+        _tcpClient.stop();
+        _tempCurrentServer = server;
+    }
+
+    if (_tempCurrentServer == 0)
+    {
+        _status = FLPROG_MODBUS_READY;
+        return;
+    }
+
     if (!_tcpClient.connected())
     {
-        uint8_t result = _tcpClient.connect(server->getIp(), server->getPort());
+        uint8_t result = _tcpClient.connect(_tempCurrentServer->getIp(), _tempCurrentServer->getPort());
         if (result == FLPROG_WITE)
         {
             _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
@@ -698,6 +710,15 @@ bool ModbusMasterTCP::hasServer(uint8_t serverIndex)
 
 void ModbusMasterTCP::pool()
 {
+    if (_interface == 0)
+    {
+        return;
+    }
+    if (!_interface->isReady())
+    {
+        return;
+    }
+
     if (!_isInit)
     {
         begin();
@@ -896,16 +917,11 @@ bool ModbusMasterTCP::nextSlave()
 
 bool ModbusMasterTCP::nextServer()
 {
-    _tempCurrentServer = nextReadyServer(_tempCurrentServer);
-    if (_tempCurrentServer == 0)
+    _currentServer = nextReadyServer(_currentServer);
+    if (_currentServer == 0)
     {
         return false;
     }
-    if (_tempCurrentServer != _currentServer)
-    {
-        _tcpClient.stop();
-    }
-    _currentServer = _tempCurrentServer;
     _currentSlave = _currentServer->firstReadySlave();
     _currentSlaveTable = _currentSlave->firstTabe();
     _currentSlaveStartAddress = _currentSlaveTable->getMinAdress();
