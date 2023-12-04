@@ -141,6 +141,7 @@ protected:
     int _telegrammNumbeRegs;
     int _telegrammAnswerId = 1;
     ModbusTCPSlaveServer *_currentServer;
+    ModbusTCPSlaveServer *_tempCurrentServer;
     ModbusSlaveInMaster *_currentSlave;
     ModbusTable *_currentSlaveTable;
     int _currentSlaveStartAddress = -1;

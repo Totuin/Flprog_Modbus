@@ -704,11 +704,11 @@ void ModbusMasterTCP::pool()
     }
     if (_status == FLPROG_MODBUS_WAITING_CONNECT_CLIENT)
     {
-        connect(_telegrammServer);
+        return connect(_telegrammServer);
     }
     if (_status == FLPROG_MODBUS_WAITING_ANSWER)
     {
-        checkAnswer();
+        return checkAnswer();
     }
     if (_status == FLPROG_MODBUS_READY)
     {
@@ -752,7 +752,6 @@ void ModbusMasterTCP::checkAnswer()
 void ModbusMasterTCP::getRxBuffer()
 {
     uint8_t currentByte = 0;
-
     uint8_t currentByteIndex = 0;
     _bufferSize = 0;
     while (_tcpClient.available())
@@ -879,7 +878,6 @@ bool ModbusMasterTCP::nextTable()
 }
 
 bool ModbusMasterTCP::nextSlave()
-
 {
     if (_currentSlave != 0)
     {
@@ -898,13 +896,16 @@ bool ModbusMasterTCP::nextSlave()
 
 bool ModbusMasterTCP::nextServer()
 {
-    _tcpClient.stop();
-    _currentServer = nextReadyServer(_currentServer);
-
-    if (_currentServer == 0)
+    _tempCurrentServer = nextReadyServer(_tempCurrentServer);
+    if (_tempCurrentServer == 0)
     {
         return false;
     }
+    if (_tempCurrentServer != _currentServer)
+    {
+        _tcpClient.stop();
+    }
+    _currentServer = _tempCurrentServer;
     _currentSlave = _currentServer->firstReadySlave();
     _currentSlaveTable = _currentSlave->firstTabe();
     _currentSlaveStartAddress = _currentSlaveTable->getMinAdress();
@@ -1008,7 +1009,6 @@ bool ModbusMasterTCP::createWriteTelegramm(ModbusTCPSlaveServer *writeServer)
     }
     return true;
 }
-
 ModbusTCPSlaveServer *ModbusMasterTCP::firstWriteServer()
 {
     for (int i = 0; i < _serversSize; i++)
@@ -1023,7 +1023,7 @@ ModbusTCPSlaveServer *ModbusMasterTCP::firstWriteServer()
 
 void ModbusMasterTCP::sendTxBuffer()
 {
-    memset(resultBuffer, 0, 70);
+    // memset(resultBuffer, 0, 70);
     resultBufferSize = 0;
     _mbapBuffer[4] = highByte(_bufferSize);
     _mbapBuffer[5] = lowByte(_bufferSize);
@@ -1117,7 +1117,6 @@ void ModbusMasterRTUoverTCP::getRxBuffer()
 
 void ModbusMasterRTUoverTCP::sendTxBuffer()
 {
-
     int crc = flprogModus::modbusCalcCRC(_bufferSize, _buffer);
     _buffer[_bufferSize] = crc >> 8;
     _bufferSize++;
