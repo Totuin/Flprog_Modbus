@@ -33,8 +33,6 @@ FLProgWiznetInterface WiznetInterface;
   -----------------------------------------------------------------------------------------
 */
 
-// ModbusTcpBridge Bridge(1, &WiznetInterface);
-//  ModbusKasCadaCloudTcpBridge Bridge(0, &WiznetInterface);
 ModbusBridge Bridge(1, &WiznetInterface);
 
 /*
@@ -85,7 +83,7 @@ void setup()
   {
   }
 
-  flprog::printConsole(" Тест Modbus Slave TCP - WizNet ");
+  flprog::printConsole(" Тест Modbus Bridge - WizNet ");
 
   Serial.print("CS - ");
   Serial.println(WiznetInterface.pinCs());
