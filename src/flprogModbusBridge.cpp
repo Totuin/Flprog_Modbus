@@ -192,7 +192,7 @@ void ModbusBridge::begin()
 {
     _isInit = true;
     _status = FLPROG_MODBUS_READY;
-    RT_HW_Base.uartBegin(_uart);
+    flprog::beginUart(_uart);
     _tcpClient.stop();
     _server.stop();
     if (_pinPeDe >= 0)
@@ -221,8 +221,7 @@ void ModbusBridge::rtuPool()
             return;
         }
     }
-    uint8_t avalibleBytes = RT_HW_Base.uartAvailable(_uart);
-    if (avalibleBytes == 0)
+    uint8_t avalibleBytes = flprog::availableUart(_uart);
     {
         return;
     }
@@ -232,7 +231,7 @@ void ModbusBridge::rtuPool()
         _startT35 = millis();
         return;
     }
-    if (!(flprog::isTimer(_startT35, (flprogModus::t35TimeForSpeed(RT_HW_Base.uartGetSpeed(_uart))))))
+    if (!(flprog::isTimer(_startT35, (flprogModus::t35TimeForSpeed(flprog::getSpeedUart(_uart))))))
     {
         return;
     }
@@ -248,9 +247,9 @@ void ModbusBridge::rtuPool()
 void ModbusBridge::getRTURxBuffer()
 {
     _bufferSize = 0;
-    while (RT_HW_Base.uartAvailable(_uart))
+    while (flprog::availableUart(_uart))
     {
-        _buffer[_bufferSize] = RT_HW_Base.uartRead(_uart);
+        _buffer[_bufferSize] = flprog::readUart(_uart);
         _bufferSize++;
     }
 }
@@ -263,14 +262,11 @@ void ModbusBridge::sendRTUBuffer()
     _bufferSize++;
     _buffer[_bufferSize] = crc & 0x00ff;
     _bufferSize++;
-    for (uint8_t i = 0; i < _bufferSize; i++)
-    {
-        RT_HW_Base.uartWrite(_buffer[i], _uart);
-    }
+    flprog::writeUart(_buffer, _bufferSize, _uart);
     uint8_t dataBits = 8;
     uint8_t stopBits = 1;
     uint8_t portParity = 0;
-    uint16_t portSpeed = RT_HW_Base.uartGetSpeed(_uart);
+    uint16_t portSpeed = flprog::getSpeedUart(_uart);
     _timeOfSend = flprogModus::timeForSendBytes(dataBits, stopBits, portParity, portSpeed, _bufferSize);
     _startSendTime = millis();
     _status = FLPROG_MODBUS_WAITING_SENDING;

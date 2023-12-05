@@ -2,7 +2,7 @@
 
 void ModbusSlaveRTU::begin()
 {
-    RT_HW_Base.uartBegin(_uartPortNumber);
+    flprog::beginUart(_uartPortNumber);
     _bufferSize = 0;
     _lastRec = 0;
     if (_pinPeDe >= 0)

@@ -22,15 +22,15 @@ uint8_t ModbusRTU::rxBuffer()
 {
     bool bBuffOverflow = false;
     _bufferSize = 0;
-    while (RT_HW_Base.uartAvailable(_uartPortNumber))
+    while (flprog::availableUart(_uartPortNumber))
     {
         if (_bufferSize < 64)
         {
-            _buffer[_bufferSize] = RT_HW_Base.uartRead(_uartPortNumber);
+            _buffer[_bufferSize] = flprog::readUart(_uartPortNumber);
         }
         else
         {
-            RT_HW_Base.uartRead(_uartPortNumber);
+            flprog::readUart(_uartPortNumber);
             bBuffOverflow = true;
         }
         _bufferSize++;
@@ -56,14 +56,11 @@ void ModbusRTU::sendTxBuffer()
     _bufferSize++;
     _buffer[_bufferSize] = crc & 0x00ff;
     _bufferSize++;
-    for (uint8_t i = 0; i < _bufferSize; i++)
-    {
-        RT_HW_Base.uartWrite(_buffer[i], _uartPortNumber);
-    }
+    flprog::writeUart(_buffer, _bufferSize, _uartPortNumber);
     uint8_t dataBits = 8;
     uint8_t stopBits = 1;
     uint8_t portParity = 0;
-    uint16_t portSpeed = RT_HW_Base.uartGetSpeed(_uartPortNumber);
+    uint16_t portSpeed = flprog::getSpeedUart(_uartPortNumber);
     _timeOfSend = flprogModus::timeForSendBytes(dataBits, stopBits, portParity, portSpeed, _bufferSize);
     _startSendTime = millis();
     _status = FLPROG_MODBUS_WAITING_SENDING;
@@ -72,7 +69,7 @@ void ModbusRTU::sendTxBuffer()
 
 bool ModbusRTU::checkAvaliblePacage()
 {
-     uint16_t avalibleBytes = RT_HW_Base.uartAvailable(_uartPortNumber);
+    uint16_t avalibleBytes = flprog::availableUart(_uartPortNumber);
     if (avalibleBytes == 0)
     {
         return false;
@@ -86,7 +83,7 @@ bool ModbusRTU::checkAvaliblePacage()
             return false;
         }
     }
-    if (!(flprog::isTimer(_time, flprogModus::t35TimeForSpeed(RT_HW_Base.uartGetSpeed(_uartPortNumber)))))
+    if (!(flprog::isTimer(_time, flprogModus::t35TimeForSpeed(flprog::getSpeedUart(_uartPortNumber)))))
     {
         return false;
     }

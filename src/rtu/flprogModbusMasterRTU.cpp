@@ -9,7 +9,7 @@ ModbusMasterRTU::ModbusMasterRTU(uint8_t portNumber, uint8_t size)
 
 void ModbusMasterRTU::begin()
 {
-    RT_HW_Base.uartBegin(_uartPortNumber);
+    flprog::beginUart(_uartPortNumber);
     if (_pinPeDe >= 0)
     {
         pinMode(_pinPeDe, OUTPUT);
