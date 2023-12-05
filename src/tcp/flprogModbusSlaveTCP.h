@@ -1,11 +1,10 @@
 #pragma once
-#include "flprogModbusTCP.h"
 #include "flprogEthernet.h"
+#include "../base/flprogModbus.h"
 
-class ModbusSlaveTCP : public ModbusTCP
+class ModbusSlaveTCP : public Modbus
 {
 public:
-    ModbusSlaveTCP(){};
     ModbusSlaveTCP(FLProgAbstractTcpInterface *sourse);
 
     virtual void pool();
@@ -63,6 +62,9 @@ protected:
     FLProgEthernetServer _server;
     int _port = 502;
     ModbusMainData *_data = 0;
+
+    uint8_t _mbapBuffer[6];
+    FLProgAbstractTcpInterface *_interface = 0;
 
     FLProgEthernetClient _tcpClient;
     int _cloudPort = 25000;

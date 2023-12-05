@@ -1,4 +1,4 @@
-//Подключаем необходимую библиотеку
+// Подключаем необходимую библиотеку
 #include "flprogModbusTCP.h"
 /*
   -------------------------------------------------------------------------------------------------
@@ -33,7 +33,6 @@ FLProgWiznetInterface WiznetInterface;
   -----------------------------------------------------------------------------------------
 */
 ModbusMasterTCP Master1(&WiznetInterface, 1);
-//ModbusMasterRTUoverTCP Master1(&WiznetInterface, 1);
 
 /*
   -----------------------------------------------------------------------------------------
@@ -71,21 +70,25 @@ void setup()
           Настройка модбас мастера
      -----------------------------------------------------------------------------------------
   */
-  Master1.setServerPort(0, 502); //Задаём порт для сервера
-  Master1.setServerIpAdress(0, IPAddress(192, 168, 1, 1));  //Устанавливаем IP адрес сервера
-  Master1.setServerSlavesSize(0, 2); //Задаём количество слейвов на сервере
-  Master1.setSlaveAddress(0, 0, 1);  //Задаём адреса для слейвов
-  Master1.setSlaveAddress(0, 1, 2);  //Задаём адреса для слейвов
 
-  //задаём таблицы для  слейва с адресом 1 на сервере 0
-  Master1.configDataTable(0, 1, FLPROG_HOLDING_REGISTR,  8);
-  Master1.configDataTable(0, 1, FLPROG_INPUT_REGISTR,  8);
+  // Master1.setSlaveAsTcp(0) // Значение по умолчанию
+  Master1.setSlaveAsRtuOverTcp(0);
+
+  Master1.setServerPort(0, 502);                           // Задаём порт для сервера
+  Master1.setServerIpAdress(0, IPAddress(192, 168, 1, 1)); // Устанавливаем IP адрес сервера
+  Master1.setServerSlavesSize(0, 2);                       // Задаём количество слейвов на сервере
+  Master1.setSlaveAddress(0, 0, 1);                        // Задаём адреса для слейвов
+  Master1.setSlaveAddress(0, 1, 2);                        // Задаём адреса для слейвов
+
+  // задаём таблицы для  слейва с адресом 1 на сервере 0
+  Master1.configDataTable(0, 1, FLPROG_HOLDING_REGISTR, 8);
+  Master1.configDataTable(0, 1, FLPROG_INPUT_REGISTR, 8);
   Master1.configDataTable(0, 1, FLPROG_COIL, 2);
   Master1.configDataTable(0, 1, FLPROG_DISCRETE_INPUT, 2);
 
-  //так же для второго слейва
-  Master1.configDataTable(0, 2, FLPROG_HOLDING_REGISTR,  8);
-  Master1.configDataTable(0, 2, FLPROG_INPUT_REGISTR,  8);
+  // так же для второго слейва
+  Master1.configDataTable(0, 2, FLPROG_HOLDING_REGISTR, 8);
+  Master1.configDataTable(0, 2, FLPROG_INPUT_REGISTR, 8);
   Master1.configDataTable(0, 2, FLPROG_COIL, 2);
   Master1.configDataTable(0, 2, FLPROG_DISCRETE_INPUT, 2);
 
@@ -94,8 +97,8 @@ void setup()
     Вызов не обязятелен, значение по умолчанию - 1000 миллисекунд
     значение можно изменять в режиме выполнения программы
   */
-  Master1.setPollingPeriod(0, 1, 100);
-  Master1.setPollingPeriod(0, 2, 100);
+  Master1.setPollingPeriod(0, 1, 500);
+  Master1.setPollingPeriod(0, 2, 500);
 
   /*
     Устанавливаем период таймаута для слейва
@@ -133,7 +136,6 @@ void setup()
   Master1.setUnsignedlongOrder(0, 2, FLPROG_ABCD_ORDER);
   Master1.setIntOrder(0, 2, FLPROG_AB_ORDER);
 
-
   Serial.begin(115200);
   while (!Serial)
   {
@@ -150,12 +152,11 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
-
 //=================================================================================================
 void loop()
 {
-  WiznetInterface.pool();  // Цикл работы интерфейса
-  Master1.pool();//Цикл работы мастера
+  WiznetInterface.pool(); // Цикл работы интерфейса
+  Master1.pool();         // Цикл работы мастера
   printStatusMessages();
   blinkLed();
   workModbus();
@@ -165,7 +166,7 @@ void loop()
 void workModbus()
 {
 
-  //Демонстрационная логика - раз в секунду изменяем значение переменной.
+  // Демонстрационная логика - раз в секунду изменяем значение переменной.
   if ((startTime + 1000) < millis())
   {
     startTime = millis();
@@ -196,7 +197,7 @@ void workModbus()
   */
   value = Master1.readInteger(0, 1, FLPROG_INPUT_REGISTR, 0);
 
-  Master1.saveBool(0, 1, ! tempBool, FLPROG_COIL, 0);
+  Master1.saveBool(0, 1, !tempBool, FLPROG_COIL, 0);
 
   Master1.saveBool(0, 2, tempBool, FLPROG_COIL, 1);
 
@@ -207,7 +208,6 @@ void workModbus()
   Master1.saveInteger(0, 1, value, FLPROG_HOLDING_REGISTR, 0);
   Master1.saveInteger(0, 2, value, FLPROG_HOLDING_REGISTR, 0);
 }
-
 
 void blinkLed()
 {
