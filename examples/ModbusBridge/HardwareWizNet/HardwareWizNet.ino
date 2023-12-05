@@ -34,9 +34,9 @@ FLProgWiznetInterface WiznetInterface;
   -----------------------------------------------------------------------------------------
 */
 
-ModbusTcpBridge Bridge(1, &WiznetInterface);
+//ModbusTcpBridge Bridge(1, &WiznetInterface);
 // ModbusKasCadaCloudTcpBridge Bridge(0, &WiznetInterface);
-// ModbusRtuOverTcpBridge Bridge(0, &WiznetInterface);
+ModbusBridge Bridge(1, &WiznetInterface);
 
 
 /*
@@ -70,14 +70,18 @@ void setup()
           Настройка моста
      -----------------------------------------------------------------------------------------
   */
-  //.byClient();
-   Bridge.byServer();
+  Bridge.byClient();
+  //Bridge.byServer();
+
+  //Bridge.byTcp();
+  //Bridge.byRtuOverTcp();
+  Bridge.byKasCadaCloud();
 
   Bridge.setTCPPort(502);
- // Bridge.setTCPRemoteIp(IPAddress(192, 168, 1, 1));
-  // Bridge.setKaScadaCloudIp(94, 250, 249, 225);
-  // Bridge.setKaScadaCloudPort(25000);
-  // Bridge.setKaScadaCloudDevceId("DKK6T9TPE4");
+  Bridge.setTCPRemoteIp(IPAddress(192, 168, 1, 1));
+  Bridge.setKaScadaCloudIp(94, 250, 249, 225);
+  Bridge.setKaScadaCloudPort(25000);
+  Bridge.setKaScadaCloudDevceId("DKK6T9TPE4");
 
 
   Serial.begin(115200);

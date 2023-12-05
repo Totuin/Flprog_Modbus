@@ -14,29 +14,58 @@ public:
     void setTCPRemoteIp(IPAddress newIp);
     void setPinPeDe(uint8_t pin) { _pinPeDe = pin; };
 
+    void setKaScadaCloudIp(IPAddress newIp);
+    void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
+    void setKaScadaCloudPort(int port);
+    void setKaScadaCloudDevceId(String id);
+
     virtual void byServer();
     virtual void byClient();
 
-    virtual void begin();
+    void setMode(uint8_t mode);
+    void byTcp() { setMode(FLPROG_TCP_MODBUS); };
+    void byRtuOverTcp() { setMode(FLPROG_RTU_OVER_TCP_MODBUS); };
+    void byKasCadaCloud() { setMode(FLPROG_KASCADA_CLOUD_MODBUS); };
+    uint8_t mode() { return _mode; };
 
 protected:
     void onPeDePin();
     void offPeDePin();
+    virtual void begin();
 
-    virtual void tcpPool() = 0;
+    virtual void tcpPool();
+    void tspModeTcpPool();
+    void tspModeAsServerTcpPool();
+    void tspModeAsClientTcpPool();
+    void rtuOverTspModeTcpPool();
+    void rtuOverTspModeAsServerTcpPool();
+    void rtuOverTspModeAsClientTcpPool();
+
+    virtual void sendTCPBuffer();
+    void tspModeSendTCPBuffer();
+    void tspModeSendAsServerTCPBuffer();
+    void tspModeSendAsClientTCPBuffer();
+    void rtuOverTspModeSendTCPBuffer();
+    void rtuOverTspModeSendAsServerTCPBuffer();
+    void rtuOverTspModeSendAsClientTCPBuffer();
+
     virtual void rtuPool();
 
     void getRTURxBuffer();
     void sendRTUBuffer();
-    virtual void sendTCPBuffer() = 0;
+
     virtual void connect();
     uint8_t _status = FLPROG_MODBUS_READY;
     uint8_t _uart = 0;
+
     int _port = 502;
+    int _kasCadaCloudPort = 25000;
+    IPAddress _kasCadaCloudIP = IPAddress(94, 250, 249, 225);
+
     bool _isServer = false;
     int _pinPeDe = -1;
     uint8_t _bufferSize = 0;
-    uint8_t _buffer[64];
+    uint8_t _buffer[200];
     uint8_t _lastRec = 0;
     unsigned long _startT35;
     unsigned long _startSendTime;
@@ -46,52 +75,9 @@ protected:
     FLProgAbstractTcpInterface *_interface;
     FLProgEthernetServer _server;
     FLProgEthernetClient _tcpClient;
-};
-
-class ModbusTcpBridge : public ModbusBridge
-{
-public:
-    using ModbusBridge::ModbusBridge;
-
-protected:
-    virtual void tcpPool();
-    virtual void sendTCPBuffer();
-
-private:
+    uint8_t _mode = FLPROG_TCP_MODBUS;
     uint8_t _mbapBuffer[6];
-};
 
-class ModbusRtuOverTcpBridge : public ModbusBridge
-{
-public:
-    using ModbusBridge::ModbusBridge;
-
-protected:
-    virtual void tcpPool();
-    virtual void sendTCPBuffer();
-};
-
-class ModbusKasCadaCloudTcpBridge : public ModbusBridge
-{
-public:
-    ModbusKasCadaCloudTcpBridge();
-    ModbusKasCadaCloudTcpBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse);
-
-    virtual void pool();
-    void setKaScadaCloudIp(IPAddress newIp);
-    void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
-    void setKaScadaCloudPort(int port);
-    void setKaScadaCloudDevceId(String id);
-    virtual void byServer(){};
-    virtual void byClient(){};
-    virtual void begin();
-
-protected:
-    virtual void tcpPool();
-    virtual void sendTCPBuffer();
-
-private:
-    uint8_t _mbapBuffer[6];
     String _deniceId;
     unsigned long _kaScadaCloudTimeStartTime;
 };
