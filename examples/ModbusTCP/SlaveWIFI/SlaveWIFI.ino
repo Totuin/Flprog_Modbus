@@ -72,6 +72,13 @@ void setup()
   WifiInterface.setClientSsidd("totuin-router");
   WifiInterface.setClientPassword("12345678");
 
+  Slave1.setSlaveAddress(1);
+  // Slave1.byTcp(); // Режим по умолчанию
+  //Slave1.byRtuOverTcp();
+
+  //Slave1.byKasCadaCloud();
+  //Slave1.setKaScadaCloudDevceId("DKK6T9TPE4");
+
   /*
     -----------------------------------------------------------------------------------------
           Описываем таблицы слейва

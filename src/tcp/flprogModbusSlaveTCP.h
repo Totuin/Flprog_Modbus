@@ -11,8 +11,14 @@ public:
     virtual void pool();
 
     void setSlaveAddress(uint8_t adr) { _slaveAddres = adr; };
-    void setData(ModbusMainData *data) { _data = data; };
 
+    void setTcpPort(int _port);
+    void setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond_octet, uint8_t newThird_octet, uint8_t newFourth_octet);
+    void setKaScadaCloudIp(IPAddress ip);
+    void setKaScadaCloudPort(int newPort);
+    void setKaScadaCloudDevceId(String id);
+
+    void setData(ModbusMainData *data) { _data = data; };
     void setDataTable(ModbusTable *table) { mainData()->setDataTable(table); };
     void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses) { mainData()->setDataTable(_table, dataSize, _adresses); };
     void configDataTable(uint8_t _table, uint16_t dataSize, uint16_t _startAdr = 0) { mainData()->configDataTable(_table, dataSize, _startAdr); };
@@ -37,7 +43,6 @@ public:
     void byKasCadaCloud() { setMode(FLPROG_KASCADA_CLOUD_MODBUS); };
     uint8_t mode() { return _mode; };
 
-    void setTcpPort(int _port);
     ModbusMainData *mainData();
 
     void setLongOrder(uint8_t order) { mainData()->setLongOrder(order); };
@@ -50,32 +55,15 @@ protected:
     virtual void begin();
     virtual void getRxBuffer();
     virtual void sendTxBuffer();
-     uint8_t rxBuffer();
+    uint8_t rxBuffer();
+    void connect();
 
     uint8_t _mode = FLPROG_TCP_MODBUS;
     uint8_t _slaveAddres = 1;
     FLProgEthernetServer _server;
     int _port = 502;
     ModbusMainData *_data = 0;
-};
 
-class ModbusKaScadaCloud : public ModbusSlaveTCP
-{
-public:
-    ModbusKaScadaCloud(FLProgAbstractTcpInterface *sourse);
-    void setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond_octet, uint8_t newThird_octet, uint8_t newFourth_octet);
-    void setKaScadaCloudPort(int newPort);
-    void setKaScadaCloudDevceId(String id);
-    virtual void begin();
-    virtual void begin(uint8_t address);
-    virtual void pool();
-
-protected:
-    void getRxBuffer();
-    virtual void sendTxBuffer();
-    void connect();
-
-private:
     FLProgEthernetClient _tcpClient;
     int _cloudPort = 25000;
     String _deniceId;
