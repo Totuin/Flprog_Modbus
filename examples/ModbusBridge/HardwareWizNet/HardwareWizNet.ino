@@ -27,17 +27,15 @@ FLProgWiznetInterface WiznetInterface;
 */
 // FLProgWiznetInterface WiznetInterface(10, 0);
 
-
 /*
   -----------------------------------------------------------------------------------------
      Создаем объект непосредстредственно Модбас моста на необходимом интерфейсе и UART мосту
   -----------------------------------------------------------------------------------------
 */
 
-//ModbusTcpBridge Bridge(1, &WiznetInterface);
-// ModbusKasCadaCloudTcpBridge Bridge(0, &WiznetInterface);
+// ModbusTcpBridge Bridge(1, &WiznetInterface);
+//  ModbusKasCadaCloudTcpBridge Bridge(0, &WiznetInterface);
 ModbusBridge Bridge(1, &WiznetInterface);
-
 
 /*
   -----------------------------------------------------------------------------------------
@@ -64,25 +62,23 @@ void setup()
   WiznetInterface.localIP(IPAddress(192, 168, 1, 10));
   WiznetInterface.resetDhcp();
 
-
   /*
      -----------------------------------------------------------------------------------------
           Настройка моста
      -----------------------------------------------------------------------------------------
   */
-  Bridge.byClient();
-  //Bridge.byServer();
+  // Bridge.byClient();// Режим по умолчанию
+  Bridge.byServer();
 
-  //Bridge.byTcp();
-  //Bridge.byRtuOverTcp();
-  Bridge.byKasCadaCloud();
+  // Bridge.byTcp(); // Режим по умолчанию
+  Bridge.byRtuOverTcp();
+  // Bridge.byKasCadaCloud(); // Переключение режимов клиент/сервер не действует
 
   Bridge.setTCPPort(502);
   Bridge.setTCPRemoteIp(IPAddress(192, 168, 1, 1));
   Bridge.setKaScadaCloudIp(94, 250, 249, 225);
   Bridge.setKaScadaCloudPort(25000);
   Bridge.setKaScadaCloudDevceId("DKK6T9TPE4");
-
 
   Serial.begin(115200);
   while (!Serial)
