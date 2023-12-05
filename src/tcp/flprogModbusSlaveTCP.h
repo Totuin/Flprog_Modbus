@@ -8,6 +8,8 @@ public:
     ModbusSlaveTCP(){};
     ModbusSlaveTCP(FLProgAbstractTcpInterface *sourse);
 
+    virtual void pool();
+
     void setSlaveAddress(uint8_t adr) { _slaveAddres = adr; };
     void setData(ModbusMainData *data) { _data = data; };
 
@@ -29,10 +31,12 @@ public:
     uint32_t readUnsignedLong(uint8_t table, int adr) { return mainData()->readUnsignedLong(table, adr); };
     bool readBool(uint8_t table, int adr) { return mainData()->readBool(table, adr); };
 
-    virtual uint8_t validateRequest() { return validateSlaveReqest(mainData()); };
-    virtual void begin();
-    virtual void begin(uint8_t address);
-    virtual void pool();
+    void setMode(uint8_t mode);
+    void byTcp() { setMode(FLPROG_TCP_MODBUS); };
+    void byRtuOverTcp() { setMode(FLPROG_RTU_OVER_TCP_MODBUS); };
+    void byKasCadaCloud() { setMode(FLPROG_KASCADA_CLOUD_MODBUS); };
+    uint8_t mode() { return _mode; };
+
     void setTcpPort(int _port);
     ModbusMainData *mainData();
 
@@ -42,26 +46,17 @@ public:
     void setIntOrder(uint8_t order) { mainData()->setIntOrder(order); };
 
 protected:
-    uint8_t _slaveAddres = 1;
+    virtual uint8_t validateRequest();
+    virtual void begin();
     virtual void getRxBuffer();
     virtual void sendTxBuffer();
+     uint8_t rxBuffer();
+
+    uint8_t _mode = FLPROG_TCP_MODBUS;
+    uint8_t _slaveAddres = 1;
     FLProgEthernetServer _server;
     int _port = 502;
     ModbusMainData *_data = 0;
-};
-
-class ModbusSlaveRTUoverTCP : public ModbusSlaveTCP
-{
-
-public:
-    using ModbusSlaveTCP::ModbusSlaveTCP;
-    virtual void pool();
-
-protected:
-    virtual bool checkAvaliblePacage();
-    virtual uint8_t rxBuffer();
-    virtual void sendTxBuffer();
-    virtual uint8_t validateRequest();
 };
 
 class ModbusKaScadaCloud : public ModbusSlaveTCP

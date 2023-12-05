@@ -5,9 +5,8 @@
 class ModbusBridge
 {
 public:
-    ModbusBridge(){};
     ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse);
-    virtual void pool();
+    void pool();
     void setRTUDevice(uint8_t device) { _uart = device; };
     void setTCPPort(int _port);
     void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
@@ -19,8 +18,8 @@ public:
     void setKaScadaCloudPort(int port);
     void setKaScadaCloudDevceId(String id);
 
-    virtual void byServer();
-    virtual void byClient();
+    void byServer();
+    void byClient();
 
     void setMode(uint8_t mode);
     void byTcp() { setMode(FLPROG_TCP_MODBUS); };
@@ -28,12 +27,12 @@ public:
     void byKasCadaCloud() { setMode(FLPROG_KASCADA_CLOUD_MODBUS); };
     uint8_t mode() { return _mode; };
 
-protected:
+private:
     void onPeDePin();
     void offPeDePin();
-    virtual void begin();
+    void begin();
 
-    virtual void tcpPool();
+    void tcpPool();
     void tspModeTcpPool();
     void tspModeAsServerTcpPool();
     void tspModeAsClientTcpPool();
@@ -41,7 +40,7 @@ protected:
     void rtuOverTspModeAsServerTcpPool();
     void rtuOverTspModeAsClientTcpPool();
 
-    virtual void sendTCPBuffer();
+    void sendTCPBuffer();
     void tspModeSendTCPBuffer();
     void tspModeSendAsServerTCPBuffer();
     void tspModeSendAsClientTCPBuffer();
@@ -49,19 +48,18 @@ protected:
     void rtuOverTspModeSendAsServerTCPBuffer();
     void rtuOverTspModeSendAsClientTCPBuffer();
 
-    virtual void rtuPool();
+    void rtuPool();
 
     void getRTURxBuffer();
     void sendRTUBuffer();
 
-    virtual void connect();
+    void connect();
+
     uint8_t _status = FLPROG_MODBUS_READY;
     uint8_t _uart = 0;
-
     int _port = 502;
     int _kasCadaCloudPort = 25000;
     IPAddress _kasCadaCloudIP = IPAddress(94, 250, 249, 225);
-
     bool _isServer = false;
     int _pinPeDe = -1;
     uint8_t _bufferSize = 0;

@@ -126,11 +126,11 @@ void ModbusBridge::connect()
     uint8_t result;
     if (_mode == FLPROG_KASCADA_CLOUD_MODBUS)
     {
-        result == _tcpClient.connect(_kasCadaCloudIP, _kasCadaCloudPort);
+        result = _tcpClient.connect(_kasCadaCloudIP, _kasCadaCloudPort);
     }
     else
     {
-        result == _tcpClient.connect(_ip, _port);
+        result = _tcpClient.connect(_ip, _port);
     }
     if (result == FLPROG_WITE)
     {

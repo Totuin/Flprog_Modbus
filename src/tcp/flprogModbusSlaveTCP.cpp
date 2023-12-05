@@ -7,6 +7,20 @@ ModbusSlaveTCP::ModbusSlaveTCP(FLProgAbstractTcpInterface *sourse)
     _server.setPort(_port);
 }
 
+void ModbusSlaveTCP::setMode(uint8_t mode)
+{
+    if (mode > 2)
+    {
+        return;
+    }
+    if (_mode == mode)
+    {
+        return;
+    }
+    _mode = mode;
+    _isInit = false;
+}
+
 void ModbusSlaveTCP::setTcpPort(int port)
 {
     _port = port;
@@ -19,12 +33,6 @@ void ModbusSlaveTCP::begin()
     _isInit = true;
 }
 
-void ModbusSlaveTCP::begin(uint8_t address)
-{
-    _slaveAddres = address;
-    begin();
-}
-
 void ModbusSlaveTCP::pool()
 {
     if (!_isInit)
@@ -35,10 +43,45 @@ void ModbusSlaveTCP::pool()
     {
         return;
     }
-    getRxBuffer();
-    if (_bufferSize == 0)
+    if (_mode == FLPROG_TCP_MODBUS)
+
     {
-        return;
+        getRxBuffer();
+        if (_bufferSize == 0)
+        {
+            return;
+        }
+    }
+    else
+    {
+        if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
+        {
+
+            if (_status == FLPROG_MODBUS_WAITING_SENDING)
+            {
+                if ((flprog::isTimer(_startSendTime, _timeOfSend)))
+                {
+                    _status = FLPROG_MODBUS_READY;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            if (_server.available() == 0)
+            {
+                return;
+            }
+            if (rxBuffer() < 7)
+            {
+                return;
+            }
+        }
+        else
+        {
+            // Описать режим каскада cloud
+            return;
+        }
     }
     executeSlaveReqest(mainData(), _slaveAddres);
 }
@@ -75,12 +118,28 @@ void ModbusSlaveTCP::sendTxBuffer()
 {
     if (_buffer[0] == 0)
     {
+        _bufferSize = 0;
         return;
     }
-    _mbapBuffer[4] = highByte(_bufferSize);
-    _mbapBuffer[5] = lowByte(_bufferSize);
-    _server.write(_mbapBuffer, 6);
+    if (_mode == FLPROG_TCP_MODBUS)
+    {
+        _mbapBuffer[4] = highByte(_bufferSize);
+        _mbapBuffer[5] = lowByte(_bufferSize);
+        _server.write(_mbapBuffer, 6);
+    }
+    if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
+    {
+        int crc = flprogModus::modbusCalcCRC(_bufferSize, _buffer);
+        _buffer[_bufferSize] = crc >> 8;
+        _bufferSize++;
+        _buffer[_bufferSize] = crc & 0x00ff;
+        _bufferSize++;
+    }
     _server.write(_buffer, _bufferSize);
+    if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
+    {
+        _status = FLPROG_MODBUS_READY;
+    }
     _bufferSize = 0;
 }
 
@@ -93,60 +152,21 @@ ModbusMainData *ModbusSlaveTCP::mainData()
     return _data;
 }
 
-//---------------------------------ModbusSlaveRTUoverTCP--------------------------------
-
-void ModbusSlaveRTUoverTCP::pool()
+uint8_t ModbusSlaveTCP::validateRequest()
 {
-    if (!_isInit)
+    if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
     {
-        begin();
-    }
-    if (!_server.connected())
-    {
-        return;
-    }
-    if (_status == FLPROG_MODBUS_WAITING_SENDING)
-    {
-        if ((flprog::isTimer(_startSendTime, _timeOfSend)))
+        int msgCRC =
+            ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
+        if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
         {
-            _status = FLPROG_MODBUS_READY;
+            return 255;
         }
-        else
-        {
-            return;
-        }
-    }
-    if (!(checkAvaliblePacage()))
-        return;
-    uint8_t state = rxBuffer();
-    if (state < 7)
-    {
-        return;
-    }
-    executeSlaveReqest(mainData(), _slaveAddres);
-}
-
-uint8_t ModbusSlaveRTUoverTCP::validateRequest()
-{
-
-    int msgCRC =
-        ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-    if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
-    {
-        return 255;
     }
     return validateSlaveReqest(mainData());
 }
 
-bool ModbusSlaveRTUoverTCP::checkAvaliblePacage()
-{
-    uint8_t avalibleBytes = _server.available();
-    if (avalibleBytes == 0)
-        return false;
-    return true;
-}
-
-uint8_t ModbusSlaveRTUoverTCP::rxBuffer()
+uint8_t ModbusSlaveTCP::rxBuffer()
 {
     bool bBuffOverflow = false;
     _bufferSize = 0;
@@ -162,23 +182,6 @@ uint8_t ModbusSlaveRTUoverTCP::rxBuffer()
         return -3;
     }
     return _bufferSize;
-}
-
-void ModbusSlaveRTUoverTCP::sendTxBuffer()
-{
-    if (_buffer[0] == 0)
-    {
-        _bufferSize = 0;
-        return;
-    }
-    int crc = flprogModus::modbusCalcCRC(_bufferSize, _buffer);
-    _buffer[_bufferSize] = crc >> 8;
-    _bufferSize++;
-    _buffer[_bufferSize] = crc & 0x00ff;
-    _bufferSize++;
-    _server.write(_buffer, _bufferSize);
-    _status = FLPROG_MODBUS_READY;
-    _bufferSize = 0;
 }
 
 //---------------------------------ModbusKaScadaCloud--------------------------------
