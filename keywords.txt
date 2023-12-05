@@ -6,36 +6,30 @@
 #######################################
 Modbus	KEYWORD1
 ModbusBridge	KEYWORD1
-ModbusKaScadaCloud	KEYWORD1
-ModbusKasCadaCloudTcpBridge	KEYWORD1
 ModbusMainData	KEYWORD1
 ModbusMasterRTU	KEYWORD1
-ModbusMasterRTUoverTCP	KEYWORD1
 ModbusMasterTCP	KEYWORD1
 ModbusRTU	KEYWORD1
-ModbusRtuOverTcpBridge	KEYWORD1
 ModbusSlaveInMaster	KEYWORD1
 ModbusSlaveRTU	KEYWORD1
-ModbusSlaveRTUoverTCP	KEYWORD1
 ModbusSlaveTCP	KEYWORD1
-ModbusTCP	KEYWORD1
 ModbusTCPSlaveServer	KEYWORD1
 ModbusTable	KEYWORD1
-ModbusTcpBridge	KEYWORD1
 flprogModus	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 adressForIndex	KEYWORD2
-available	KEYWORD2
 begin	KEYWORD2
 byClient	KEYWORD2
+byKasCadaCloud	KEYWORD2
+byRtuOverTcp	KEYWORD2
 byServer	KEYWORD2
+byTcp	KEYWORD2
 checkModbusAddres	KEYWORD2
 checkModbusRange	KEYWORD2
 configDataTable	KEYWORD2
-connect	KEYWORD2
 findNextStartAddres	KEYWORD2
 firstReadySlave	KEYWORD2
 firstTabe	KEYWORD2
@@ -62,10 +56,10 @@ lastReqest	KEYWORD2
 lastTable	KEYWORD2
 mainData	KEYWORD2
 modbusCalcCRC	KEYWORD2
+mode	KEYWORD2
 nextSlave	KEYWORD2
 nextTable	KEYWORD2
 pool	KEYWORD2
-read	KEYWORD2
 readBool	KEYWORD2
 readBoolRegister	KEYWORD2
 readByte	KEYWORD2
@@ -83,7 +77,6 @@ saveFloat	KEYWORD2
 saveInteger	KEYWORD2
 saveLong	KEYWORD2
 saveUnsignedLong	KEYWORD2
-server	KEYWORD2
 servers	KEYWORD2
 setData	KEYWORD2
 setDataTable	KEYWORD2
@@ -96,6 +89,7 @@ setKaScadaCloudIp	KEYWORD2
 setKaScadaCloudPort	KEYWORD2
 setLastError	KEYWORD2
 setLongOrder	KEYWORD2
+setMode	KEYWORD2
 setPinPeDe	KEYWORD2
 setPollingPeriod	KEYWORD2
 setPort	KEYWORD2
@@ -104,6 +98,9 @@ setServerIpAdress	KEYWORD2
 setServerPort	KEYWORD2
 setServerSlavesSize	KEYWORD2
 setSlaveAddress	KEYWORD2
+setSlaveAsRtuOverTcp	KEYWORD2
+setSlaveAsTcp	KEYWORD2
+setSlaveMode	KEYWORD2
 setSlaves	KEYWORD2
 setSlavesSize	KEYWORD2
 setSlavesToServer	KEYWORD2
@@ -115,15 +112,13 @@ setUart	KEYWORD2
 setUnsignedlongOrder	KEYWORD2
 slave	KEYWORD2
 slaveAddres	KEYWORD2
+slaveMode	KEYWORD2
 slaveOnIndex	KEYWORD2
 status	KEYWORD2
-stop	KEYWORD2
 t35TimeForSpeed	KEYWORD2
 tableForType	KEYWORD2
 tableType	KEYWORD2
 timeForSendBytes	KEYWORD2
-validateRequest	KEYWORD2
-write	KEYWORD2
 writeRegister	KEYWORD2
 writeRegsSize	KEYWORD2
 
@@ -140,6 +135,10 @@ FLPROG_DCBA_ORDER	LITERAL1
 FLPROG_DISCRETE_INPUT	LITERAL1
 FLPROG_HOLDING_REGISTR	LITERAL1
 FLPROG_INPUT_REGISTR	LITERAL1
+FLPROG_KASCADA_CLOUD_MODBUS	LITERAL1
 FLPROG_MODBUS_READY	LITERAL1
 FLPROG_MODBUS_WAITING_ANSWER	LITERAL1
+FLPROG_MODBUS_WAITING_CONNECT_CLIENT	LITERAL1
 FLPROG_MODBUS_WAITING_SENDING	LITERAL1
+FLPROG_RTU_OVER_TCP_MODBUS	LITERAL1
+FLPROG_TCP_MODBUS	LITERAL1
