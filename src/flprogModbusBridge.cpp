@@ -39,11 +39,27 @@ void ModbusBridge::setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8
 
 void ModbusBridge::setTCPRemoteIp(IPAddress newIp)
 {
+    _remoteServerAsHost = false;
     if (newIp == _ip)
     {
         return;
     }
     _ip = newIp;
+    _isInit = false;
+}
+
+void ModbusBridge::setTCPRemoteHost(String host)
+{
+    if (host.length() == 0)
+    {
+        return;
+    }
+    _remoteServerAsHost = true;
+    if (host.equals(String(_remoteServerHost)))
+    {
+        return;
+    }
+    host.toCharArray(_remoteServerHost, 50);
     _isInit = false;
 }
 
@@ -69,11 +85,27 @@ void ModbusBridge::byClient()
 
 void ModbusBridge::setKaScadaCloudIp(IPAddress newIp)
 {
+    _cloudAdressAsHost = false;
     if (newIp == _kasCadaCloudIP)
     {
         return;
     }
     _kasCadaCloudIP = newIp;
+    _isInit = false;
+}
+
+void ModbusBridge::setKaScadaCloudHost(String host)
+{
+    if (host.length() == 0)
+    {
+        return;
+    }
+    _cloudAdressAsHost = true;
+    if (host.equals(String(_cloudHost)))
+    {
+        return;
+    }
+    host.toCharArray(_cloudHost, 50);
     _isInit = false;
 }
 
@@ -126,11 +158,25 @@ void ModbusBridge::connect()
     uint8_t result;
     if (_mode == FLPROG_KASCADA_CLOUD_MODBUS)
     {
-        result = _tcpClient.connect(_kasCadaCloudIP, _kasCadaCloudPort);
+        if (_cloudAdressAsHost)
+        {
+            result = _tcpClient.connect(_cloudHost, _kasCadaCloudPort);
+        }
+        else
+        {
+            result = _tcpClient.connect(_kasCadaCloudIP, _kasCadaCloudPort);
+        }
     }
     else
     {
-        result = _tcpClient.connect(_ip, _port);
+        if (_remoteServerAsHost)
+        {
+            result = _tcpClient.connect(_remoteServerHost, _port);
+        }
+        else
+        {
+            result = _tcpClient.connect(_ip, _port);
+        }
     }
     if (result == FLPROG_WITE)
     {

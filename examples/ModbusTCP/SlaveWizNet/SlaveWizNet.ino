@@ -84,8 +84,9 @@ void setup()
   // Slave1.byTcp(); // Режим по умолчанию
   //Slave1.byRtuOverTcp();
 
-  //Slave1.byKasCadaCloud();
-  //Slave1.setKaScadaCloudDevceId("DKK6T9TPE4");
+  Slave1.byKasCadaCloud();
+  Slave1.setKaScadaCloudDevceId("DKK6T9TPE4");
+  Slave1.setKaScadaCloudHost("kascada-cloud.fvds.ru");
 
   /*
     -----------------------------------------------------------------------------------------

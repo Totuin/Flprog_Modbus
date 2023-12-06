@@ -19,12 +19,15 @@ public:
     void setTCPPort(int _port);
     void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
     void setTCPRemoteIp(IPAddress newIp);
+    void setTCPRemoteHost(String host);
+
     void setPinPeDe(uint8_t pin) { _pinPeDe = pin; };
 
     void setKaScadaCloudIp(IPAddress newIp);
     void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
     void setKaScadaCloudPort(int port);
     void setKaScadaCloudDevceId(String id);
+    void setKaScadaCloudHost(String host);
 
     void byServer();
     void byClient();
@@ -68,6 +71,9 @@ private:
     int _port = 502;
     int _kasCadaCloudPort = 25000;
     IPAddress _kasCadaCloudIP = IPAddress(94, 250, 249, 225);
+    char _cloudHost[50] = "";
+    bool _cloudAdressAsHost = false;
+
     bool _isServer = false;
     int _pinPeDe = -1;
     uint8_t _bufferSize = 0;
@@ -77,6 +83,9 @@ private:
     unsigned long _startSendTime;
     int _timeOfSend;
     IPAddress _ip = FLPROG_INADDR_NONE;
+    char _remoteServerHost[50] = "";
+    bool _remoteServerAsHost = false;
+
     bool _isInit = false;
     FLProgAbstractTcpInterface *_interface;
     FLProgEthernetServer _server;

@@ -14,6 +14,7 @@ public:
     void setTcpPort(int _port);
     void setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond_octet, uint8_t newThird_octet, uint8_t newFourth_octet);
     void setKaScadaCloudIp(IPAddress ip);
+    void setKaScadaCloudHost(String host);
     void setKaScadaCloudPort(int newPort);
     void setKaScadaCloudDevceId(String id);
 
@@ -70,5 +71,7 @@ protected:
     int _cloudPort = 25000;
     String _deniceId;
     IPAddress _cloudIp = IPAddress(94, 250, 249, 225);
+    char _cloudHost[50] = "";
+    bool _cloudAdressAsHost = false;
     uint32_t _kaScadaCloudTimeOutStartTime;
 };

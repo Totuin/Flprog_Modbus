@@ -57,30 +57,33 @@ void setup()
     -----------------------------------------------------------------------------------------
   */
   WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
-  WiznetInterface.localIP(IPAddress(192, 168, 1, 10));
-  WiznetInterface.resetDhcp();
+  // WiznetInterface.localIP(IPAddress(192, 168, 1, 10));
+  // WiznetInterface.resetDhcp();
 
   /*
      -----------------------------------------------------------------------------------------
           Настройка моста
      -----------------------------------------------------------------------------------------
   */
-  
-  Bridge.setSpeedUart(9600);
 
+  Bridge.setSpeedUart(19200);
 
-  // Bridge.byClient();// Режим по умолчанию
-  Bridge.byServer();
+  // Bridge.byClient(); // Режим по умолчанию
+  // Bridge.byServer();
 
   // Bridge.byTcp(); // Режим по умолчанию
-  Bridge.byRtuOverTcp();
+  // Bridge.byRtuOverTcp();
   // Bridge.byKasCadaCloud(); // Переключение режимов клиент/сервер не действует
 
-  Bridge.setTCPPort(502);
-  Bridge.setTCPRemoteIp(IPAddress(192, 168, 1, 1));
-  Bridge.setKaScadaCloudIp(94, 250, 249, 225);
-  Bridge.setKaScadaCloudPort(25000);
-  Bridge.setKaScadaCloudDevceId("DKK6T9TPE4");
+  Bridge.setTCPPort(505);
+  Bridge.setTCPRemoteHost("flprog.info");
+
+  // Bridge.setTCPRemoteIp(IPAddress(213, 108, 173, 154));
+  // Bridge.setTCPRemoteIp(IPAddress(192, 168, 1, 1));
+  // Bridge.setKaScadaCloudIp(94, 250, 249, 225);
+  // Bridge.setKaScadaCloudPort(25000);
+  // Bridge.setKaScadaCloudDevceId("DKK6T9TPE4");
+  // Bridge.setKaScadaCloudHost("kascada-cloud.fvds.ru");
 
   Serial.begin(115200);
   while (!Serial)

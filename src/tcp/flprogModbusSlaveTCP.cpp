@@ -293,11 +293,27 @@ void ModbusSlaveTCP::setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond
 
 void ModbusSlaveTCP::setKaScadaCloudIp(IPAddress ip)
 {
+    _cloudAdressAsHost = false;
     if (_cloudIp == ip)
     {
         return;
     }
     _cloudIp == ip;
+    _isInit = false;
+}
+
+void ModbusSlaveTCP::setKaScadaCloudHost(String host)
+{
+    if (host.length() == 0)
+    {
+        return;
+    }
+    _cloudAdressAsHost = true;
+    if (host.equals(String(_cloudHost)))
+    {
+        return;
+    }
+    host.toCharArray(_cloudHost, 50);
     _isInit = false;
 }
 
@@ -330,7 +346,16 @@ void ModbusSlaveTCP::connect()
         _status = FLPROG_MODBUS_READY;
         return;
     }
-    uint8_t result = _tcpClient.connect(_cloudIp, _cloudPort);
+    uint8_t result;
+    if (_cloudAdressAsHost)
+    {
+        result = _tcpClient.connect(_cloudHost, _cloudPort);
+    }
+    else
+    {
+        result = _tcpClient.connect(_cloudIp, _cloudPort);
+    }
+
     if (result == FLPROG_WITE)
     {
         _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
