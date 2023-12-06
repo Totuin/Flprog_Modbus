@@ -7,7 +7,15 @@ class ModbusBridge
 public:
     ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse);
     void pool();
-    void setRTUDevice(uint8_t device) { _uart = device; };
+
+    void setUart(uint8_t portNumber) { _uart = portNumber; };
+    void setSpeedUart(uint32_t speed) { flprog::setSpeedUart(speed, _uart); };
+    void setDataBitUart(uint8_t value) { flprog::setDataBitUart(value, _uart); };
+    void setStopBitUart(uint8_t value) { flprog::setStopBitUart(value, _uart); };
+    void setParityUart(uint8_t value) { flprog::setParityUart(value, _uart); };
+    void setPinRxUart(uint8_t pin) { flprog::setPinRxUart(pin, _uart); };
+    void setPinTxUart(uint8_t pin) { flprog::setPinTxUart(pin, _uart); };
+
     void setTCPPort(int _port);
     void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
     void setTCPRemoteIp(IPAddress newIp);
@@ -63,7 +71,7 @@ private:
     bool _isServer = false;
     int _pinPeDe = -1;
     uint8_t _bufferSize = 0;
-    uint8_t _buffer[200];
+    uint8_t _buffer[FLPROG_MODBUS_BUFER_SIZE];
     uint8_t _lastRec = 0;
     unsigned long _startT35;
     unsigned long _startSendTime;

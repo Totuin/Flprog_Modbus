@@ -222,6 +222,7 @@ void ModbusBridge::rtuPool()
         }
     }
     uint8_t avalibleBytes = flprog::availableUart(_uart);
+    if (avalibleBytes == 0)
     {
         return;
     }
@@ -249,8 +250,15 @@ void ModbusBridge::getRTURxBuffer()
     _bufferSize = 0;
     while (flprog::availableUart(_uart))
     {
-        _buffer[_bufferSize] = flprog::readUart(_uart);
-        _bufferSize++;
+        if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+        {
+            _buffer[_bufferSize] = flprog::readUart(_uart);
+            _bufferSize++;
+        }
+        else
+        {
+            flprog::readUart(_uart);
+        }
     }
 }
 
@@ -340,8 +348,15 @@ void ModbusBridge::tspModeAsServerTcpPool()
         }
         else
         {
-            _buffer[_bufferSize] = _server.read();
-            _bufferSize++;
+            if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+            {
+                _buffer[_bufferSize] = _server.read();
+                _bufferSize++;
+            }
+            else
+            {
+                _server.read();
+            }
         }
     }
 }
@@ -359,8 +374,15 @@ void ModbusBridge::rtuOverTspModeAsServerTcpPool()
     }
     while (_server.available())
     {
-        _buffer[_bufferSize] = _server.read();
-        _bufferSize++;
+        if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+        {
+            _buffer[_bufferSize] = _server.read();
+            _bufferSize++;
+        }
+        else
+        {
+            _server.read();
+        }
     }
 }
 
@@ -384,8 +406,16 @@ void ModbusBridge::tspModeAsClientTcpPool()
         }
         else
         {
-            _buffer[_bufferSize] = _tcpClient.read();
-            _bufferSize++;
+            if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+            {
+
+                _buffer[_bufferSize] = _tcpClient.read();
+                _bufferSize++;
+            }
+            else
+            {
+                _tcpClient.read();
+            }
         }
     }
 }
@@ -402,8 +432,15 @@ void ModbusBridge::rtuOverTspModeAsClientTcpPool()
     }
     while (_tcpClient.available())
     {
-        _buffer[_bufferSize] = _tcpClient.read();
-        _bufferSize++;
+        if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+        {
+            _buffer[_bufferSize] = _tcpClient.read();
+            _bufferSize++;
+        }
+        else
+        {
+            _tcpClient.read();
+        }
     }
 }
 

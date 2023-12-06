@@ -12,7 +12,7 @@ protected:
     uint8_t _lastError = 0;
     uint8_t _status = FLPROG_MODBUS_READY;
     uint8_t _bufferSize = 0;
-    uint8_t _buffer[200];
+    uint8_t _buffer[FLPROG_MODBUS_BUFER_SIZE];
     unsigned long _startSendTime;
     unsigned long _timeOfSend;
     virtual void sendTxBuffer() = 0;

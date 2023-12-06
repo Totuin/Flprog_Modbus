@@ -5,7 +5,13 @@ class ModbusRTU : public Modbus
 {
 public:
     void setUart(uint8_t uartPort) { _uartPortNumber = uartPort; };
-    
+    void setSpeedUart(uint32_t speed) { flprog::setSpeedUart(speed, _uartPortNumber); };
+    void setDataBitUart(uint8_t value) { flprog::setDataBitUart(value, _uartPortNumber); };
+    void setStopBitUart(uint8_t value) { flprog::setStopBitUart(value, _uartPortNumber); };
+    void setParityUart(uint8_t value) { flprog::setParityUart(value, _uartPortNumber); };
+    void setPinRxUart(uint8_t pin) { flprog::setPinRxUart(pin, _uartPortNumber); };
+    void setPinTxUart(uint8_t pin) { flprog::setPinTxUart(pin, _uartPortNumber); };
+
 protected:
     void onPeDePin();
     void offPeDePin();

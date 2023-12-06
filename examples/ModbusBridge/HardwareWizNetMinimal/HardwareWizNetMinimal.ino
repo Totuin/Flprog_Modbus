@@ -33,20 +33,8 @@ FLProgWiznetInterface WiznetInterface;
   -----------------------------------------------------------------------------------------
 */
 
-ModbusBridge Bridge(1, &WiznetInterface);
+ModbusBridge Bridge(0, &WiznetInterface);
 
-/*
-  -----------------------------------------------------------------------------------------
-          Определение рабочих параметров и функций
-  -----------------------------------------------------------------------------------------
-*/
-uint32_t blinkStartTime = 0;
-
-uint8_t ethernetStatus = 255;
-uint8_t ethernetError = 255;
-
-bool isNeedSendConnectMessage = true;
-bool isNeedSendDisconnectMessage = true;
 
 //=================================================================================================
 void setup()
@@ -66,7 +54,7 @@ void setup()
      -----------------------------------------------------------------------------------------
   */
   
-  Bridge.setSpeedUart(9600);
+  Bridge.setSpeedUart(19200);
 
 
   // Bridge.byClient();// Режим по умолчанию
@@ -82,18 +70,6 @@ void setup()
   Bridge.setKaScadaCloudPort(25000);
   Bridge.setKaScadaCloudDevceId("DKK6T9TPE4");
 
-  Serial.begin(115200);
-  while (!Serial)
-  {
-  }
-
-  flprog::printConsole(" Тест Modbus Bridge - WizNet ");
-
-  Serial.print("CS - ");
-  Serial.println(WiznetInterface.pinCs());
-  Serial.print("SPI BUS - ");
-  Serial.println(WiznetInterface.spiBus());
-  pinMode(LED_BUILTIN, OUTPUT);
 }
 
 //=================================================================================================
@@ -101,80 +77,6 @@ void loop()
 {
   WiznetInterface.pool();
   Bridge.pool();
-  blinkLed();
-  printStatusMessages();
 }
 //=================================================================================================
 
-void blinkLed()
-{
-  if (flprog::isTimer(blinkStartTime, 50))
-  {
-    blinkStartTime = millis();
-    digitalWrite(LED_BUILTIN, !(digitalRead(LED_BUILTIN)));
-  }
-}
-void printStatusMessages()
-{
-  if (WiznetInterface.getStatus() != ethernetStatus)
-  {
-    ethernetStatus = WiznetInterface.getStatus();
-    Serial.println();
-    Serial.print("Статус интерфейса - ");
-    Serial.println(flprog::flprogStatusCodeName(ethernetStatus));
-  }
-  if (WiznetInterface.getError() != ethernetError)
-  {
-    ethernetError = WiznetInterface.getError();
-    if (ethernetError != FLPROG_NOT_ERROR)
-    {
-      Serial.println();
-      Serial.print("Ошибка интерфейса - ");
-      Serial.println(flprog::flprogErrorCodeName(ethernetError));
-    }
-  }
-  printConnectMessages();
-  printDisconnectMessages();
-}
-
-void printConnectMessages()
-{
-  if (!WiznetInterface.isReady())
-  {
-    return;
-  }
-  if (!isNeedSendConnectMessage)
-  {
-    return;
-  }
-  Serial.println("Ethernet подключён!");
-  Serial.print("Ip - ");
-  Serial.println(WiznetInterface.localIP());
-  Serial.print("DNS - ");
-  Serial.println(WiznetInterface.dns());
-  Serial.print("Subnet - ");
-  Serial.println(WiznetInterface.subnet());
-  Serial.print("Gateway - ");
-  Serial.println(WiznetInterface.gateway());
-  isNeedSendConnectMessage = false;
-  isNeedSendDisconnectMessage = true;
-}
-
-void printDisconnectMessages()
-{
-  if (WiznetInterface.isReady())
-  {
-    return;
-  }
-  if (isNeedSendConnectMessage)
-  {
-    return;
-  }
-  if (!isNeedSendDisconnectMessage)
-  {
-    return;
-  }
-  Serial.println("Ethernet отключён!");
-  isNeedSendConnectMessage = true;
-  isNeedSendDisconnectMessage = false;
-}

@@ -33,22 +33,22 @@ byte flprogModus::t35TimeForSpeed(int portSpeed)
     switch (speed)
     {
     case FLPROG_SPEED_300:
-        return 75;
+        return 100;
         break;
     case FLPROG_SPEED_600:
         return 75;
         break;
     case FLPROG_SPEED_1200:
-        return 38;
+        return 40;
         break;
     case FLPROG_SPEED_2400:
-        return 19;
+        return 25;
         break;
     case FLPROG_SPEED_4800:
-        return 10;
+        return 15;
         break;
     case FLPROG_SPEED_9600:
-        return 5;
+        return 10;
         break;
     case FLPROG_SPEED_14400:
         return 5;

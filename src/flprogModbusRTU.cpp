@@ -24,7 +24,7 @@ uint8_t ModbusRTU::rxBuffer()
     _bufferSize = 0;
     while (flprog::availableUart(_uartPortNumber))
     {
-        if (_bufferSize < 64)
+        if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
         {
             _buffer[_bufferSize] = flprog::readUart(_uartPortNumber);
         }

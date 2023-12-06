@@ -79,6 +79,7 @@ saveLong	KEYWORD2
 saveUnsignedLong	KEYWORD2
 servers	KEYWORD2
 setData	KEYWORD2
+setDataBitUart	KEYWORD2
 setDataTable	KEYWORD2
 setFloatOrder	KEYWORD2
 setInit	KEYWORD2
@@ -90,10 +91,12 @@ setKaScadaCloudPort	KEYWORD2
 setLastError	KEYWORD2
 setLongOrder	KEYWORD2
 setMode	KEYWORD2
+setParityUart	KEYWORD2
 setPinPeDe	KEYWORD2
+setPinRxUart	KEYWORD2
+setPinTxUart	KEYWORD2
 setPollingPeriod	KEYWORD2
 setPort	KEYWORD2
-setRTUDevice	KEYWORD2
 setServerIpAdress	KEYWORD2
 setServerPort	KEYWORD2
 setServerSlavesSize	KEYWORD2
@@ -104,6 +107,8 @@ setSlaveMode	KEYWORD2
 setSlaves	KEYWORD2
 setSlavesSize	KEYWORD2
 setSlavesToServer	KEYWORD2
+setSpeedUart	KEYWORD2
+setStopBitUart	KEYWORD2
 setTCPPort	KEYWORD2
 setTCPRemoteIp	KEYWORD2
 setTcpPort	KEYWORD2

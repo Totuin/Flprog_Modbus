@@ -1,7 +1,5 @@
 // Подключаем необходимую библиотеку
 
-
-
 #include "flprogModbusRTU.h"
 
 // FLProgUart RtuDevice(1);
@@ -19,8 +17,10 @@ int lastError;
 
 void setup()
 {
+  
 
   // SlaveRTU1.setUart(&RtuDevice);
+   SlaveRTU1.setSpeedUart(FLPROG_SPEED_9600);
 
   /*
       Задаем последовательность байтов для хранения различных типов данных
