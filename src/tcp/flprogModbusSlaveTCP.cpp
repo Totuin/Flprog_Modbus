@@ -313,7 +313,7 @@ void ModbusSlaveTCP::setKaScadaCloudHost(String host)
     {
         return;
     }
-    host.toCharArray(_cloudHost, 50);
+    host.toCharArray(_cloudHost, FLPROG_HOST_NAME_LENGTH);
     _isInit = false;
 }
 

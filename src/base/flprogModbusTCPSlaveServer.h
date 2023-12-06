@@ -9,14 +9,19 @@ public:
     void setSlavesSize(uint8_t size);
 
     void setPort(int16_t serverPort) { _port = serverPort; };
-    void setIpAdress(IPAddress ip) { serverIp = ip; };
+    void setIpAdress(IPAddress ip);
+    void setHost(String host);
     void setSlaveAddress(uint8_t slaveIndex, uint16_t addr);
 
     void setMode(uint8_t mode);
     uint8_t mode() { return _mode; };
 
+    IPAddress getIp() { return _serverIp; };
+    char *getHost() { return _serverHost; };
+    bool serverAsHost() { return _serverAsHost; };
+
     bool hasSlave(uint8_t slaveIndex);
-    IPAddress getIp() { return serverIp; };
+
     ModbusSlaveInMaster *slaveOnIndex(uint8_t slaveIndex);
     ModbusSlaveInMaster *slave(uint8_t slaveAddr, bool isIndex = false);
 
@@ -61,7 +66,9 @@ public:
 
 protected:
     int _port = 502;
-    IPAddress serverIp;
+    IPAddress _serverIp;
+    char _serverHost[FLPROG_HOST_NAME_LENGTH] = "";
+    bool _serverAsHost = false;
     uint8_t slavesSize = 5;
     ModbusSlaveInMaster *slaves = 0;
     uint8_t _mode = FLPROG_TCP_MODBUS;

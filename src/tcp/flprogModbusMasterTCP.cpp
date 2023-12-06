@@ -26,7 +26,7 @@ ModbusTCPSlaveServer *ModbusMasterTCP::server(uint8_t serverIndex)
     return 0;
 }
 
-uint8_t ModbusMasterTCP::slaveMode(uint8_t serverIndex)
+uint8_t ModbusMasterTCP::serverMode(uint8_t serverIndex)
 {
     if (hasServer(serverIndex))
     {
@@ -51,7 +51,7 @@ void ModbusMasterTCP::setServerPort(uint8_t serverIndex, int16_t port)
     }
 }
 
-void ModbusMasterTCP::setSlaveMode(uint8_t serverIndex, uint8_t mode)
+void ModbusMasterTCP::setServerMode(uint8_t serverIndex, uint8_t mode)
 {
 
     if (hasServer(serverIndex))
@@ -65,6 +65,14 @@ void ModbusMasterTCP::setServerIpAdress(uint8_t serverIndex, IPAddress ip)
     if (hasServer(serverIndex))
     {
         server(serverIndex)->setIpAdress(ip);
+    }
+}
+
+void ModbusMasterTCP::setServerHost(uint8_t serverIndex, String host)
+{
+    if (hasServer(serverIndex))
+    {
+        server(serverIndex)->setHost(host);
     }
 }
 
@@ -332,7 +340,15 @@ void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
 
     if (!_tcpClient.connected())
     {
-        uint8_t result = _tcpClient.connect(_tempCurrentServer->getIp(), _tempCurrentServer->getPort());
+        uint8_t result;
+        if (_tempCurrentServer->serverAsHost())
+        {
+            result = _tcpClient.connect(_tempCurrentServer->getHost(), _tempCurrentServer->getPort());
+        }
+        else
+        {
+            result = _tcpClient.connect(_tempCurrentServer->getIp(), _tempCurrentServer->getPort());
+        }
         if (result == FLPROG_WITE)
         {
             _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;

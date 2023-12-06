@@ -11,12 +11,13 @@ public:
     void setServerSlavesSize(uint8_t serverIndex, uint8_t size);
     void setServerPort(uint8_t serverIndex, int16_t port);
     void setServerIpAdress(uint8_t serverIndex, IPAddress ip);
+    void setServerHost(uint8_t serverIndex, String host);
     void setSlaveAddress(uint8_t serverIndex, uint8_t slaveIndex, uint16_t addr);
 
-    void setSlaveMode(uint8_t serverIndex, uint8_t mode);
-    void setSlaveAsTcp(uint8_t serverIndex) { setSlaveMode(serverIndex, FLPROG_TCP_MODBUS); };
-    void setSlaveAsRtuOverTcp(uint8_t serverIndex) { setSlaveMode(serverIndex, FLPROG_RTU_OVER_TCP_MODBUS); };
-    uint8_t slaveMode(uint8_t serverIndex);
+    void setServerMode(uint8_t serverIndex, uint8_t mode);
+    void setServerAsTcp(uint8_t serverIndex) { setServerMode(serverIndex, FLPROG_TCP_MODBUS); };
+    void setServerAsRtuOverTcp(uint8_t serverIndex) { setServerMode(serverIndex, FLPROG_RTU_OVER_TCP_MODBUS); };
+    uint8_t serverMode(uint8_t serverIndex);
 
     void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, ModbusTable *table);
     void setDataTable(uint8_t serverIndex, uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses);
@@ -91,7 +92,7 @@ protected:
     int _currentSlaveLastAddress = -1;
     int _serversSize = 1;
     ModbusTCPSlaveServer *_servs = 0;
-    FLProgEthernetClient _tcpClient = 0;
+    FLProgEthernetClient _tcpClient;
     uint8_t _mbapBuffer[6];
     FLProgAbstractTcpInterface *_interface = 0;
 };

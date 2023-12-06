@@ -5,7 +5,6 @@
 class ModbusMasterRTU : public ModbusRTU
 {
 public:
-    ModbusMasterRTU(){};
     ModbusMasterRTU(uint8_t portNumber, uint8_t size);
 
     void pool();

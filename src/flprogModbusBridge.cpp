@@ -59,7 +59,7 @@ void ModbusBridge::setTCPRemoteHost(String host)
     {
         return;
     }
-    host.toCharArray(_remoteServerHost, 50);
+    host.toCharArray(_remoteServerHost, FLPROG_HOST_NAME_LENGTH);
     _isInit = false;
 }
 
@@ -105,7 +105,7 @@ void ModbusBridge::setKaScadaCloudHost(String host)
     {
         return;
     }
-    host.toCharArray(_cloudHost, 50);
+    host.toCharArray(_cloudHost, FLPROG_HOST_NAME_LENGTH);
     _isInit = false;
 }
 

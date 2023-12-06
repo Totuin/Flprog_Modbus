@@ -61,9 +61,9 @@ void setup()
          Настройка интерфейса
     -----------------------------------------------------------------------------------------
   */
-  WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
-  WiznetInterface.localIP(IPAddress(192, 168, 1, 177));
-  WiznetInterface.resetDhcp();
+  WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5C, 0x86);
+  // WiznetInterface.localIP(IPAddress(192, 168, 1, 177));
+  // WiznetInterface.resetDhcp();
 
   /*
      -----------------------------------------------------------------------------------------
@@ -71,14 +71,15 @@ void setup()
      -----------------------------------------------------------------------------------------
   */
 
-  // Master1.setSlaveAsTcp(0) // Значение по умолчанию
-  Master1.setSlaveAsRtuOverTcp(0);
+  // Master1.setServerAsTcp(0) // Значение по умолчанию
+  // Master1.setServerAsRtuOverTcp(0);
 
-  Master1.setServerPort(0, 502);                           // Задаём порт для сервера
-  Master1.setServerIpAdress(0, IPAddress(192, 168, 1, 1)); // Устанавливаем IP адрес сервера
-  Master1.setServerSlavesSize(0, 2);                       // Задаём количество слейвов на сервере
-  Master1.setSlaveAddress(0, 0, 1);                        // Задаём адреса для слейвов
-  Master1.setSlaveAddress(0, 1, 2);                        // Задаём адреса для слейвов
+  Master1.setServerPort(0, 505); // Задаём порт для сервера
+  Master1.setServerHost(0, "flprog.info");
+  // Master1.setServerIpAdress(0, IPAddress(213, 108, 173, 154)); // Устанавливаем IP адрес сервера
+  Master1.setServerSlavesSize(0, 2); // Задаём количество слейвов на сервере
+  Master1.setSlaveAddress(0, 0, 1);  // Задаём адреса для слейвов
+  Master1.setSlaveAddress(0, 1, 2);  // Задаём адреса для слейвов
 
   // задаём таблицы для  слейва с адресом 1 на сервере 0
   Master1.configDataTable(0, 1, FLPROG_HOLDING_REGISTR, 8);

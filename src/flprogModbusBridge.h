@@ -71,7 +71,7 @@ private:
     int _port = 502;
     int _kasCadaCloudPort = 25000;
     IPAddress _kasCadaCloudIP = IPAddress(94, 250, 249, 225);
-    char _cloudHost[50] = "";
+    char _cloudHost[FLPROG_HOST_NAME_LENGTH] = "";
     bool _cloudAdressAsHost = false;
 
     bool _isServer = false;
@@ -83,7 +83,7 @@ private:
     unsigned long _startSendTime;
     int _timeOfSend;
     IPAddress _ip = FLPROG_INADDR_NONE;
-    char _remoteServerHost[50] = "";
+    char _remoteServerHost[FLPROG_HOST_NAME_LENGTH] = "";
     bool _remoteServerAsHost = false;
 
     bool _isInit = false;

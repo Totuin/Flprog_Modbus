@@ -6,6 +6,26 @@ void ModbusTCPSlaveServer::setSlaves(ModbusSlaveInMaster *_table, uint8_t size)
     slavesSize = size;
 }
 
+void ModbusTCPSlaveServer::setIpAdress(IPAddress ip)
+{
+    _serverAsHost = false;
+    _serverIp = ip;
+}
+
+void ModbusTCPSlaveServer::setHost(String host)
+{
+    if (host.length() == 0)
+    {
+        return;
+    }
+    _serverAsHost = true;
+    if (host.equals(String(_serverHost)))
+    {
+        return;
+    }
+    host.toCharArray(_serverHost, FLPROG_HOST_NAME_LENGTH);
+}
+
 void ModbusTCPSlaveServer::setMode(uint8_t mode)
 {
     if (mode > 1)

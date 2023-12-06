@@ -71,7 +71,7 @@ protected:
     int _cloudPort = 25000;
     String _deniceId;
     IPAddress _cloudIp = IPAddress(94, 250, 249, 225);
-    char _cloudHost[50] = "";
+    char _cloudHost[FLPROG_HOST_NAME_LENGTH] = "";
     bool _cloudAdressAsHost = false;
     uint32_t _kaScadaCloudTimeOutStartTime;
 };
