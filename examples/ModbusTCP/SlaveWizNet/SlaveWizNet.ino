@@ -36,7 +36,6 @@ FLProgWiznetInterface WiznetInterface;
 */
 ModbusSlaveTCP Slave1(&WiznetInterface);
 
-
 /*
   -----------------------------------------------------------------------------------------
      Создаем таблицу адресов (необходимо при неупорядоченном порядке адресов регисторов)
@@ -71,8 +70,8 @@ void setup()
     -----------------------------------------------------------------------------------------
   */
   WiznetInterface.mac(0x78, 0xAC, 0xC0, 0x0D, 0x5B, 0x86);
-  //WiznetInterface.localIP(IPAddress(192, 168, 1, 10));
-  // WiznetInterface.resetDhcp();
+  // WiznetInterface.localIP(IPAddress(192, 168, 1, 10));
+  //  WiznetInterface.resetDhcp();
 
   /*
     -----------------------------------------------------------------------------------------
@@ -82,7 +81,7 @@ void setup()
 
   Slave1.setSlaveAddress(1);
   // Slave1.byTcp(); // Режим по умолчанию
-  //Slave1.byRtuOverTcp();
+  // Slave1.byRtuOverTcp();
 
   Slave1.byKasCadaCloud();
   Slave1.setKaScadaCloudDevceId("DKK6T9TPE4");
