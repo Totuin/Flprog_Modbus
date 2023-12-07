@@ -66,7 +66,7 @@ void setup()
      -----------------------------------------------------------------------------------------
   */
 
-  Bridge.setSpeedUart(19200);
+  Bridge.setSpeedUart(115200);
 
   // Bridge.byClient(); // Режим по умолчанию
   // Bridge.byServer();

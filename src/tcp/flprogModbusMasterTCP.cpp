@@ -360,10 +360,10 @@ void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
             _status = FLPROG_MODBUS_READY;
             return;
         }
+        return;
     }
     if (_telegrammServer->mode() == FLPROG_TCP_MODBUS)
     {
-
         _tcpClient.write(_mbapBuffer, 6);
     }
     _tcpClient.write(_buffer, _bufferSize);
@@ -411,6 +411,7 @@ void ModbusMasterTCP::checkAnswer()
 {
     if (flprog::isTimer(_startSendTime, (_telegrammSlave->getTimeOutTime())))
     {
+        _tcpClient.stop();
         _telegrammSlave->setLastError(244);
         _status = FLPROG_MODBUS_READY;
         return;
