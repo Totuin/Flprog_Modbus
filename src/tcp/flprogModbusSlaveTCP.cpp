@@ -38,6 +38,7 @@ void ModbusSlaveTCP::begin()
     if (_mode != FLPROG_KASCADA_CLOUD_MODBUS)
     {
         _server.setPort(_port);
+        _server.begin();
     }
     _kaScadaCloudTimeOutStartTime = flprog::timeBack(5000);
     _isInit = true;
@@ -45,17 +46,20 @@ void ModbusSlaveTCP::begin()
 
 void ModbusSlaveTCP::pool()
 {
+
     if (_interface == 0)
     {
         return;
     }
     if (!_interface->isReady())
     {
+        _isInit = false;
         return;
     }
     if (!_isInit)
     {
         begin();
+        return;
     }
     if (_mode == FLPROG_KASCADA_CLOUD_MODBUS)
     {
@@ -98,7 +102,6 @@ void ModbusSlaveTCP::pool()
         executeSlaveReqest(mainData(), _slaveAddres);
         return;
     }
-
     if (_status == FLPROG_MODBUS_WAITING_SENDING)
     {
         if ((flprog::isTimer(_startSendTime, _timeOfSend)))
