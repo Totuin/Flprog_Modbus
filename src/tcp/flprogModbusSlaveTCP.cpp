@@ -359,7 +359,7 @@ void ModbusSlaveTCP::connect()
         result = _tcpClient.connect(_cloudIp, _cloudPort);
     }
 
-    if (result == FLPROG_WITE)
+    if (result == FLPROG_WAIT)
     {
         _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
         return;

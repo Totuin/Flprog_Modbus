@@ -349,7 +349,7 @@ void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
         {
             result = _tcpClient.connect(_tempCurrentServer->getIp(), _tempCurrentServer->getPort());
         }
-        if (result == FLPROG_WITE)
+        if (result == FLPROG_WAIT)
         {
             _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
             return;

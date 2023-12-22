@@ -178,7 +178,7 @@ void ModbusBridge::connect()
             result = _tcpClient.connect(_ip, _port);
         }
     }
-    if (result == FLPROG_WITE)
+    if (result == FLPROG_WAIT)
     {
         _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
         return;
