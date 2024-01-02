@@ -8,7 +8,7 @@
             "intelliSenseMode": "windows-msvc-x64",
             "includePath": [
                 "${workspaceFolder}/**",
-                "D:/FLProg/ideV8**"
+                "D:/FLProg/ideV8/**"
             ],
             "forcedInclude": [],
             "cStandard": "c17",
