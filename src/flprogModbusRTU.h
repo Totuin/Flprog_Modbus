@@ -11,6 +11,7 @@ public:
     void setParityUart(uint8_t value) { flprog::setParityUart(value, _uartPortNumber); };
     void setPinRxUart(uint8_t pin) { flprog::setPinRxUart(pin, _uartPortNumber); };
     void setPinTxUart(uint8_t pin) { flprog::setPinTxUart(pin, _uartPortNumber); };
+    void setPinPeDe(uint8_t pin) { _pinPeDe = pin; };
 
 protected:
     void onPeDePin();
