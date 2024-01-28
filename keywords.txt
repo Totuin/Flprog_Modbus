@@ -106,6 +106,7 @@ setServerAsRtuOverTcp	KEYWORD2
 setServerAsTcp	KEYWORD2
 setServerHost	KEYWORD2
 setServerIpAdress	KEYWORD2
+setServerIpAdressAsNumber	KEYWORD2
 setServerMode	KEYWORD2
 setServerPort	KEYWORD2
 setServerSlavesSize	KEYWORD2

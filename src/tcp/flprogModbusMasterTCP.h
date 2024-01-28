@@ -11,6 +11,7 @@ public:
     void setServerSlavesSize(uint8_t serverIndex, uint8_t size);
     void setServerPort(uint8_t serverIndex, int16_t port);
     void setServerIpAdress(uint8_t serverIndex, IPAddress ip);
+    void setServerIpAdressAsNumber(uint8_t serverIndex, uint32_t ip) { setServerIpAdress(serverIndex, flprog::numberToIp(ip)); };
     void setServerHost(uint8_t serverIndex, String host);
     void setSlaveAddress(uint8_t serverIndex, uint8_t slaveIndex, uint16_t addr);
 
