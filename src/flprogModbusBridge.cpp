@@ -83,6 +83,18 @@ void ModbusBridge::byClient()
     _isInit = false;
 }
 
+void ModbusBridge::setBridgeMode(uint8_t mode)
+{
+    if (mode > 0)
+    {
+        byServer();
+    }
+    else
+    {
+        byClient();
+    }
+}
+
 void ModbusBridge::setKaScadaCloudIp(IPAddress newIp)
 {
     _cloudAdressAsHost = false;

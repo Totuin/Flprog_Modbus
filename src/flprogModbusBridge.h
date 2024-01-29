@@ -19,11 +19,13 @@ public:
     void setTCPPort(int _port);
     void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
     void setTCPRemoteIp(IPAddress newIp);
+    void setTCPRemoteIpNumber(uint32_t newIp) { setTCPRemoteIp(flprog::numberToIp(newIp)); };
     void setTCPRemoteHost(String host);
 
     void setPinPeDe(uint8_t pin) { _pinPeDe = pin; };
 
     void setKaScadaCloudIp(IPAddress newIp);
+    void setKaScadaCloudIpNumber(uint32_t newIp) { setKaScadaCloudIp(flprog::numberToIp(newIp)); };
     void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
     void setKaScadaCloudPort(int port);
     void setKaScadaCloudDevceId(String id);
@@ -31,6 +33,7 @@ public:
 
     void byServer();
     void byClient();
+    void setBridgeMode(uint8_t mode);
 
     void setMode(uint8_t mode);
     void byTcp() { setMode(FLPROG_TCP_MODBUS); };

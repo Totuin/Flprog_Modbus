@@ -81,6 +81,7 @@ saveUnsignedLong	KEYWORD2
 serverAsHost	KEYWORD2
 serverMode	KEYWORD2
 servers	KEYWORD2
+setBridgeMode	KEYWORD2
 setData	KEYWORD2
 setDataBitUart	KEYWORD2
 setDataTable	KEYWORD2
@@ -92,6 +93,8 @@ setIpAdress	KEYWORD2
 setKaScadaCloudDevceId	KEYWORD2
 setKaScadaCloudHost	KEYWORD2
 setKaScadaCloudIp	KEYWORD2
+setKaScadaCloudIpNmber	KEYWORD2
+setKaScadaCloudIpNumber	KEYWORD2
 setKaScadaCloudPort	KEYWORD2
 setLastError	KEYWORD2
 setLongOrder	KEYWORD2
@@ -119,6 +122,7 @@ setStopBitUart	KEYWORD2
 setTCPPort	KEYWORD2
 setTCPRemoteHost	KEYWORD2
 setTCPRemoteIp	KEYWORD2
+setTCPRemoteIpNumber	KEYWORD2
 setTcpPort	KEYWORD2
 setTimeOutTime	KEYWORD2
 setUart	KEYWORD2

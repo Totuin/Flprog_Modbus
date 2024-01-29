@@ -14,6 +14,7 @@ public:
     void setTcpPort(int _port);
     void setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond_octet, uint8_t newThird_octet, uint8_t newFourth_octet);
     void setKaScadaCloudIp(IPAddress ip);
+    void setKaScadaCloudIpNmber(uint32_t ip) { setKaScadaCloudIp(flprog::numberToIp(ip)); };
     void setKaScadaCloudHost(String host);
     void setKaScadaCloudPort(int newPort);
     void setKaScadaCloudDevceId(String id);
