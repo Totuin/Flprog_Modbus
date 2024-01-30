@@ -40,7 +40,6 @@ public:
     void setFloatOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
     void setUnsignedlongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
     void setIntOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
-
     uint8_t getLastError(uint8_t slaveAddres, bool isIndex = false);
     void status(uint8_t slaveAddres, bool status, bool isIndex = false);
 
