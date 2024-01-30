@@ -83,9 +83,9 @@ void ModbusBridge::byClient()
     _isInit = false;
 }
 
-void ModbusBridge::setBridgeMode(uint8_t mode)
+void ModbusBridge::setBridgeMode(bool mode)
 {
-    if (mode > 0)
+    if (mode)
     {
         byServer();
     }

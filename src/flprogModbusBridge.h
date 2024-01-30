@@ -33,7 +33,7 @@ public:
 
     void byServer();
     void byClient();
-    void setBridgeMode(uint8_t mode);
+    void setBridgeMode(bool mode);
 
     void setMode(uint8_t mode);
     void byTcp() { setMode(FLPROG_TCP_MODBUS); };
