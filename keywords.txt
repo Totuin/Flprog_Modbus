@@ -22,6 +22,7 @@ flprogModus	KEYWORD1
 #######################################
 adressForIndex	KEYWORD2
 begin	KEYWORD2
+bridgeMode	KEYWORD2
 byClient	KEYWORD2
 byKasCadaCloud	KEYWORD2
 byRtuOverTcp	KEYWORD2
@@ -36,12 +37,14 @@ firstTabe	KEYWORD2
 firstWriteAddress	KEYWORD2
 firstWriteSlave	KEYWORD2
 firstWriteTable	KEYWORD2
+floatOrder	KEYWORD2
 getHost	KEYWORD2
 getIp	KEYWORD2
 getLastError	KEYWORD2
 getMaxAdress	KEYWORD2
 getMinAdress	KEYWORD2
 getPort	KEYWORD2
+getSlaveAddress	KEYWORD2
 getTimeOutTime	KEYWORD2
 hasAdress	KEYWORD2
 hasSlave	KEYWORD2
@@ -50,17 +53,25 @@ hasTable	KEYWORD2
 hasWriteRegisters	KEYWORD2
 indexForAddres	KEYWORD2
 init	KEYWORD2
+intOrder	KEYWORD2
+ipAdress	KEYWORD2
 isInit	KEYWORD2
 isReady	KEYWORD2
 isSupportFunction	KEYWORD2
+kaScadaCloudDevceId	KEYWORD2
+kaScadaCloudIp	KEYWORD2
+kaScadaCloudPort	KEYWORD2
 lastReqest	KEYWORD2
 lastTable	KEYWORD2
+longOrder	KEYWORD2
 mainData	KEYWORD2
 modbusCalcCRC	KEYWORD2
 mode	KEYWORD2
 nextSlave	KEYWORD2
 nextTable	KEYWORD2
+pollingPeriod	KEYWORD2
 pool	KEYWORD2
+port	KEYWORD2
 readBool	KEYWORD2
 readBoolRegister	KEYWORD2
 readByte	KEYWORD2
@@ -79,7 +90,9 @@ saveInteger	KEYWORD2
 saveLong	KEYWORD2
 saveUnsignedLong	KEYWORD2
 serverAsHost	KEYWORD2
+serverIpAdress	KEYWORD2
 serverMode	KEYWORD2
+serverPort	KEYWORD2
 servers	KEYWORD2
 setBridgeMode	KEYWORD2
 setData	KEYWORD2
@@ -128,13 +141,17 @@ setTimeOutTime	KEYWORD2
 setUart	KEYWORD2
 setUnsignedlongOrder	KEYWORD2
 slave	KEYWORD2
-slaveAddres	KEYWORD2
+slaveAddress	KEYWORD2
 slaveOnIndex	KEYWORD2
+slaveStatus	KEYWORD2
 status	KEYWORD2
 t35TimeForSpeed	KEYWORD2
 tableForType	KEYWORD2
 tableType	KEYWORD2
+tcpPort	KEYWORD2
+tcpRemoteIp	KEYWORD2
 timeForSendBytes	KEYWORD2
+unsignedlongOrder	KEYWORD2
 writeRegister	KEYWORD2
 writeRegsSize	KEYWORD2
 
