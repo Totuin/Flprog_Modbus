@@ -22,7 +22,7 @@ ModbusSlaveInMaster *ModbusMasterRTU::slave(uint8_t adr)
 {
     for (uint8_t i = 0; i < slavesSize; i++)
     {
-        if (slaves[i].slaveAddres() == adr)
+        if (slaves[i].slaveAddress() == adr)
         {
             return &slaves[i];
         }
@@ -135,7 +135,7 @@ ModbusSlaveInMaster *ModbusMasterRTU::slaveForAddress(int16_t adress)
 {
     for (int16_t i = 0; i < slavesSize; i++)
     {
-        if (slaves[i].slaveAddres() == adress)
+        if (slaves[i].slaveAddress() == adress)
         {
             return &slaves[i];
         }
@@ -234,7 +234,7 @@ bool ModbusMasterRTU::createWriteTelegramm()
 
 void ModbusMasterRTU::sendQuery()
 {
-    _buffer[0] = _telegrammSlave->slaveAddres();
+    _buffer[0] = _telegrammSlave->slaveAddress();
     _buffer[1] = _telegrammFunction;
     create_PDU(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
 }

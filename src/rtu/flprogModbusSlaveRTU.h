@@ -9,6 +9,7 @@ public:
     void begin();
     void pool();
     void setSlaveAddress(uint8_t adr) { _slaveAddres = adr; };
+    uint8_t slaveAddress() { return _slaveAddres; };
     void setData(ModbusMainData *data) { _data = data; };
 
     void setDataTable(ModbusTable *table) { mainData()->setDataTable(table); };
@@ -33,6 +34,11 @@ public:
     void setFloatOrder(uint8_t order) { mainData()->setFloatOrder(order); };
     void setUnsignedlongOrder(uint8_t order) { mainData()->setUnsignedlongOrder(order); };
     void setIntOrder(uint8_t order) { mainData()->setIntOrder(order); };
+
+    uint8_t intOrder() { return mainData()->intOrder(); };
+    uint8_t longOrder() { return mainData()->longOrder(); };
+    uint8_t floatOrder() { return mainData()->floatOrder(); };
+    uint8_t unsignedlongOrder() { return mainData()->unsignedlongOrder(); };
 
     ModbusMainData *mainData();
 

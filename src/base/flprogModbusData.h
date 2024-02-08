@@ -59,6 +59,12 @@ public:
     void setLongOrder(uint8_t order);
     void setFloatOrder(uint8_t order);
     void setUnsignedlongOrder(uint8_t order);
+
+    uint8_t intOrder() { return _intOrder; };
+    uint8_t longOrder() { return _longOrder; };
+    uint8_t floatOrder() { return _floatOrder; };
+    uint8_t unsignedlongOrder() { return _unsignedlongOrder; };
+
     int16_t indexForAddres(int16_t addr, uint8_t table);
     bool checkModbusAddres(int16_t addr, uint8_t table);
     bool checkModbusRange(int16_t startAddr, int16_t addrNumber, uint8_t table);
@@ -104,6 +110,7 @@ public:
 
     void status(bool status);
     bool status() { return _isActive; };
+    bool slaveStatus() { return _isActive; };
 
     void lastReqest(uint32_t time) { _lastReqestTime = time; };
     uint32_t lastReqest() { return _lastReqestTime; };
@@ -113,6 +120,7 @@ public:
     void resetInit() { _initFlag = false; };
 
     void setPollingPeriod(uint32_t period);
+    uint32_t pollingPeriod() { return _pollingPeriod; };
     void setTimeOutTime(uint32_t time);
     uint32_t getTimeOutTime();
     bool hasWriteRegisters();
@@ -124,7 +132,8 @@ public:
     ModbusTable *nextTable(ModbusTable *table);
     bool isReady();
     void setSlaveAddress(uint8_t adr);
-    uint8_t slaveAddres() { return _slaveAddres; };
+    uint8_t slaveAddress() { return _slaveAddres; };
+    uint8_t getSlaveAddress() { return _slaveAddres; };
 
 protected:
     bool _isActive = true;

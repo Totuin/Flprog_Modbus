@@ -51,6 +51,15 @@ void ModbusMasterTCP::setServerPort(uint8_t serverIndex, int16_t port)
     }
 }
 
+int16_t ModbusMasterTCP::serverPort(uint8_t serverIndex)
+{
+    if (hasServer(serverIndex))
+    {
+        return server(serverIndex)->port();
+    }
+    return 0;
+}
+
 void ModbusMasterTCP::setServerMode(uint8_t serverIndex, uint8_t mode)
 {
 
@@ -68,6 +77,15 @@ void ModbusMasterTCP::setServerIpAdress(uint8_t serverIndex, IPAddress ip)
     }
 }
 
+IPAddress ModbusMasterTCP::serverIpAdress(uint8_t serverIndex)
+{
+    if (hasServer(serverIndex))
+    {
+        return server(serverIndex)->ipAdress();
+    }
+    return FLPROG_INADDR_NONE;
+}
+
 void ModbusMasterTCP::setServerHost(uint8_t serverIndex, String host)
 {
     if (hasServer(serverIndex))
@@ -82,6 +100,15 @@ void ModbusMasterTCP::setSlaveAddress(uint8_t serverIndex, uint8_t slaveIndex, u
     {
         server(serverIndex)->setSlaveAddress(slaveIndex, addr);
     }
+}
+
+uint8_t ModbusMasterTCP::getSlaveAddress(uint8_t serverIndex, uint8_t slaveIndex)
+{
+    if (hasServer(serverIndex))
+    {
+        return server(serverIndex)->getSlaveAddress(slaveIndex);
+    }
+    return 0;
 }
 
 void ModbusMasterTCP::setDataTable(uint8_t serverIndex, uint8_t slaveAddres, ModbusTable *table)
@@ -134,6 +161,16 @@ void ModbusMasterTCP::setPollingPeriod(uint8_t serverIndex, uint8_t slaveAddres,
     serv->setPollingPeriod(slaveAddres, period, isIndex);
 }
 
+uint32_t ModbusMasterTCP::pollingPeriod(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
+{
+    ModbusTCPSlaveServer *serv = server(serverIndex);
+    if (serv == 0)
+    {
+        return 0;
+    }
+    return serv->pollingPeriod(slaveAddres, isIndex);
+}
+
 void ModbusMasterTCP::setTimeOutTime(uint8_t serverIndex, uint8_t slaveAddres, uint32_t time, bool isIndex)
 {
     ModbusTCPSlaveServer *serv = server(serverIndex);
@@ -182,6 +219,46 @@ void ModbusMasterTCP::setIntOrder(uint8_t serverIndex, uint8_t slaveAddres, uint
         return;
     }
     serv->setIntOrder(slaveAddres, order, isIndex);
+}
+
+uint8_t ModbusMasterTCP::intOrder(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
+{
+    ModbusTCPSlaveServer *serv = server(serverIndex);
+    if (serv == 0)
+    {
+        return 0;
+    }
+    return serv->intOrder(slaveAddres, isIndex);
+}
+
+uint8_t ModbusMasterTCP::longOrder(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
+{
+    ModbusTCPSlaveServer *serv = server(serverIndex);
+    if (serv == 0)
+    {
+        return 0;
+    }
+    return serv->longOrder(slaveAddres, isIndex);
+}
+
+uint8_t ModbusMasterTCP::floatOrder(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
+{
+    ModbusTCPSlaveServer *serv = server(serverIndex);
+    if (serv == 0)
+    {
+        return 0;
+    }
+    return serv->floatOrder(slaveAddres, isIndex);
+}
+
+uint8_t ModbusMasterTCP::unsignedlongOrder(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
+{
+    ModbusTCPSlaveServer *serv = server(serverIndex);
+    if (serv == 0)
+    {
+        return 0;
+    }
+    return serv->unsignedlongOrder(slaveAddres, isIndex);
 }
 
 void ModbusMasterTCP::saveLong(uint8_t serverIndex, uint8_t slaveAddres, int32_t value, uint8_t table, int startAddres, bool isIndex)
@@ -321,7 +398,17 @@ void ModbusMasterTCP::status(uint8_t serverIndex, uint8_t slaveAddres, bool stat
     {
         return;
     }
-    return serv->status(slaveAddres, status, isIndex);
+    serv->status(slaveAddres, status, isIndex);
+}
+
+bool ModbusMasterTCP::slaveStatus(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
+{
+    ModbusTCPSlaveServer *serv = server(serverIndex);
+    if (serv == 0)
+    {
+        return false;
+    }
+    return serv->slaveStatus(slaveAddres, isIndex);
 }
 
 void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
@@ -668,7 +755,7 @@ void ModbusMasterTCP::sendQuery()
     _mbapBuffer[1] = lowByte(_telegrammAnswerId);
     _mbapBuffer[2] = 0;
     _mbapBuffer[3] = 0;
-    _buffer[0] = _telegrammSlave->slaveAddres();
+    _buffer[0] = _telegrammSlave->slaveAddress();
     _buffer[1] = _telegrammFunction;
     create_PDU(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
     _startSendTime = millis();

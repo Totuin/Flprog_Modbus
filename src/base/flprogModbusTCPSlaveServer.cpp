@@ -76,7 +76,7 @@ ModbusSlaveInMaster *ModbusTCPSlaveServer::slave(uint8_t slaveAddr, bool isIndex
 
     for (uint8_t i = 0; i < slavesSize; i++)
     {
-        if (slaves[i].slaveAddres() == slaveAddr)
+        if (slaves[i].slaveAddress() == slaveAddr)
         {
             return &slaves[i];
         }
@@ -134,6 +134,16 @@ void ModbusTCPSlaveServer::setSlaveAddress(uint8_t slaveIndex, uint16_t addr)
     sl->setSlaveAddress(addr);
 }
 
+uint8_t ModbusTCPSlaveServer::getSlaveAddress(uint8_t slaveIndex)
+{
+    ModbusSlaveInMaster *sl = slave(slaveIndex, true);
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->getSlaveAddress();
+}
+
 void ModbusTCPSlaveServer::setPollingPeriod(uint8_t slaveAddres, uint32_t period, bool isIndex)
 {
     ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
@@ -142,6 +152,16 @@ void ModbusTCPSlaveServer::setPollingPeriod(uint8_t slaveAddres, uint32_t period
         return;
     }
     sl->setPollingPeriod(period);
+}
+
+uint32_t ModbusTCPSlaveServer::pollingPeriod(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->pollingPeriod();
 }
 
 void ModbusTCPSlaveServer::setTimeOutTime(uint8_t slaveAddres, uint32_t time, bool isIndex)
@@ -192,6 +212,46 @@ void ModbusTCPSlaveServer::setIntOrder(uint8_t slaveAddres, uint8_t order, bool 
         return;
     }
     sl->setIntOrder(order);
+}
+
+uint8_t ModbusTCPSlaveServer::intOrder(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->intOrder();
+}
+
+uint8_t ModbusTCPSlaveServer::longOrder(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->longOrder();
+}
+
+uint8_t ModbusTCPSlaveServer::floatOrder(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->floatOrder();
+}
+
+uint8_t ModbusTCPSlaveServer::unsignedlongOrder(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->unsignedlongOrder();
 }
 
 void ModbusTCPSlaveServer::saveLong(uint8_t slaveAddres, int32_t value, uint8_t table, int startAddres, bool isIndex)
@@ -332,6 +392,16 @@ void ModbusTCPSlaveServer::status(uint8_t slaveAddres, bool status, bool isIndex
         return;
     }
     sl->status(status);
+}
+
+bool ModbusTCPSlaveServer::slaveStatus(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+    if (sl == 0)
+    {
+        return false;
+    }
+    return sl->slaveStatus();
 }
 
 bool ModbusTCPSlaveServer::hasWriteRegisters()

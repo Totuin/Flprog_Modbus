@@ -10,15 +10,19 @@ public:
     virtual void pool();
 
     void setSlaveAddress(uint8_t adr) { _slaveAddres = adr; };
+    uint8_t slaveAddress() { return _slaveAddres; };
 
     void setTcpPort(int _port);
+    int tcpPort() { return _port; };
     void setKaScadaCloudIp(uint8_t newFirst_octet, uint8_t newSecond_octet, uint8_t newThird_octet, uint8_t newFourth_octet);
     void setKaScadaCloudIp(IPAddress ip);
     void setKaScadaCloudIpNmber(uint32_t ip) { setKaScadaCloudIp(flprog::numberToIp(ip)); };
+    IPAddress kaScadaCloudIp() { return _cloudIp; };
     void setKaScadaCloudHost(String host);
     void setKaScadaCloudPort(int newPort);
+    int kaScadaCloudPort() { return _cloudPort; };
     void setKaScadaCloudDevceId(String id);
-
+    String kaScadaCloudDevceId() { return _deniceId; };
     void setData(ModbusMainData *data) { _data = data; };
     void setDataTable(ModbusTable *table) { mainData()->setDataTable(table); };
     void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses) { mainData()->setDataTable(_table, dataSize, _adresses); };
@@ -50,6 +54,11 @@ public:
     void setFloatOrder(uint8_t order) { mainData()->setFloatOrder(order); };
     void setUnsignedlongOrder(uint8_t order) { mainData()->setUnsignedlongOrder(order); };
     void setIntOrder(uint8_t order) { mainData()->setIntOrder(order); };
+
+    uint8_t intOrder() { return mainData()->intOrder(); };
+    uint8_t longOrder() { return mainData()->longOrder(); };
+    uint8_t floatOrder() { return mainData()->floatOrder(); };
+    uint8_t unsignedlongOrder() { return mainData()->unsignedlongOrder(); };
 
 protected:
     virtual uint8_t validateRequest();

@@ -9,9 +9,14 @@ public:
     void setSlavesSize(uint8_t size);
 
     void setPort(int16_t serverPort) { _port = serverPort; };
+    int16_t port() { return _port; };
+
     void setIpAdress(IPAddress ip);
+    IPAddress ipAdress() { return _serverIp; };
+
     void setHost(String host);
     void setSlaveAddress(uint8_t slaveIndex, uint16_t addr);
+    uint8_t getSlaveAddress(uint8_t slaveIndex);
 
     void setMode(uint8_t mode);
     uint8_t mode() { return _mode; };
@@ -32,12 +37,19 @@ public:
     void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr);
 
     void setPollingPeriod(uint8_t slaveAdr, uint32_t period, bool isIndex = false);
+    uint32_t pollingPeriod(uint8_t slaveAddres, bool isIndex);
+
     void setTimeOutTime(uint8_t slaveAdr, uint32_t time, bool isIndex = false);
 
     void setLongOrder(uint8_t slaveAdr, uint8_t order, bool isIndex = false);
     void setFloatOrder(uint8_t slaveAdr, uint8_t order, bool isIndex = false);
     void setUnsignedlongOrder(uint8_t slaveAdr, uint8_t order, bool isIndex = false);
     void setIntOrder(uint8_t slaveAdr, uint8_t order, bool isIndex = false);
+
+    uint8_t longOrder(uint8_t slaveAdr, bool isIndex = false);
+    uint8_t floatOrder(uint8_t slaveAdr, bool isIndex = false);
+    uint8_t unsignedlongOrder(uint8_t slaveAdr, bool isIndex = false);
+    uint8_t intOrder(uint8_t slaveAdr, bool isIndex = false);
 
     void saveLong(uint8_t slaveAdr, int32_t value, uint8_t table, int startAddres, bool isIndex = false);
     void saveUnsignedLong(uint8_t slaveAdr, uint32_t value, uint8_t table, int startAddres, bool isIndex = false);
@@ -55,6 +67,7 @@ public:
 
     uint8_t getLastError(uint8_t slaveAdr, bool isIndex = false);
     void status(uint8_t slaveAdr, bool status, bool isIndex = false);
+    bool slaveStatus(uint8_t slaveAddres, bool isIndex);
 
     ModbusSlaveInMaster *firstWriteSlave();
     ModbusSlaveInMaster *firstReadySlave();
