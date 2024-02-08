@@ -16,9 +16,13 @@ public:
     void setPinRxUart(uint8_t pin) { flprog::setPinRxUart(pin, _uart); };
     void setPinTxUart(uint8_t pin) { flprog::setPinTxUart(pin, _uart); };
 
-    void setTCPPort(int _port);
-    void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
+    void setTCPPort(int port);
+    int tcpPort() { return _port; };
+    
     void setTCPRemoteIp(IPAddress newIp);
+    void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
+    IPAddress tcpRemoteIp() { return _ip; };
+
     void setTCPRemoteIpNumber(uint32_t newIp) { setTCPRemoteIp(flprog::numberToIp(newIp)); };
     void setTCPRemoteHost(String host);
 
@@ -27,13 +31,20 @@ public:
     void setKaScadaCloudIp(IPAddress newIp);
     void setKaScadaCloudIpNumber(uint32_t newIp) { setKaScadaCloudIp(flprog::numberToIp(newIp)); };
     void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
+    IPAddress kaScadaCloudIp() { return _kasCadaCloudIP; };
+
     void setKaScadaCloudPort(int port);
+    int kaScadaCloudPort() { return _kasCadaCloudPort; };
+
     void setKaScadaCloudDevceId(String id);
+    String kaScadaCloudDevceId() { return _deniceId; };
+
     void setKaScadaCloudHost(String host);
 
     void byServer();
     void byClient();
     void setBridgeMode(bool mode);
+    bool bridgeMode() { return _isServer; };
 
     void setMode(uint8_t mode);
     void byTcp() { setMode(FLPROG_TCP_MODBUS); };

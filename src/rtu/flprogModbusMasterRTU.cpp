@@ -620,6 +620,15 @@ void ModbusMasterRTU::setSlaveAddress(uint8_t slaveIndex, uint8_t address)
     }
 }
 
+uint8_t ModbusMasterRTU::getSlaveAddress(uint8_t slaveIndex)
+{
+    if (hasSlaveOnIndex(slaveIndex))
+    {
+        return slaves[slaveIndex].getSlaveAddress();
+    }
+    return 0;
+}
+
 void ModbusMasterRTU::setPollingPeriod(uint8_t slaveAddres, uint32_t period, bool isIndex)
 {
     ModbusSlaveInMaster *sl;
@@ -636,6 +645,114 @@ void ModbusMasterRTU::setPollingPeriod(uint8_t slaveAddres, uint32_t period, boo
         return;
     }
     sl->setPollingPeriod(period);
+}
+
+uint32_t ModbusMasterRTU::pollingPeriod(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl;
+    if (isIndex)
+    {
+        sl = slaveOnIndex(slaveAddres);
+    }
+    else
+    {
+        sl = slave(slaveAddres);
+    }
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->pollingPeriod();
+}
+
+uint8_t ModbusMasterRTU::intOrder(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl;
+    if (isIndex)
+    {
+        sl = slaveOnIndex(slaveAddres);
+    }
+    else
+    {
+        sl = slave(slaveAddres);
+    }
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->intOrder();
+}
+
+uint8_t ModbusMasterRTU::longOrder(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl;
+    if (isIndex)
+    {
+        sl = slaveOnIndex(slaveAddres);
+    }
+    else
+    {
+        sl = slave(slaveAddres);
+    }
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->longOrder();
+}
+
+uint8_t ModbusMasterRTU::floatOrder(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl;
+    if (isIndex)
+    {
+        sl = slaveOnIndex(slaveAddres);
+    }
+    else
+    {
+        sl = slave(slaveAddres);
+    }
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->floatOrder();
+}
+
+uint8_t ModbusMasterRTU::unsignedlongOrder(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl;
+    if (isIndex)
+    {
+        sl = slaveOnIndex(slaveAddres);
+    }
+    else
+    {
+        sl = slave(slaveAddres);
+    }
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->unsignedlongOrder();
+}
+
+bool ModbusMasterRTU::slaveStatus(uint8_t slaveAddres, bool isIndex)
+{
+    ModbusSlaveInMaster *sl;
+    if (isIndex)
+    {
+        sl = slaveOnIndex(slaveAddres);
+    }
+    else
+    {
+        sl = slave(slaveAddres);
+    }
+    if (sl == 0)
+    {
+        return 0;
+    }
+    return sl->slaveStatus();
 }
 
 void ModbusMasterRTU::setTimeOutTime(uint8_t slaveAddres, uint32_t time, bool isIndex)

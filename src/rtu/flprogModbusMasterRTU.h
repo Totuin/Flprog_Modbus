@@ -16,6 +16,7 @@ public:
     void configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int16_t _startAdr);
 
     void setSlaveAddress(uint8_t slaveIndex, uint8_t adr);
+    uint8_t getSlaveAddress(uint8_t slaveIndex);
     bool hasSlaveOnIndex(uint8_t slaveIndex);
     ModbusSlaveInMaster *slaveOnIndex(uint8_t slaveIndex);
     ModbusSlaveInMaster *slave(uint8_t adr);
@@ -35,13 +36,23 @@ public:
     bool readBool(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
 
     void setPollingPeriod(uint8_t slaveAddres, uint32_t period, bool isIndex = false);
+    uint32_t pollingPeriod(uint8_t slaveAddres, bool isIndex);
+
     void setTimeOutTime(uint8_t slaveAddres, uint32_t time, bool isIndex = false);
+
     void setLongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
     void setFloatOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
     void setUnsignedlongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
     void setIntOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
+
+    uint8_t intOrder(uint8_t slaveAddres, bool isIndex);
+    uint8_t longOrder(uint8_t slaveAddres, bool isIndex);
+    uint8_t floatOrder(uint8_t slaveAddres, bool isIndex);
+    uint8_t unsignedlongOrder(uint8_t slaveAddres, bool isIndex);
+
     uint8_t getLastError(uint8_t slaveAddres, bool isIndex = false);
     void status(uint8_t slaveAddres, bool status, bool isIndex = false);
+    bool slaveStatus(uint8_t slaveAddres, bool isIndex);
 
 protected:
     ModbusSlaveInMaster *slaves;
