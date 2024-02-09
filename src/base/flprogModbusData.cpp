@@ -770,10 +770,7 @@ uint8_t ModbusSlaveInMaster::getLastError()
     return _lastError;
 }
 
-void ModbusSlaveInMaster::status(bool status)
-{
-    _isActive = status;
-}
+
 
 void ModbusSlaveInMaster::setPollingPeriod(uint32_t period)
 {

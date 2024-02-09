@@ -108,7 +108,8 @@ public:
     ModbusSlaveInMaster(uint8_t addr) { setSlaveAddress(addr); };
     uint8_t getLastError();
 
-    void status(bool status);
+    void status(bool status) { _isActive = status; };
+
     bool status() { return _isActive; };
     bool slaveStatus() { return _isActive; };
 
