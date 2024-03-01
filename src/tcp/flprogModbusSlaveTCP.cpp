@@ -46,11 +46,17 @@ void ModbusSlaveTCP::begin()
 
 void ModbusSlaveTCP::pool()
 {
-
     if (_interface == 0)
     {
         return;
     }
+    if (_eventsCount < _skippingEvents)
+    {
+        _eventsCount++;
+        return;
+    }
+    _eventsCount = 0;
+
     if (!_interface->isReady())
     {
         _isInit = false;

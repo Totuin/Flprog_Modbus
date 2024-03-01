@@ -204,6 +204,12 @@ void ModbusBridge::pool()
     {
         return;
     }
+    if (_eventsCount < _skippingEvents)
+    {
+        _eventsCount++;
+        return;
+    }
+    _eventsCount = 0;
     if (!_interface->isReady())
     {
         return;

@@ -18,7 +18,7 @@ public:
 
     void setTCPPort(int port);
     int tcpPort() { return _port; };
-    
+
     void setTCPRemoteIp(IPAddress newIp);
     void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
     IPAddress tcpRemoteIp() { return _ip; };
@@ -52,6 +52,9 @@ public:
     void byKasCadaCloud() { setMode(FLPROG_KASCADA_CLOUD_MODBUS); };
     uint8_t mode() { return _mode; };
 
+    uint16_t getSkippingEvents() { return _skippingEvents; };
+    void setSkippingEvents(uint16_t value) { _skippingEvents = value; };
+
 private:
     void onPeDePin();
     void offPeDePin();
@@ -79,6 +82,9 @@ private:
     void sendRTUBuffer();
 
     void connect();
+
+    uint16_t _skippingEvents = 0;
+    uint16_t _eventsCount = 0;
 
     uint8_t _status = FLPROG_MODBUS_READY;
     uint8_t _uart = 0;

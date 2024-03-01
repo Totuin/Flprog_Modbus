@@ -15,6 +15,12 @@ void ModbusSlaveRTU::begin()
 
 void ModbusSlaveRTU::pool()
 {
+    if (_eventsCount < _skippingEvents)
+    {
+        _eventsCount++;
+        return;
+    }
+    _eventsCount = 0;
     if (!_isInit)
     {
         begin();

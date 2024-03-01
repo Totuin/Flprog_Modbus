@@ -44,6 +44,7 @@ getLastError	KEYWORD2
 getMaxAdress	KEYWORD2
 getMinAdress	KEYWORD2
 getPort	KEYWORD2
+getSkippingEvents	KEYWORD2
 getSlaveAddress	KEYWORD2
 getTimeOutTime	KEYWORD2
 hasAdress	KEYWORD2
@@ -126,6 +127,7 @@ setServerIpAdressAsNumber	KEYWORD2
 setServerMode	KEYWORD2
 setServerPort	KEYWORD2
 setServerSlavesSize	KEYWORD2
+setSkippingEvents	KEYWORD2
 setSlaveAddress	KEYWORD2
 setSlaves	KEYWORD2
 setSlavesSize	KEYWORD2

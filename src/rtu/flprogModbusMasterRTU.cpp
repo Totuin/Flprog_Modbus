@@ -41,6 +41,12 @@ ModbusSlaveInMaster *ModbusMasterRTU::slaveOnIndex(uint8_t slaveIndex)
 
 void ModbusMasterRTU::pool()
 {
+    if (_eventsCount < _skippingEvents)
+    {
+        _eventsCount++;
+        return;
+    }
+    _eventsCount = 0;
     if (!_isInit)
     {
         begin();
