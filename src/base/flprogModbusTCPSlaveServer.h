@@ -4,7 +4,7 @@
 class ModbusTCPSlaveServer
 {
 public:
-    ModbusTCPSlaveServer(){};
+    ModbusTCPSlaveServer() { };
     void setSlaves(ModbusSlaveInMaster *_table, uint8_t size);
     void setSlavesSize(uint8_t size);
 
@@ -83,6 +83,6 @@ protected:
     char _serverHost[FLPROG_HOST_NAME_LENGTH] = "";
     bool _serverAsHost = false;
     uint8_t slavesSize = 5;
-    ModbusSlaveInMaster *slaves = 0;
+    ModbusSlaveInMaster *slaves;
     uint8_t _mode = FLPROG_TCP_MODBUS;
 };

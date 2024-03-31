@@ -47,7 +47,11 @@ void ModbusMasterTCP::setServerPort(uint8_t serverIndex, int16_t port)
 {
     if (hasServer(serverIndex))
     {
-        server(serverIndex)->setPort(port);
+        if ((server(serverIndex)->getPort()) != port)
+        {
+            _tcpClient.stop();
+            server(serverIndex)->setPort(port);
+        }
     }
 }
 
@@ -73,7 +77,11 @@ void ModbusMasterTCP::setServerIpAdress(uint8_t serverIndex, IPAddress ip)
 {
     if (hasServer(serverIndex))
     {
-        server(serverIndex)->setIpAdress(ip);
+        if ((server(serverIndex)->getIp()) != ip)
+        {
+            _tcpClient.stop();
+            server(serverIndex)->setIpAdress(ip);
+        }
     }
 }
 
@@ -413,6 +421,7 @@ bool ModbusMasterTCP::slaveStatus(uint8_t serverIndex, uint8_t slaveAddres, bool
 
 void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
 {
+
     if (_tempCurrentServer != server)
     {
         _tcpClient.stop();
@@ -444,6 +453,7 @@ void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
         if (result == FLPROG_ERROR)
         {
             _telegrammSlave->setLastError(244);
+            _tcpClient.stop();
             _status = FLPROG_MODBUS_READY;
             return;
         }
@@ -535,6 +545,7 @@ void ModbusMasterTCP::checkAnswer()
     }
     _telegrammSlave->setLastError(0);
     writeMaserData(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
+    _tcpClient.stop();
 }
 
 void ModbusMasterTCP::getRxBuffer()

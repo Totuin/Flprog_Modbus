@@ -210,6 +210,7 @@ void ModbusSlaveTCP::sendTxBuffer()
     {
         if (!_server.connected())
         {
+            _server.stopConnection();
             return;
         }
     }
