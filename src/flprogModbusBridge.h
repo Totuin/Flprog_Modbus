@@ -1,20 +1,21 @@
 #pragma once
 #include "base/flprogModbusUtilites.h"
 #include "flprogEthernet.h"
+#include "flprogUartBase.h"
 
 class ModbusBridge
 {
 public:
-    ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse);
+    ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse, FlprogAbstractUartExecutor *executor);
     void pool();
 
     void setUart(uint8_t portNumber) { _uart = portNumber; };
-    void setSpeedUart(uint32_t speed) { flprog::setSpeedUart(speed, _uart); };
-    void setDataBitUart(uint8_t value) { flprog::setDataBitUart(value, _uart); };
-    void setStopBitUart(uint8_t value) { flprog::setStopBitUart(value, _uart); };
-    void setParityUart(uint8_t value) { flprog::setParityUart(value, _uart); };
-    void setPinRxUart(uint8_t pin) { flprog::setPinRxUart(pin, _uart); };
-    void setPinTxUart(uint8_t pin) { flprog::setPinTxUart(pin, _uart); };
+    void setSpeedUart(uint32_t speed) { _executor->setSpeedUart(speed, _uart); };
+    void setDataBitUart(uint8_t value) { _executor->setDataBitUart(value, _uart); };
+    void setStopBitUart(uint8_t value) { _executor->setStopBitUart(value, _uart); };
+    void setParityUart(uint8_t value) { _executor->setParityUart(value, _uart); };
+    void setPinRxUart(uint8_t pin) { _executor->setPinRxUart(pin, _uart); };
+    void setPinTxUart(uint8_t pin) { _executor->setPinTxUart(pin, _uart); };
 
     void setTCPPort(int port);
     int tcpPort() { return _port; };
@@ -82,6 +83,8 @@ private:
     void sendRTUBuffer();
 
     void connect();
+
+    FlprogAbstractUartExecutor *_executor = 0;
 
     uint16_t _skippingEvents = 0;
     uint16_t _eventsCount = 0;

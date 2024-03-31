@@ -1,9 +1,10 @@
 #include "flprogModbusBridge.h"
 
-ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse)
+ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse , FlprogAbstractUartExecutor *executor)
 {
     _interface = sourse;
     _uart = portNumber;
+    _executor = executor;
     _server.setSourse(sourse);
     _tcpClient.setSourse(sourse);
 }
@@ -256,7 +257,7 @@ void ModbusBridge::begin()
 {
     _isInit = true;
     _status = FLPROG_MODBUS_READY;
-    flprog::beginUart(_uart);
+    _executor->beginUart(_uart);
     _tcpClient.stop();
     _server.stop();
     if (_pinPeDe >= 0)
@@ -285,7 +286,7 @@ void ModbusBridge::rtuPool()
             return;
         }
     }
-    uint8_t avalibleBytes = flprog::availableUart(_uart);
+    uint8_t avalibleBytes = _executor->availableUart(_uart);
     if (avalibleBytes == 0)
     {
         return;
@@ -296,7 +297,7 @@ void ModbusBridge::rtuPool()
         _startT35 = millis();
         return;
     }
-    if (!(flprog::isTimer(_startT35, (flprogModus::t35TimeForSpeed(flprog::getSpeedUart(_uart))))))
+    if (!(flprog::isTimer(_startT35, (flprogModus::t35TimeForSpeed(_executor->getSpeedUart(_uart))))))
     {
         return;
     }
@@ -312,16 +313,16 @@ void ModbusBridge::rtuPool()
 void ModbusBridge::getRTURxBuffer()
 {
     _bufferSize = 0;
-    while (flprog::availableUart(_uart))
+    while (_executor->availableUart(_uart))
     {
         if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
         {
-            _buffer[_bufferSize] = flprog::readUart(_uart);
+            _buffer[_bufferSize] = _executor->readUart(_uart);
             _bufferSize++;
         }
         else
         {
-            flprog::readUart(_uart);
+            _executor->readUart(_uart);
         }
     }
 }
@@ -334,11 +335,11 @@ void ModbusBridge::sendRTUBuffer()
     _bufferSize++;
     _buffer[_bufferSize] = crc & 0x00ff;
     _bufferSize++;
-    flprog::writeUart(_buffer, _bufferSize, _uart);
+    _executor->writeUart(_buffer, _bufferSize, _uart);
     uint8_t dataBits = 8;
     uint8_t stopBits = 1;
     uint8_t portParity = 0;
-    uint16_t portSpeed = flprog::getSpeedUart(_uart);
+    uint16_t portSpeed = _executor->getSpeedUart(_uart);
     _timeOfSend = flprogModus::timeForSendBytes(dataBits, stopBits, portParity, portSpeed, _bufferSize);
     _startSendTime = millis();
     _status = FLPROG_MODBUS_WAITING_SENDING;

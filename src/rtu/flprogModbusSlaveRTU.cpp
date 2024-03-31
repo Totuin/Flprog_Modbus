@@ -1,8 +1,14 @@
 #include "flprogModbusSlaveRTU.h"
 
+ModbusSlaveRTU::ModbusSlaveRTU(uint8_t number, FlprogAbstractUartExecutor *executor)
+{
+    _uartPortNumber = number;
+    _executor = executor;
+}
+
 void ModbusSlaveRTU::begin()
 {
-    flprog::beginUart(_uartPortNumber);
+    _executor->beginUart(_uartPortNumber);
     _bufferSize = 0;
     _lastRec = 0;
     if (_pinPeDe >= 0)

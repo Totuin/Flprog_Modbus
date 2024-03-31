@@ -1,15 +1,16 @@
 #include "flprogModbusMasterRTU.h"
 
-ModbusMasterRTU::ModbusMasterRTU(uint8_t portNumber, uint8_t size)
+ModbusMasterRTU::ModbusMasterRTU(uint8_t portNumber, uint8_t size, FlprogAbstractUartExecutor *executor)
 {
     slavesSize = size;
+    _executor = executor;
     slaves = new ModbusSlaveInMaster[slavesSize];
     setUart(portNumber);
 }
 
 void ModbusMasterRTU::begin()
 {
-    flprog::beginUart(_uartPortNumber);
+    _executor->beginUart(_uartPortNumber);
     if (_pinPeDe >= 0)
     {
         pinMode(_pinPeDe, OUTPUT);

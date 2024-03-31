@@ -5,7 +5,7 @@
 class ModbusMasterRTU : public ModbusRTU
 {
 public:
-    ModbusMasterRTU(uint8_t portNumber, uint8_t size);
+    ModbusMasterRTU(uint8_t portNumber, uint8_t size, FlprogAbstractUartExecutor *executor);
 
     void pool();
     void begin();

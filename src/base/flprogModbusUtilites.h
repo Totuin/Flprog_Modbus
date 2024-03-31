@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include "flprogUtilites.h"
+#include "flprogUartBase.h"
 #pragma once
 #define FLPROG_MODBUS_READY 0
 #define FLPROG_MODBUS_WAITING_SENDING 1

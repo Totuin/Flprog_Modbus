@@ -5,7 +5,7 @@ class ModbusSlaveRTU : public ModbusRTU
 {
 public:
     ModbusSlaveRTU(){};
-    ModbusSlaveRTU(uint8_t number) { _uartPortNumber = number; };
+    ModbusSlaveRTU(uint8_t number, FlprogAbstractUartExecutor *executor);
     void begin();
     void pool();
     void setSlaveAddress(uint8_t adr) { _slaveAddres = adr; };
