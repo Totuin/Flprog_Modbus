@@ -57,6 +57,7 @@ init	KEYWORD2
 intOrder	KEYWORD2
 ipAdress	KEYWORD2
 isInit	KEYWORD2
+isPause	KEYWORD2
 isReady	KEYWORD2
 isSupportFunction	KEYWORD2
 kaScadaCloudDevceId	KEYWORD2

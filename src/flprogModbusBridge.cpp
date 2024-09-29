@@ -1,6 +1,6 @@
 #include "flprogModbusBridge.h"
 
-ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse , FlprogAbstractUartExecutor *executor)
+ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse, FlprogAbstractUartExecutor *executor)
 {
     _interface = sourse;
     _uart = portNumber;
@@ -211,6 +211,10 @@ void ModbusBridge::pool()
         return;
     }
     _eventsCount = 0;
+    if (_isPause)
+    {
+        return;
+    }
     if (!_interface->isReady())
     {
         return;

@@ -9,6 +9,8 @@ public:
     uint8_t getLastError() { return _lastError; };
     uint16_t getSkippingEvents() { return _skippingEvents; };
     void setSkippingEvents(uint16_t value) { _skippingEvents = value; };
+    void isPause(bool value) { _isPause = value; };
+    bool isPause() { return _isPause; };
 
 protected:
     virtual void sendTxBuffer() = 0;
@@ -40,6 +42,7 @@ protected:
     unsigned long _startSendTime;
     unsigned long _timeOfSend;
     bool _isInit = false;
+    bool _isPause = false;
     uint16_t _skippingEvents = 0;
     uint16_t _eventsCount = 0;
 };

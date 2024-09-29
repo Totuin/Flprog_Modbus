@@ -48,6 +48,10 @@ void ModbusMasterRTU::pool()
         return;
     }
     _eventsCount = 0;
+    if (_isPause)
+    {
+        return;
+    }
     if (!_isInit)
     {
         begin();

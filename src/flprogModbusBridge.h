@@ -55,6 +55,8 @@ public:
 
     uint16_t getSkippingEvents() { return _skippingEvents; };
     void setSkippingEvents(uint16_t value) { _skippingEvents = value; };
+    void isPause(bool value) { _isPause = value; };
+    bool isPause() { return _isPause; };
 
 private:
     void onPeDePin();
@@ -109,7 +111,10 @@ private:
     char _remoteServerHost[FLPROG_HOST_NAME_LENGTH] = "";
     bool _remoteServerAsHost = false;
 
+    bool _isPause = false;
+
     bool _isInit = false;
+
     FLProgAbstractTcpInterface *_interface;
     FLProgEthernetServer _server;
     FLProgEthernetClient _tcpClient;
