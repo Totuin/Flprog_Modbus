@@ -95,7 +95,10 @@ void ModbusMasterRTU::checkAnswer()
     uint8_t state = rxBuffer();
     if (state < 5)
     {
-        _telegrammSlave->setLastError(255);
+//ander
+//        _telegrammSlave->setLastError(255);  
+        _telegrammSlave->setLastError(0);
+
         _status = FLPROG_MODBUS_READY;
         return;
     }
@@ -113,9 +116,10 @@ void ModbusMasterRTU::checkAnswer()
 uint8_t ModbusMasterRTU::validateRequest()
 {
     int16_t msgCRC = ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-    if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+  //  if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
     {
-        return 255;
+//ander
+  //      return 255;
     }
     if ((_buffer[1] & 0x80) != 0)
     {

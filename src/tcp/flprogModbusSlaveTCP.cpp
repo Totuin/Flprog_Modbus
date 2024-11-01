@@ -270,9 +270,9 @@ uint8_t ModbusSlaveTCP::validateRequest()
     {
         int msgCRC =
             ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-        if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+    //    if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
         {
-            return 255;
+    //        return 255;
         }
     }
     return validateSlaveReqest(mainData());
@@ -354,7 +354,7 @@ void ModbusSlaveTCP::connect()
     if (_tcpClient.connected())
     {
         _status = FLPROG_MODBUS_READY;
-        return;
+       // return; ander
     }
     uint8_t result;
     if (_cloudAdressAsHost)

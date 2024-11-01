@@ -32,7 +32,8 @@ uint8_t ModbusMasterTCP::serverMode(uint8_t serverIndex)
     {
         return server(serverIndex)->mode();
     }
-    return 255;
+   // return 255; ander
+return 0;
 }
 
 void ModbusMasterTCP::setServerSlavesSize(uint8_t serverIndex, uint8_t size)
@@ -582,9 +583,11 @@ uint8_t ModbusMasterTCP::validateRequest()
     if (_telegrammServer->mode() == FLPROG_RTU_OVER_TCP_MODBUS)
     {
         int16_t msgCRC = ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-        if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+   //     if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
         {
-            return 255;
+  
+//return 255; ander
+
         }
     }
     if ((_buffer[1] & 0x80) != 0)
