@@ -94,8 +94,6 @@ protected:
     uint8_t _floatOrder = 1;
     uint8_t _unsignedlongOrder = 1;
     void saveForByteWithOrder(unsigned char *sourse, uint8_t table, int16_t startAddres, uint8_t order);
-    void modbusOrderAray(uint8_t *orderArray, uint8_t order);
-    void sortTwoWordRegistors(uint8_t *orderArray, uint8_t order, uint8_t *data, uint16_t w1, uint16_t w2);
     void readForByteWithOrder(unsigned char *sourse, uint8_t table, int16_t startAddres, uint8_t order);
     ModbusTable *tableForStartArddres(uint8_t table, int16_t startAddres, bool isTwoWord);
     virtual bool canSaveTable(uint8_t table);

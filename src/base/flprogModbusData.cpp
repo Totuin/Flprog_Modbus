@@ -580,18 +580,35 @@ void ModbusMainData::saveForByteWithOrder(unsigned char *sourse, uint8_t table, 
     {
         return;
     }
-    unsigned char target[2];
     int16_t temp;
-    uint8_t orderArray[4];
-    modbusOrderAray(orderArray, order);
-    target[0] = sourse[orderArray[0]];
-    target[1] = sourse[orderArray[1]];
-    memcpy(&temp, target, 2);
-    tableData->setData((startAddres + 1), temp);
-    target[0] = sourse[orderArray[2]];
-    target[1] = sourse[orderArray[3]];
-    memcpy(&temp, target, 2);
-    tableData->setData((startAddres), temp);
+    if (order == 1) //(ABCD)
+    {
+        temp = int(word(sourse[3], sourse[2]));
+        tableData->setData(startAddres, temp);
+        temp = int(word(sourse[1], sourse[0]));
+        tableData->setData((startAddres + 1), temp);
+    }
+    if (order == 2) //(CDAB)
+    {
+        temp = int(word(sourse[1], sourse[0]));
+        tableData->setData(startAddres, temp);
+        temp = int(word(sourse[3], sourse[2]));
+        tableData->setData((startAddres + 1), temp);
+    }
+    if (order == 3) //(BADC)
+    {
+        temp = int(word(sourse[2], sourse[3]));
+        tableData->setData(startAddres, temp);
+        temp = int(word(sourse[0], sourse[1]));
+        tableData->setData((startAddres + 1), temp);
+    }
+    if (order == 4) //(DCBA)
+    {
+        temp = int(word(sourse[0], sourse[1]));
+        tableData->setData(startAddres, temp);
+        temp = int(word(sourse[2], sourse[3]));
+        tableData->setData((startAddres + 1), temp);
+    }
 }
 
 uint8_t ModbusMainData::readByte(uint8_t table, int16_t startAddres)
@@ -654,17 +671,36 @@ void ModbusMainData::readForByteWithOrder(unsigned char *sourse, uint8_t table, 
     {
         return;
     }
-    unsigned char target[2];
-    uint8_t orderArray[4] = {0, 1, 2, 3};
-    modbusOrderAray(orderArray, order);
     int16_t temp = tableData->readWorldRegister(startAddres);
-    memcpy(target, &temp, 2);
-    sourse[2] = target[orderArray[0]];
-    sourse[3] = target[orderArray[1]];
-    temp = tableData->readWorldRegister(startAddres + 1);
-    memcpy(target, &temp, 2);
-    sourse[0] = target[orderArray[0]];
-    sourse[1] = target[orderArray[1]];
+    int16_t temp1 = tableData->readWorldRegister(startAddres + 1);
+    if (order == 1) //(ABCD)
+    {
+        sourse[0] = lowByte(temp1);
+        sourse[1] = highByte(temp1);
+        sourse[2] = lowByte(temp);
+        sourse[3] = highByte(temp);
+    }
+    if (order == 2) //(CDAB)
+    {
+        sourse[0] = lowByte(temp);
+        sourse[1] = highByte(temp);
+        sourse[2] = lowByte(temp1);
+        sourse[3] = highByte(temp1);
+    }
+    if (order == 3) //(BADC)
+    {
+        sourse[0] = highByte(temp1);
+        sourse[1] = lowByte(temp1);
+        sourse[2] = highByte(temp);
+        sourse[3] = lowByte(temp);
+    }
+    if (order == 4) // (DCBA)
+    {
+        sourse[0] = highByte(temp);
+        sourse[1] = lowByte(temp);
+        sourse[2] = highByte(temp1);
+        sourse[3] = lowByte(temp1);
+    }
 }
 
 bool ModbusMainData::readBool(uint8_t table, int16_t startAddres)
@@ -714,63 +750,18 @@ bool ModbusMainData::isSupportFunction(uint8_t function)
     return false;
 }
 
-void ModbusMainData::modbusOrderAray(uint8_t *orderArray, uint8_t order)
-{
-    if (order == 1)
-    {
-        orderArray[0] = 0;
-        orderArray[1] = 1;
-        orderArray[2] = 2;
-        orderArray[3] = 3;
-    }
-    if (order == 2)
-    {
-        orderArray[0] = 2;
-        orderArray[1] = 3;
-        orderArray[2] = 0;
-        orderArray[3] = 1;
-    }
-    if (order == 3)
-    {
-        orderArray[0] = 1;
-        orderArray[1] = 0;
-        orderArray[2] = 3;
-        orderArray[3] = 2;
-    }
-    if (order == 4)
-    {
-        orderArray[0] = 3;
-        orderArray[1] = 2;
-        orderArray[2] = 1;
-        orderArray[3] = 0;
-    }
-}
-
 bool ModbusMainData::canSaveTable(uint8_t table)
 {
     return (hasTable(table));
 }
 
-void ModbusMainData::sortTwoWordRegistors(uint8_t *orderArray, uint8_t order, uint8_t *data, uint16_t w1, uint16_t w2)
-{
-    modbusOrderAray(orderArray, order);
-    for (uint8_t i = 0; i < 8; i++)
-        bitWrite(data[orderArray[0]], i, bitRead(w2, i));
-    for (uint8_t i = 0; i < 8; i++)
-        bitWrite(data[orderArray[1]], i, bitRead(w2, (i + 8)));
-    for (uint8_t i = 0; i < 8; i++)
-        bitWrite(data[orderArray[2]], i, bitRead(w1, i));
-    for (uint8_t i = 0; i < 8; i++)
-        bitWrite(data[orderArray[3]], i, bitRead(w1, (i + 8)));
-}
+
 
 // ModbusSlaveInMaster******************************8
 uint8_t ModbusSlaveInMaster::getLastError()
 {
     return _lastError;
 }
-
-
 
 void ModbusSlaveInMaster::setPollingPeriod(uint32_t period)
 {
