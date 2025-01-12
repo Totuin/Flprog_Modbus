@@ -27,5 +27,7 @@ protected:
     FlprogAbstractUartExecutor *_executor = 0;
 };
 
+
+
 #include "rtu/flprogModbusSlaveRTU.h"
 #include "rtu/flprogModbusMasterRTU.h"
