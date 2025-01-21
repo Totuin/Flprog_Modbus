@@ -42,6 +42,7 @@ void Modbus::process_modbus_FC3(ModbusMainData *data, uint8_t table)
     int16_t value;
     _buffer[2] = byteRegsno * 2;
     _bufferSize = 3;
+    for (i = startAddr; i < startAddr + byteRegsno; i++)
     {
         value = dataTable->readWorldRegister(i);
         _buffer[_bufferSize] = highByte(value);
