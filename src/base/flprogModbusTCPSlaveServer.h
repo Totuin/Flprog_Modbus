@@ -4,7 +4,7 @@
 class ModbusTCPSlaveServer
 {
 public:
-    ModbusTCPSlaveServer() { };
+    ModbusTCPSlaveServer() {};
     void setSlaves(ModbusSlaveInMaster *_table, uint8_t size);
     void setSlavesSize(uint8_t size);
 
@@ -45,6 +45,8 @@ public:
     void setFloatOrder(uint8_t slaveAdr, uint8_t order, bool isIndex = false);
     void setUnsignedlongOrder(uint8_t slaveAdr, uint8_t order, bool isIndex = false);
     void setIntOrder(uint8_t slaveAdr, uint8_t order, bool isIndex = false);
+
+    void setCallBack(uint8_t slaveAdr, FLProgModbusNewDataCallback func, bool isIndex = false);
 
     uint8_t longOrder(uint8_t slaveAdr, bool isIndex = false);
     uint8_t floatOrder(uint8_t slaveAdr, bool isIndex = false);

@@ -4,7 +4,7 @@
 class ModbusSlaveRTU : public ModbusRTU
 {
 public:
-    ModbusSlaveRTU(){};
+    ModbusSlaveRTU() {};
     ModbusSlaveRTU(uint8_t number, FlprogAbstractUartExecutor *executor);
     void begin();
     void pool();
@@ -41,6 +41,7 @@ public:
     uint8_t unsignedlongOrder() { return mainData()->unsignedlongOrder(); };
 
     ModbusMainData *mainData();
+    void setCallBack(FLProgModbusNewDataCallback func);
 
 protected:
     uint8_t _slaveAddres = 1;

@@ -264,15 +264,20 @@ ModbusMainData *ModbusSlaveTCP::mainData()
     return _data;
 }
 
+void ModbusSlaveTCP::setCallBack(FLProgModbusNewDataCallback func)
+{
+    mainData()->setCallBack(func);
+}
+
 uint8_t ModbusSlaveTCP::validateRequest()
 {
     if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
     {
         int msgCRC =
             ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-    //    if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+        //    if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
         {
-    //        return 255;
+            //        return 255;
         }
     }
     return validateSlaveReqest(mainData());
@@ -354,7 +359,7 @@ void ModbusSlaveTCP::connect()
     if (_tcpClient.connected())
     {
         _status = FLPROG_MODBUS_READY;
-       // return; ander
+        // return; ander
     }
     uint8_t result;
     if (_cloudAdressAsHost)

@@ -41,9 +41,16 @@ public:
     void setUnsignedlongOrder(uint8_t serverIndex, uint8_t slaveAdr, uint8_t order, bool isIndex = false);
     void setIntOrder(uint8_t serverIndex, uint8_t slaveAdr, uint8_t order, bool isIndex = false);
 
+    void setCallBack(uint8_t serverIndex, uint8_t slaveAdr, FLProgModbusNewDataCallback func, bool isIndex = false);
+
+
+
     uint8_t intOrder(uint8_t serverIndex, uint8_t slaveAdr, bool isIndex = false);
     uint8_t longOrder(uint8_t serverIndex, uint8_t slaveAdr, bool isIndex = false);
     uint8_t floatOrder(uint8_t serverIndex, uint8_t slaveAdr, bool isIndex = false);
+
+   
+
     uint8_t unsignedlongOrder(uint8_t serverIndex, uint8_t slaveAdr, bool isIndex = false);
 
     void saveLong(uint8_t serverIndex, uint8_t slaveAdr, int32_t value, uint8_t table, int startAddres, bool isIndex = false);
@@ -64,6 +71,9 @@ public:
     void status(uint8_t serverIndex, uint8_t slaveAdr, bool status, bool isIndex = false);
     bool slaveStatus(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex);
     void setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster *table, int size);
+
+    
+
     ModbusTCPSlaveServer *servers();
     virtual void pool();
 

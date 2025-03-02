@@ -95,8 +95,8 @@ void ModbusMasterRTU::checkAnswer()
     uint8_t state = rxBuffer();
     if (state < 5)
     {
-//ander
-//        _telegrammSlave->setLastError(255);  
+        // ander
+        //         _telegrammSlave->setLastError(255);
         _telegrammSlave->setLastError(0);
 
         _status = FLPROG_MODBUS_READY;
@@ -116,10 +116,10 @@ void ModbusMasterRTU::checkAnswer()
 uint8_t ModbusMasterRTU::validateRequest()
 {
     int16_t msgCRC = ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-  //  if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+    //  if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
     {
-//ander
-  //      return 255;
+        // ander
+        //       return 255;
     }
     if ((_buffer[1] & 0x80) != 0)
     {
@@ -804,6 +804,24 @@ void ModbusMasterRTU::setLongOrder(uint8_t slaveAddres, uint8_t order, bool isIn
         return;
     }
     sl->setLongOrder(order);
+}
+
+void ModbusMasterRTU::setCallBack(uint8_t slaveAddres, FLProgModbusNewDataCallback func, bool isIndex)
+{
+    ModbusSlaveInMaster *sl;
+    if (isIndex)
+    {
+        sl = slaveOnIndex(slaveAddres);
+    }
+    else
+    {
+        sl = slave(slaveAddres);
+    }
+    if (sl == 0)
+    {
+        return;
+    }
+    sl->setCallBack(func);
 }
 
 void ModbusMasterRTU::setFloatOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)

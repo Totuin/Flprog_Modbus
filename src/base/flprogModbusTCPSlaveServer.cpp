@@ -214,6 +214,16 @@ void ModbusTCPSlaveServer::setIntOrder(uint8_t slaveAddres, uint8_t order, bool 
     sl->setIntOrder(order);
 }
 
+void ModbusTCPSlaveServer::setCallBack(uint8_t slaveAdr, FLProgModbusNewDataCallback func, bool isIndex)
+{
+    ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+    if (sl == 0)
+    {
+        return;
+    }
+    sl->setCallBack(func);
+}
+
 uint8_t ModbusTCPSlaveServer::intOrder(uint8_t slaveAddres, bool isIndex)
 {
     ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);

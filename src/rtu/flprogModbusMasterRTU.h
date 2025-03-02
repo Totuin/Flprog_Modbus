@@ -41,6 +41,8 @@ public:
     void setTimeOutTime(uint8_t slaveAddres, uint32_t time, bool isIndex = false);
 
     void setLongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
+    void setCallBack(uint8_t slaveAddres, FLProgModbusNewDataCallback func, bool isIndex = false);
+
     void setFloatOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
     void setUnsignedlongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);
     void setIntOrder(uint8_t slaveAddres, uint8_t order, bool isIndex = false);

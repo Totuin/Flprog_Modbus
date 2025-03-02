@@ -32,6 +32,8 @@ public:
     bool readBoolRegister(int16_t adress);
     uint8_t tableType() { return _table; };
 
+    void setCallBack(FLProgModbusNewDataCallback func) { _newDataCallback = func; };
+
 private:
     int16_t recursiveWriteRegsSize(int16_t startAddres, int16_t result);
     int16_t recursiveReadRegsSize(int16_t startAddres, int16_t result);
@@ -45,12 +47,14 @@ private:
     int16_t *_worldData;
     bool *_boolData;
     bool *_sendRegisters;
+
+    FLProgModbusNewDataCallback _newDataCallback = 0;
 };
 
 class ModbusMainData
 {
 public:
-    ModbusMainData(){};
+    ModbusMainData() {};
     void setDataTable(ModbusTable *_table);
     void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses);
     void configDataTable(uint8_t _table, uint16_t dataSize, int16_t startAddres = 0);
@@ -83,6 +87,7 @@ public:
     bool isSupportFunction(uint8_t function);
     ModbusTable *tableForType(uint8_t table);
     bool hasTable(uint8_t table);
+    void setCallBack(FLProgModbusNewDataCallback func);
 
 protected:
     ModbusTable *_tableCoil = 0;
@@ -102,7 +107,7 @@ protected:
 class ModbusSlaveInMaster : public ModbusMainData
 {
 public:
-    ModbusSlaveInMaster(){};
+    ModbusSlaveInMaster() {};
     ModbusSlaveInMaster(uint8_t addr) { setSlaveAddress(addr); };
     uint8_t getLastError();
 

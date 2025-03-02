@@ -83,6 +83,15 @@ void ModbusTable::setData(int16_t adress, bool value)
         _sendRegisters[index] = true;
     }
     _boolData[index] = value;
+    if (_newDataCallback != 0)
+    {
+        uint16_t temp = 0;
+        if (value)
+        {
+            temp = 1;
+        }
+        _newDataCallback(_table, adress, temp);
+    }
 }
 
 void ModbusTable::setData(int16_t adress, int16_t value)
@@ -96,7 +105,6 @@ void ModbusTable::setData(int16_t adress, int16_t value)
     {
         return;
     }
-
     if (value == _worldData[index])
     {
         return;
@@ -106,6 +114,10 @@ void ModbusTable::setData(int16_t adress, int16_t value)
         _sendRegisters[index] = true;
     }
     _worldData[index] = value;
+    if (_newDataCallback != 0)
+    {
+        _newDataCallback(_table, adress, value);
+    }
 }
 
 void ModbusTable::writeRegister(int16_t adress, bool value)
@@ -117,7 +129,20 @@ void ModbusTable::writeRegister(int16_t adress, bool value)
     int16_t index = indexForAddres(adress);
     if (index != -1)
     {
+        if (_boolData[index] == value)
+        {
+            return;
+        }
         _boolData[index] = value;
+        if (_newDataCallback != 0)
+        {
+            uint16_t temp = 0;
+            if (value)
+            {
+                temp = 1;
+            }
+            _newDataCallback(_table, adress, temp);
+        }
     }
 }
 
@@ -130,7 +155,15 @@ void ModbusTable::writeRegister(int16_t adress, int16_t value)
     int16_t index = indexForAddres(adress);
     if (index != -1)
     {
+        if (_worldData[index] == value)
+        {
+            return;
+        }
         _worldData[index] = value;
+        if (_newDataCallback != 0)
+        {
+            _newDataCallback(_table, adress, value);
+        }
     }
 }
 
@@ -755,7 +788,25 @@ bool ModbusMainData::canSaveTable(uint8_t table)
     return (hasTable(table));
 }
 
-
+void ModbusMainData::setCallBack(FLProgModbusNewDataCallback func)
+{
+    if (_tableCoil != 0)
+    {
+        _tableCoil->setCallBack(func);
+    }
+    if (_tableDiscreteInput != 0)
+    {
+        _tableDiscreteInput->setCallBack(func);
+    }
+    if (_tableInputRegistr != 0)
+    {
+        _tableInputRegistr->setCallBack(func);
+    }
+    if (_tableHoldingRegistr != 0)
+    {
+        _tableHoldingRegistr->setCallBack(func);
+    }
+}
 
 // ModbusSlaveInMaster******************************8
 uint8_t ModbusSlaveInMaster::getLastError()

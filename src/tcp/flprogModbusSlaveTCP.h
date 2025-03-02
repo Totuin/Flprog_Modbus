@@ -60,6 +60,8 @@ public:
     uint8_t floatOrder() { return mainData()->floatOrder(); };
     uint8_t unsignedlongOrder() { return mainData()->unsignedlongOrder(); };
 
+    void setCallBack(FLProgModbusNewDataCallback func);
+
 protected:
     virtual uint8_t validateRequest();
     virtual void begin();

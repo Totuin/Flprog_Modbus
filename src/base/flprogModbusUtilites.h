@@ -22,6 +22,8 @@
 #define FLPROG_BADC_ORDER 3
 #define FLPROG_DCBA_ORDER 4
 
+typedef void (*FLProgModbusNewDataCallback)(uint8_t table, int16_t adress, int16_t value);
+
 namespace flprogModus
 {
     int modbusCalcCRC(byte length, byte bufferArray[]);

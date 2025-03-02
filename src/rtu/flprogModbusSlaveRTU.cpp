@@ -68,10 +68,10 @@ uint8_t ModbusSlaveRTU::validateRequest()
 
     int msgCRC =
         ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-//ander  
-//  if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+    // ander
+    //   if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
     {
-    //    return 255;
+        //    return 255;
     }
     return validateSlaveReqest(mainData());
 }
@@ -83,4 +83,9 @@ ModbusMainData *ModbusSlaveRTU::mainData()
         _data = new ModbusMainData();
     }
     return _data;
+}
+
+void ModbusSlaveRTU::setCallBack(FLProgModbusNewDataCallback func)
+{
+    mainData()->setCallBack(func);
 }
