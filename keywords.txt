@@ -97,6 +97,7 @@ serverMode	KEYWORD2
 serverPort	KEYWORD2
 servers	KEYWORD2
 setBridgeMode	KEYWORD2
+setCallBack	KEYWORD2
 setData	KEYWORD2
 setDataBitUart	KEYWORD2
 setDataTable	KEYWORD2
