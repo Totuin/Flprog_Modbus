@@ -591,15 +591,18 @@ void ModbusMasterTCP::getRxBuffer()
 
 uint8_t ModbusMasterTCP::validateRequest()
 {
-    if (_telegrammServer->mode() == FLPROG_RTU_OVER_TCP_MODBUS)
-    {
-        int16_t msgCRC = ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-        //     if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+    /*
+        if (_telegrammServer->mode() == FLPROG_RTU_OVER_TCP_MODBUS)
         {
+            int16_t msgCRC = ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
+            if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+            {
 
-            // return 255; ander
+                return 255;
+
+            }
         }
-    }
+    */
     if ((_buffer[1] & 0x80) != 0)
     {
         return _buffer[2];

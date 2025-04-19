@@ -271,15 +271,17 @@ void ModbusSlaveTCP::setCallBack(FLProgModbusNewDataCallback func)
 
 uint8_t ModbusSlaveTCP::validateRequest()
 {
-    if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
-    {
-        int msgCRC =
-            ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-        //    if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+    /*
+        if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
         {
-            //        return 255;
+            int msgCRC =
+                ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
+            if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+            {
+                return 255;
+            }
         }
-    }
+    */
     return validateSlaveReqest(mainData());
 }
 

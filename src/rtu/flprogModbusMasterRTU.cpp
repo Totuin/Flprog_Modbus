@@ -115,12 +115,14 @@ void ModbusMasterRTU::checkAnswer()
 
 uint8_t ModbusMasterRTU::validateRequest()
 {
-    int16_t msgCRC = ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
-    //  if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
-    {
-        // ander
-        //       return 255;
-    }
+    /*
+         int16_t msgCRC = ((_buffer[_bufferSize - 2] << 8) | _buffer[_bufferSize - 1]);
+         if (flprogModus::modbusCalcCRC(_bufferSize - 2, _buffer) != msgCRC)
+         {
+             // ander
+                   return 255;
+         }
+    */
     if ((_buffer[1] & 0x80) != 0)
     {
         return _buffer[2];
