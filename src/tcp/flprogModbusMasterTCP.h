@@ -90,7 +90,7 @@ protected:
     virtual void sendTxBuffer();
     ModbusTCPSlaveServer *nextReadyServer(ModbusTCPSlaveServer *oldServer);
     bool hasReadyServer();
-    bool nextStep();
+    // bool nextStep();
     bool nextServer();
     bool nextSlave();
     bool nextTable();
