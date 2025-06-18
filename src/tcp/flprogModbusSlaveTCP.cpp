@@ -235,7 +235,7 @@ void ModbusSlaveTCP::sendTxBuffer()
   if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
   {
     uint16_t crc = flprogModus::modbusCalcCRC(_bufferSize, _buffer);
-    _buffer[_bufferSize] = lowByte(crc); 
+    _buffer[_bufferSize] = lowByte(crc);
     _bufferSize++;
     _buffer[_bufferSize] = highByte(crc);
     _bufferSize++;
@@ -274,7 +274,16 @@ uint8_t ModbusSlaveTCP::validateRequest()
   // TODO Проверить CRC
   if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
   {
-    if (!(flprogModus::checkCRCOnBuffer(_bufferSize, _buffer)))
+    uint16_t pacadgeSize = flprogModus::slaveRTUPacadgeSize(_bufferSize, _buffer);
+    if (pacadgeSize == 0)
+    {
+      return 253;
+    }
+    if (pacadgeSize > _bufferSize)
+    {
+      return 253;
+    }
+    if (!(flprogModus::checkCRCOnBuffer(pacadgeSize, _buffer)))
     {
       return 252;
     }

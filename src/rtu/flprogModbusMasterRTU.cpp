@@ -115,7 +115,6 @@ void ModbusMasterRTU::checkAnswer()
 
 uint8_t ModbusMasterRTU::validateRequest()
 {
-  // TODO Проверить CRC
   uint16_t pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
   if (pacadgeSize == 0)
   {
