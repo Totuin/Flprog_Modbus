@@ -2,480 +2,480 @@
 
 void ModbusTCPSlaveServer::setSlaves(ModbusSlaveInMaster *_table, uint8_t size)
 {
-    slaves = _table;
-    slavesSize = size;
+  slaves = _table;
+  slavesSize = size;
 }
 
 void ModbusTCPSlaveServer::setIpAdress(IPAddress ip)
 {
-    _serverAsHost = false;
-    _serverIp = ip;
+  _serverAsHost = false;
+  _serverIp = ip;
 }
 
 void ModbusTCPSlaveServer::setHost(String host)
 {
-    if (host.length() == 0)
-    {
-        return;
-    }
-    _serverAsHost = true;
-    if (host.equals(String(_serverHost)))
-    {
-        return;
-    }
-    host.toCharArray(_serverHost, FLPROG_HOST_NAME_LENGTH);
+  if (host.length() == 0)
+  {
+    return;
+  }
+  _serverAsHost = true;
+  if (host.equals(String(_serverHost)))
+  {
+    return;
+  }
+  host.toCharArray(_serverHost, FLPROG_HOST_NAME_LENGTH);
 }
 
 void ModbusTCPSlaveServer::setMode(uint8_t mode)
 {
-    if (mode > 1)
-    {
-        return;
-    }
-    if (_mode == mode)
-    {
-        return;
-    }
-    _mode = mode;
+  if (mode > 1)
+  {
+    return;
+  }
+  if (_mode == mode)
+  {
+    return;
+  }
+  _mode = mode;
 }
 
 void ModbusTCPSlaveServer::setSlavesSize(uint8_t size)
 {
-    slavesSize = size;
-    slaves = new ModbusSlaveInMaster[slavesSize];
+  slavesSize = size;
+  slaves = new ModbusSlaveInMaster[slavesSize];
 }
 
 bool ModbusTCPSlaveServer::hasSlave(uint8_t slaveIndex)
 {
-    return slaveIndex < slavesSize;
+  return slaveIndex < slavesSize;
 }
 
 ModbusSlaveInMaster *ModbusTCPSlaveServer::slaveOnIndex(uint8_t slaveIndex)
 {
-    if (slaves == 0)
-    {
-        slaves = new ModbusSlaveInMaster[slavesSize];
-    }
-    if (hasSlave(slaveIndex))
-    {
-        return &slaves[slaveIndex];
-    }
-    return 0;
+  if (slaves == 0)
+  {
+    slaves = new ModbusSlaveInMaster[slavesSize];
+  }
+  if (hasSlave(slaveIndex))
+  {
+    return &slaves[slaveIndex];
+  }
+  return 0;
 }
 
 ModbusSlaveInMaster *ModbusTCPSlaveServer::slave(uint8_t slaveAddr, bool isIndex)
 {
-    if (isIndex)
-    {
-        return slaveOnIndex(slaveAddr);
-    }
-    if (slaves == 0)
-    {
-        slaves = new ModbusSlaveInMaster[slavesSize];
-    }
+  if (isIndex)
+  {
+    return slaveOnIndex(slaveAddr);
+  }
+  if (slaves == 0)
+  {
+    slaves = new ModbusSlaveInMaster[slavesSize];
+  }
 
-    for (uint8_t i = 0; i < slavesSize; i++)
+  for (uint8_t i = 0; i < slavesSize; i++)
+  {
+    if (slaves[i].slaveAddress() == slaveAddr)
     {
-        if (slaves[i].slaveAddress() == slaveAddr)
-        {
-            return &slaves[i];
-        }
+      return &slaves[i];
     }
-    return 0;
+  }
+  return 0;
 }
 
 void ModbusTCPSlaveServer::setDataTable(uint8_t slaveAddres, ModbusTable *table)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, false);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setDataTable(table);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, false);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setDataTable(table);
 }
 
 void ModbusTCPSlaveServer::setDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int *_adresses)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, false);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setDataTable(_table, dataSize, _adresses);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, false);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setDataTable(_table, dataSize, _adresses);
 }
 
 void ModbusTCPSlaveServer::configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, false);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->configDataTable(_table, dataSize);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, false);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->configDataTable(_table, dataSize);
 }
 
 void ModbusTCPSlaveServer::configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, uint16_t _startAdr)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, false);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->configDataTable(_table, dataSize, _startAdr);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, false);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->configDataTable(_table, dataSize, _startAdr);
 }
 
 void ModbusTCPSlaveServer::setSlaveAddress(uint8_t slaveIndex, uint16_t addr)
 {
-    ModbusSlaveInMaster *sl = slave(slaveIndex, true);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setSlaveAddress(addr);
+  ModbusSlaveInMaster *sl = slave(slaveIndex, true);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setSlaveAddress(addr);
 }
 
 uint8_t ModbusTCPSlaveServer::getSlaveAddress(uint8_t slaveIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveIndex, true);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->getSlaveAddress();
+  ModbusSlaveInMaster *sl = slave(slaveIndex, true);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->getSlaveAddress();
 }
 
 void ModbusTCPSlaveServer::setPollingPeriod(uint8_t slaveAddres, uint32_t period, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setPollingPeriod(period);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setPollingPeriod(period);
 }
 
 uint32_t ModbusTCPSlaveServer::pollingPeriod(uint8_t slaveAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->pollingPeriod();
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->pollingPeriod();
 }
 
 void ModbusTCPSlaveServer::setTimeOutTime(uint8_t slaveAddres, uint32_t time, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setTimeOutTime(time);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setTimeOutTime(time);
 }
 
 void ModbusTCPSlaveServer::setLongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setLongOrder(order);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setLongOrder(order);
 }
 
 void ModbusTCPSlaveServer::setFloatOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setFloatOrder(order);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setFloatOrder(order);
 }
 
 void ModbusTCPSlaveServer::setUnsignedlongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setUnsignedlongOrder(order);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setUnsignedlongOrder(order);
 }
 
 void ModbusTCPSlaveServer::setIntOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setIntOrder(order);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setIntOrder(order);
 }
 
 void ModbusTCPSlaveServer::setCallBack(uint8_t slaveAdr, FLProgModbusNewDataCallback func, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->setCallBack(func);
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setCallBack(func);
 }
 
 uint8_t ModbusTCPSlaveServer::intOrder(uint8_t slaveAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->intOrder();
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->intOrder();
 }
 
 uint8_t ModbusTCPSlaveServer::longOrder(uint8_t slaveAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->longOrder();
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->longOrder();
 }
 
 uint8_t ModbusTCPSlaveServer::floatOrder(uint8_t slaveAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->floatOrder();
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->floatOrder();
 }
 
 uint8_t ModbusTCPSlaveServer::unsignedlongOrder(uint8_t slaveAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->unsignedlongOrder();
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->unsignedlongOrder();
 }
 
 void ModbusTCPSlaveServer::saveLong(uint8_t slaveAddres, int32_t value, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->saveLong(value, table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveLong(value, table, startAddres);
 }
 
 void ModbusTCPSlaveServer::saveUnsignedLong(uint8_t slaveAddres, uint32_t value, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->saveUnsignedLong(value, table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveUnsignedLong(value, table, startAddres);
 }
 
 void ModbusTCPSlaveServer::saveFloat(uint8_t slaveAddres, float value, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->saveFloat(value, table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveFloat(value, table, startAddres);
 }
 
 void ModbusTCPSlaveServer::saveInteger(uint8_t slaveAddres, int value, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->saveInteger(value, table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveInteger(value, table, startAddres);
 }
 
 void ModbusTCPSlaveServer::saveByte(uint8_t slaveAddres, uint8_t value, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->saveByte(value, table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveByte(value, table, startAddres);
 }
 
 void ModbusTCPSlaveServer::saveBool(uint8_t slaveAddres, bool value, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->saveBool(value, table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveBool(value, table, startAddres);
 }
 
 uint8_t ModbusTCPSlaveServer::readByte(uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->readByte(table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readByte(table, startAddres);
 }
 
 int ModbusTCPSlaveServer::readInteger(uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->readInteger(table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readInteger(table, startAddres);
 }
 
 float ModbusTCPSlaveServer::readFloat(uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->readFloat(table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readFloat(table, startAddres);
 }
 
 int32_t ModbusTCPSlaveServer::readLong(uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->readLong(table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readLong(table, startAddres);
 }
 
 uint32_t ModbusTCPSlaveServer::readUnsignedLong(uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 0;
-    }
-    return sl->readUnsignedLong(table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readUnsignedLong(table, startAddres);
 }
 
 bool ModbusTCPSlaveServer::readBool(uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return false;
-    }
-    return sl->readBool(table, startAddres);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return false;
+  }
+  return sl->readBool(table, startAddres);
 }
 
 uint8_t ModbusTCPSlaveServer::getLastError(uint8_t slaveAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return 70;
-    }
-    return sl->getLastError();
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return 70;
+  }
+  return sl->getLastError();
 }
 
 void ModbusTCPSlaveServer::status(uint8_t slaveAddres, bool status, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return;
-    }
-    sl->status(status);
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->status(status);
 }
 
 bool ModbusTCPSlaveServer::slaveStatus(uint8_t slaveAddres, bool isIndex)
 {
-    ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
-    if (sl == 0)
-    {
-        return false;
-    }
-    return sl->slaveStatus();
+  ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
+  if (sl == 0)
+  {
+    return false;
+  }
+  return sl->slaveStatus();
 }
 
 bool ModbusTCPSlaveServer::hasWriteRegisters()
 {
-    return !(firstWriteSlave() == 0);
+  return !(firstWriteSlave() == 0);
 }
 
 ModbusSlaveInMaster *ModbusTCPSlaveServer::firstWriteSlave()
 {
-    for (int i = 0; i < slavesSize; i++)
+  for (int i = 0; i < slavesSize; i++)
+  {
+    if ((slaves[i].status()) && (slaves[i].hasWriteRegisters()))
     {
-        if ((slaves[i].status()) && (slaves[i].hasWriteRegisters()))
-        {
-            return &slaves[i];
-        }
+      return &slaves[i];
     }
-    return 0;
+  }
+  return 0;
 }
 
 ModbusSlaveInMaster *ModbusTCPSlaveServer::firstReadySlave()
 {
 
-    for (int i = 0; i < slavesSize; i++)
+  for (int i = 0; i < slavesSize; i++)
+  {
+    if (slaves[i].isReady())
     {
-        if (slaves[i].isReady())
-        {
-            return &slaves[i];
-        }
+      return &slaves[i];
     }
-    return 0;
+  }
+  return 0;
 }
 
 ModbusSlaveInMaster *ModbusTCPSlaveServer::nextSlave(ModbusSlaveInMaster *currentSlave)
 {
-    bool isFindSlave = false;
-    for (int i = 0; i < slavesSize; i++)
+  bool isFindSlave = false;
+  for (int i = 0; i < slavesSize; i++)
+  {
+    if (isFindSlave)
     {
-        if (isFindSlave)
-        {
-            if (slaves[i].isReady())
-            {
-                return &slaves[i];
-            }
-        }
-        else
-        {
-            if (currentSlave == &slaves[i])
-            {
-                isFindSlave = true;
-            }
-        }
+      if (slaves[i].isReady())
+      {
+        return &slaves[i];
+      }
     }
-    return 0;
+    else
+    {
+      if (currentSlave == &slaves[i])
+      {
+        isFindSlave = true;
+      }
+    }
+  }
+  return 0;
 }
 
 bool ModbusTCPSlaveServer::isReady()
 {
 
-    for (int i = 0; i < slavesSize; i++)
+  for (int i = 0; i < slavesSize; i++)
+  {
+    if (slaves[i].isReady())
     {
-        if (slaves[i].isReady())
-        {
-            return true;
-        }
+      return true;
     }
-    return false;
+  }
+  return false;
 }

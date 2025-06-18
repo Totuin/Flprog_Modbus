@@ -26,7 +26,10 @@ typedef void (*FLProgModbusNewDataCallback)(uint8_t table, int16_t adress, int16
 
 namespace flprogModus
 {
-    int modbusCalcCRC(byte length, byte bufferArray[]);
-    byte t35TimeForSpeed(int portSpeed);
-    int timeForSendBytes(byte portDataBits, byte portStopBits, byte portParity, int portSpeed, int dataSize);
+  uint16_t modbusCalcCRC(uint16_t length, uint8_t bufferArray[]);
+  uint8_t t35TimeForSpeed(uint16_t portSpeed);
+  uint16_t timeForSendBytes(uint8_t portDataBits, uint8_t portStopBits, uint8_t portParity, uint16_t portSpeed, uint16_t dataSize);
+  bool checkCRCOnBuffer(uint16_t length, uint8_t bufferArray[]);
+  uint16_t slaveRTUPacadgeSize(uint16_t length, uint8_t bufferArray[]);
+  uint16_t masterRTUPacadgeSize(uint16_t length, uint8_t bufferArray[]);
 };

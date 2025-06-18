@@ -2,87 +2,137 @@
 
 //------------------namespace flprogModus--------------------
 
-int flprogModus::modbusCalcCRC(byte length, byte bufferArray[])
+uint16_t flprogModus::modbusCalcCRC(uint16_t length, uint8_t bufferArray[])
 {
-    unsigned int temp, temp2, flag;
-    temp = 0xFFFF;
-    for (unsigned char i = 0; i < length; i++)
+  uint16_t crc = 0xFFFF;
+  for (uint16_t pos = 0; pos < length; pos++)
+  {
+    crc ^= bufferArray[pos];
+    for (uint8_t i = 8; i != 0; i--)
     {
-        temp = temp ^ bufferArray[i];
-        for (unsigned char j = 1; j <= 8; j++)
-        {
-            flag = temp & 0x0001;
-            temp >>= 1;
-            if (flag)
-                temp ^= 0xA001;
-        }
+      if ((crc & 0x0001) != 0)
+      {
+        crc >>= 1;
+        crc ^= 0xA001;
+      }
+      else
+      {
+        crc >>= 1;
+      }
     }
-    temp2 = temp >> 8;
-    temp = (temp << 8) | temp2;
-    temp &= 0xFFFF;
-    return temp;
+  }
+  // return (uint16_t)((crc >> 8) | (crc << 8));
+  return crc;
 }
 
-byte flprogModus::t35TimeForSpeed(int portSpeed)
+uint8_t flprogModus::t35TimeForSpeed(uint16_t portSpeed)
 {
-    int speed = portSpeed;
-    if (speed > 100)
-    {
-        speed = flprog::codeFromSpeed(portSpeed);
-    }
-    switch (speed)
-    {
-    case FLPROG_SPEED_300:
-        return 100;
-        break;
-    case FLPROG_SPEED_600:
-        return 75;
-        break;
-    case FLPROG_SPEED_1200:
-        return 40;
-        break;
-    case FLPROG_SPEED_2400:
-        return 25;
-        break;
-    case FLPROG_SPEED_4800:
-        return 15;
-        break;
-    case FLPROG_SPEED_9600:
-        return 10;
-        break;
-    case FLPROG_SPEED_14400:
-        return 5;
-        break;
-    case FLPROG_SPEED_19200:
-        return 5;
-        break;
-    case FLPROG_SPEED_28800:
-        return 5;
-        break;
-    case FLPROG_SPEED_38400:
-        return 5;
-        break;
-    default:
-        return 5;
-        break;
-    }
+  uint16_t speed = portSpeed;
+  if (speed > 100)
+  {
+    speed = flprog::codeFromSpeed(portSpeed);
+  }
+  switch (speed)
+  {
+  case FLPROG_SPEED_300:
+    return 100;
+    break;
+  case FLPROG_SPEED_600:
+    return 75;
+    break;
+  case FLPROG_SPEED_1200:
+    return 40;
+    break;
+  case FLPROG_SPEED_2400:
+    return 25;
+    break;
+  case FLPROG_SPEED_4800:
+    return 15;
+    break;
+  case FLPROG_SPEED_9600:
+    return 10;
+    break;
+  case FLPROG_SPEED_14400:
+    return 5;
+    break;
+  case FLPROG_SPEED_19200:
+    return 5;
+    break;
+  case FLPROG_SPEED_28800:
+    return 5;
+    break;
+  case FLPROG_SPEED_38400:
+    return 5;
+    break;
+  default:
+    return 5;
+    break;
+  }
 }
 
-int flprogModus::timeForSendBytes(byte portDataBits, byte portStopBits, byte portParity, int portSpeed, int dataSize)
+uint16_t flprogModus::timeForSendBytes(uint8_t portDataBits, uint8_t portStopBits, uint8_t portParity, uint16_t portSpeed, uint16_t dataSize)
 {
-    int speed = portSpeed;
-    uint8_t temp = 1 + portDataBits + portStopBits;
-    if (speed < 100)
-    {
-        speed = flprog::speedFromCode(portSpeed);
-    }
-    if (portParity > 0)
-    {
-        temp = temp + 1;
-    }
-    float temp1 = (temp / portDataBits);
+  uint16_t speed = portSpeed;
+  uint8_t temp = 1 + portDataBits + portStopBits;
+  if (speed < 100)
+  {
+    speed = flprog::speedFromCode(portSpeed);
+  }
+  if (portParity > 0)
+  {
+    temp = temp + 1;
+  }
+  float temp1 = (temp / portDataBits);
 
-    temp1 = temp1 * speed;
-    temp1 = 1000 / temp1;
-    return (ceil(temp1 * (dataSize + 8) * 8));
+  temp1 = temp1 * speed;
+  temp1 = 1000 / temp1;
+  return (ceil(temp1 * (dataSize + 8) * 8));
+}
+
+bool flprogModus::checkCRCOnBuffer(uint16_t length, uint8_t bufferArray[])
+{
+  uint16_t msgCRC = word(bufferArray[length - 1], bufferArray[length - 2]);
+  return flprogModus::modbusCalcCRC((length - 2), bufferArray) == msgCRC;
+}
+
+uint16_t flprogModus::slaveRTUPacadgeSize(uint16_t length, uint8_t bufferArray[])
+{
+  if (length < 2)
+  {
+    return 0;
+  }
+  if ((bufferArray[1] & 0x80) != 0)
+  {
+    return 5;
+  }
+  if (bufferArray[1] < 0xF)
+  {
+    return 8;
+  }
+  if (length < 7)
+  {
+    return 0;
+  }
+  return bufferArray[6] + 9;
+}
+
+uint16_t flprogModus::masterRTUPacadgeSize(uint16_t length, uint8_t bufferArray[])
+{
+  if (length < 2)
+  {
+    return 0;
+  }
+  if ((bufferArray[1] & 0x80) != 0)
+  {
+    return 5;
+  }
+  if (bufferArray[1] > 0x4)
+  {
+    return 8;
+  }
+  if (length < 3)
+  {
+    return 0;
+  }
+  return bufferArray[2] + 5;
 }
