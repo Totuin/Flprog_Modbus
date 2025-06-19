@@ -85,4 +85,5 @@ protected:
   bool nextTable();
   void sendQuery();
   bool nextStep();
+  virtual uint16_t rtuPacadgeSize(uint16_t length, uint8_t bufferArray[]);
 };

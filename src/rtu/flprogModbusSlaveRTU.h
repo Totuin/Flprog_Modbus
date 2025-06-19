@@ -46,6 +46,7 @@ public:
 protected:
   uint8_t _slaveAddres = 1;
   virtual uint8_t validateRequest();
+  virtual uint16_t rtuPacadgeSize(uint16_t length, uint8_t bufferArray[]);
 
 private:
   ModbusMainData *_data;

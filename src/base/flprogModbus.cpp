@@ -18,18 +18,26 @@ void Modbus::process_modbus_FC1(ModbusMainData *data, uint8_t table)
   bitsNo = 0;
   for (currentCoil = 0; currentCoil < coilNo; currentCoil++)
   {
-    coil = startCoil + currentCoil;
-    value = dataTable->readBoolRegister(coil);
-    bitWrite(_buffer[_bufferSize], bitsNo, value);
-    bitsNo++;
-    if (bitsNo > 7)
+    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
     {
-      bitsNo = 0;
+      coil = startCoil + currentCoil;
+      value = dataTable->readBoolRegister(coil);
+      bitWrite(_buffer[_bufferSize], bitsNo, value);
+      bitsNo++;
+      if (bitsNo > 7)
+      {
+        bitsNo = 0;
+        _bufferSize++;
+      }
+    }
+  }
+  if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+  {
+    if (coilNo % 8 != 0)
+    {
       _bufferSize++;
     }
   }
-  if (coilNo % 8 != 0)
-    _bufferSize++;
   sendTxBuffer();
 }
 
@@ -44,11 +52,14 @@ void Modbus::process_modbus_FC3(ModbusMainData *data, uint8_t table)
   _bufferSize = 3;
   for (i = startAddr; i < startAddr + byteRegsno; i++)
   {
-    value = dataTable->readWorldRegister(i);
-    _buffer[_bufferSize] = highByte(value);
-    _bufferSize++;
-    _buffer[_bufferSize] = lowByte(value);
-    _bufferSize++;
+    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+    {
+      value = dataTable->readWorldRegister(i);
+      _buffer[_bufferSize] = highByte(value);
+      _bufferSize++;
+      _buffer[_bufferSize] = lowByte(value);
+      _bufferSize++;
+    }
   }
   sendTxBuffer();
 }

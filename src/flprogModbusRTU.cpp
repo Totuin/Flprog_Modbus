@@ -45,6 +45,7 @@ uint8_t ModbusRTU::rxBuffer()
 
 void ModbusRTU::sendTxBuffer()
 {
+  clearRXBuffer();
   if (_buffer[0] == 0)
   {
     _bufferSize = 0;
@@ -54,7 +55,7 @@ void ModbusRTU::sendTxBuffer()
   uint16_t crc = flprogModus::modbusCalcCRC(_bufferSize, _buffer);
   _buffer[_bufferSize] = lowByte(crc);
   _bufferSize++;
-  _buffer[_bufferSize] = highByte(crc);;
+  _buffer[_bufferSize] = highByte(crc);
   _bufferSize++;
   _executor->writeUart(_buffer, _bufferSize, _uartPortNumber);
   uint8_t dataBits = 8;
@@ -69,24 +70,34 @@ void ModbusRTU::sendTxBuffer()
 
 bool ModbusRTU::checkAvaliblePacage()
 {
-  uint16_t avalibleBytes = _executor->availableUart(_uartPortNumber);
-  if (avalibleBytes == 0)
+  while (_executor->availableUart(_uartPortNumber))
   {
-    return false;
-  }
-
-  if (avalibleBytes != _lastRec)
-  {
-    _lastRec = avalibleBytes;
     _time = millis();
+    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
     {
-      return false;
+      _buffer[_bufferSize] = _executor->readUart(_uartPortNumber);
+
+      _bufferSize++;
+      if (_bufferSize == (rtuPacadgeSize(_bufferSize, _buffer)))
+      {
+        return true;
+      }
     }
   }
-  if (!(flprog::isTimer(_time, flprogModus::t35TimeForSpeed(_executor->getSpeedUart(_uartPortNumber)))))
+  return false;
+}
+
+uint16_t ModbusRTU::rtuPacadgeSize(uint16_t length, uint8_t bufferArray[])
+{
+  (void)length;
+  (void)bufferArray;
+  return 0;
+}
+
+void ModbusRTU::clearRXBuffer()
+{
+  while (_executor->availableUart(_uartPortNumber))
   {
-    return false;
+    _executor->readUart(_uartPortNumber);
   }
-  _lastRec = 0;
-  return true;
 }

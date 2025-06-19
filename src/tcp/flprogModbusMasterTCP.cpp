@@ -591,10 +591,10 @@ void ModbusMasterTCP::getRxBuffer()
 
 uint8_t ModbusMasterTCP::validateRequest()
 {
+  uint16_t pacadgeSize;
   if (_telegrammServer->mode() == FLPROG_RTU_OVER_TCP_MODBUS)
   {
-    // TODO Проверить CRC
-    uint16_t pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
+    pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
     if (pacadgeSize == 0)
     {
       return 253;
@@ -606,6 +606,18 @@ uint8_t ModbusMasterTCP::validateRequest()
     if (!(flprogModus::checkCRCOnBuffer(pacadgeSize, _buffer)))
     {
       return 252;
+    }
+  }
+  else
+  {
+    pacadgeSize = (uint16_t)word(_mbapBuffer[4], _mbapBuffer[5]);
+    if (pacadgeSize == 0)
+    {
+      return 253;
+    }
+    if (pacadgeSize != _bufferSize)
+    {
+      return 253;
     }
   }
   if ((_buffer[1] & 0x80) != 0)
@@ -836,6 +848,7 @@ bool ModbusMasterTCP::createWriteTelegramm(ModbusTCPSlaveServer *writeServer)
   }
   return true;
 }
+
 ModbusTCPSlaveServer *ModbusMasterTCP::firstWriteServer()
 {
   for (int i = 0; i < _serversSize; i++)

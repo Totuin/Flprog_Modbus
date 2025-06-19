@@ -162,7 +162,7 @@ void ModbusSlaveTCP::getRxBuffer()
       }
       else
       {
-        if (_bufferSize < 64)
+        if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
         {
           _buffer[_bufferSize] = readByte;
           _bufferSize++;
@@ -182,7 +182,7 @@ void ModbusSlaveTCP::getRxBuffer()
       }
       else
       {
-        if (_bufferSize < 64)
+        if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
         {
           _buffer[_bufferSize] = readByte;
           _bufferSize++;
@@ -271,10 +271,10 @@ void ModbusSlaveTCP::setCallBack(FLProgModbusNewDataCallback func)
 
 uint8_t ModbusSlaveTCP::validateRequest()
 {
-  // TODO Проверить CRC
+  uint16_t pacadgeSize;
   if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
   {
-    uint16_t pacadgeSize = flprogModus::slaveRTUPacadgeSize(_bufferSize, _buffer);
+    pacadgeSize = flprogModus::slaveRTUPacadgeSize(_bufferSize, _buffer);
     if (pacadgeSize == 0)
     {
       return 253;
@@ -288,6 +288,18 @@ uint8_t ModbusSlaveTCP::validateRequest()
       return 252;
     }
   }
+  else
+  {
+    pacadgeSize = (uint16_t)word(_mbapBuffer[4], _mbapBuffer[5]);
+    if (pacadgeSize == 0)
+    {
+      return 253;
+    }
+    if (pacadgeSize != _bufferSize)
+    {
+      return 253;
+    }
+  }
   return validateSlaveReqest(mainData());
 }
 
@@ -297,10 +309,16 @@ uint8_t ModbusSlaveTCP::rxBuffer()
   _bufferSize = 0;
   while (_server.available())
   {
-    _buffer[_bufferSize] = _server.read();
-    _bufferSize++;
-    if (_bufferSize >= 64)
+    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+    {
+      _buffer[_bufferSize] = _server.read();
+      _bufferSize++;
+    }
+    else
+    {
+      _server.read();
       bBuffOverflow = true;
+    }
   }
   if (bBuffOverflow)
   {

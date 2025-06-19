@@ -21,7 +21,6 @@ uint16_t flprogModus::modbusCalcCRC(uint16_t length, uint8_t bufferArray[])
       }
     }
   }
-  // return (uint16_t)((crc >> 8) | (crc << 8));
   return crc;
 }
 
@@ -136,3 +135,4 @@ uint16_t flprogModus::masterRTUPacadgeSize(uint16_t length, uint8_t bufferArray[
   }
   return bufferArray[2] + 5;
 }
+

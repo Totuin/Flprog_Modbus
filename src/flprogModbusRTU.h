@@ -20,6 +20,8 @@ protected:
   virtual uint8_t rxBuffer();
   virtual void sendTxBuffer();
   virtual bool checkAvaliblePacage();
+  virtual uint16_t rtuPacadgeSize(uint16_t length, uint8_t bufferArray[]);
+  void clearRXBuffer();
   int _pinPeDe = -1;
   uint8_t _lastRec = 0;
   unsigned long _time;

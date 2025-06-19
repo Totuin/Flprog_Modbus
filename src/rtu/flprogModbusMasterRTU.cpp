@@ -88,43 +88,49 @@ void ModbusMasterRTU::checkAnswer()
   {
     _telegrammSlave->setLastError(244);
     _status = FLPROG_MODBUS_READY;
+    _bufferSize = 0;
     return;
   }
-  if (!(checkAvaliblePacage()))
-    return;
-  uint8_t state = rxBuffer();
-  if (state < 5)
+  if (checkAvaliblePacage())
   {
-    // ander
-    //         _telegrammSlave->setLastError(255);
+    uint8_t exception = validateRequest();
+    if (exception > 0)
+    {
+      _telegrammSlave->setLastError(exception);
+      _status = FLPROG_MODBUS_READY;
+      _bufferSize = 0;
+      return;
+    }
     _telegrammSlave->setLastError(0);
-
-    _status = FLPROG_MODBUS_READY;
+    writeMaserData(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
+    _bufferSize = 0;
     return;
   }
-  uint8_t exception = validateRequest();
-  if (exception > 0)
+  if (_bufferSize == 0)
   {
-    _telegrammSlave->setLastError(exception);
-    _status = FLPROG_MODBUS_READY;
     return;
   }
+  if (flprog::isTimer(_time, 50))
+  {
+    _bufferSize = 0;
+  }
+  /*
+uint8_t state = rxBuffer();
+if (state < 5)
+{
+  // ander
+  //         _telegrammSlave->setLastError(255);
   _telegrammSlave->setLastError(0);
-  writeMaserData(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
+
+  _status = FLPROG_MODBUS_READY;
+  return;
+}
+  */
 }
 
 uint8_t ModbusMasterRTU::validateRequest()
 {
-  uint16_t pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
-  if (pacadgeSize == 0)
-  {
-    return 253;
-  }
-  if (pacadgeSize > _bufferSize)
-  {
-    return 253;
-  }
-  if (!(flprogModus::checkCRCOnBuffer(pacadgeSize, _buffer)))
+  if (!(flprogModus::checkCRCOnBuffer(_bufferSize, _buffer)))
   {
     return 252;
   }
@@ -919,4 +925,9 @@ void ModbusMasterRTU::status(uint8_t slaveAddres, bool status, bool isIndex)
     return;
   }
   sl->status(status);
+}
+
+uint16_t ModbusMasterRTU::rtuPacadgeSize(uint16_t length, uint8_t bufferArray[])
+{
+  return flprogModus::masterRTUPacadgeSize(length, bufferArray);
 }

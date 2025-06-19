@@ -48,33 +48,24 @@ void ModbusSlaveRTU::pool()
       return;
     }
   }
-  if (!(checkAvaliblePacage()))
+  if (checkAvaliblePacage())
+  {
+    executeSlaveReqest(mainData(), _slaveAddres);
+    return;
+  }
+  if (_bufferSize == 0)
   {
     return;
   }
-
-  if (rxBuffer() < 7)
+  if (flprog::isTimer(_time, 50))
   {
-    setLastError(2);
-    buildException(2);
-    sendTxBuffer();
-    return;
+    _bufferSize = 0;
   }
-  executeSlaveReqest(mainData(), _slaveAddres);
 }
 
 uint8_t ModbusSlaveRTU::validateRequest()
 {
-  uint16_t pacadgeSize = flprogModus::slaveRTUPacadgeSize(_bufferSize, _buffer);
-  if (pacadgeSize == 0)
-  {
-    return 253;
-  }
-  if (pacadgeSize > _bufferSize)
-  {
-    return 253;
-  }
-  if (!(flprogModus::checkCRCOnBuffer(pacadgeSize, _buffer)))
+  if (!(flprogModus::checkCRCOnBuffer(_bufferSize, _buffer)))
   {
     return 252;
   }
@@ -93,4 +84,9 @@ ModbusMainData *ModbusSlaveRTU::mainData()
 void ModbusSlaveRTU::setCallBack(FLProgModbusNewDataCallback func)
 {
   mainData()->setCallBack(func);
+}
+
+uint16_t ModbusSlaveRTU::rtuPacadgeSize(uint16_t length, uint8_t bufferArray[])
+{
+  return flprogModus::slaveRTUPacadgeSize(length, bufferArray);
 }
