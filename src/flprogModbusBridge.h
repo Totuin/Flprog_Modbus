@@ -3,6 +3,9 @@
 #include "flprogEthernet.h"
 #include "flprogUartBase.h"
 
+#define FLPROG_BRIDGE_WAITING_FOR_REQUEST 0
+#define FLPROG_BRIDGE_WAITING_FOR_RESPONSE 1
+
 class ModbusBridge
 {
 public:
@@ -58,7 +61,7 @@ public:
   void isPause(bool value) { _isPause = value; };
   bool isPause() { return _isPause; };
 
-private:
+protected:
   void onPeDePin();
   void offPeDePin();
   void begin();
@@ -86,6 +89,17 @@ private:
 
   void connect();
 
+  void requestProcess();
+  void responseProcess();
+  void serverRequestProcess();
+  void serverTcpModeRequestProcess();
+  void serverRtuOverTcpModeRequestProcess();
+  void serverResponseProcess();
+  void clientrRequestProcess();
+  void clientResponseProcess();
+  void clientTCPModeResponseProcess();
+  void clientRtuOverTCPModeResponseProcess();
+
   FlprogAbstractUartExecutor *_executor = 0;
 
   uint16_t _skippingEvents = 0;
@@ -104,8 +118,8 @@ private:
   uint8_t _bufferSize = 0;
   uint8_t _buffer[FLPROG_MODBUS_BUFER_SIZE];
   uint8_t _lastRec = 0;
-  unsigned long _startT35;
-  unsigned long _startSendTime;
+  uint32_t _startT35;
+  uint32_t _startSendTime;
   int _timeOfSend;
   IPAddress _ip = FLPROG_INADDR_NONE;
   char _remoteServerHost[FLPROG_HOST_NAME_LENGTH] = "";
@@ -120,7 +134,11 @@ private:
   FLProgEthernetClient _tcpClient;
   uint8_t _mode = FLPROG_TCP_MODBUS;
   uint8_t _mbapBuffer[6];
+  uint8_t _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+  uint16_t _transactionId = 1;
+  uint32_t _rtuSendTime;
+  uint32_t _timeoutTime = 100;
 
   String _deniceId;
-  unsigned long _kaScadaCloudTimeStartTime;
+  uint32_t _kaScadaCloudTimeStartTime;
 };

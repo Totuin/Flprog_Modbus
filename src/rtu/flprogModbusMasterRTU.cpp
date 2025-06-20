@@ -114,18 +114,6 @@ void ModbusMasterRTU::checkAnswer()
   {
     _bufferSize = 0;
   }
-  /*
-uint8_t state = rxBuffer();
-if (state < 5)
-{
-  // ander
-  //         _telegrammSlave->setLastError(255);
-  _telegrammSlave->setLastError(0);
-
-  _status = FLPROG_MODBUS_READY;
-  return;
-}
-  */
 }
 
 uint8_t ModbusMasterRTU::validateRequest()
