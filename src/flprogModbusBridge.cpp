@@ -23,7 +23,7 @@ void ModbusBridge::setMode(uint8_t mode)
   _isInit = false;
 }
 
-void ModbusBridge::setTCPPort(int port)
+void ModbusBridge::setTCPPort(int16_t port)
 {
   if (_port == port)
   {
@@ -268,6 +268,11 @@ void ModbusBridge::pool()
 
 void ModbusBridge::requestProcess()
 {
+  if (_mode == FLPROG_KASCADA_CLOUD_MODBUS)
+  {
+    kascadaCloudRequestProcess();
+    return;
+  }
   if (_isServer)
   {
     serverRequestProcess();
@@ -278,6 +283,11 @@ void ModbusBridge::requestProcess()
 
 void ModbusBridge::responseProcess()
 {
+  if (_mode == FLPROG_KASCADA_CLOUD_MODBUS)
+  {
+    kascadaCloudResponseProcess();
+    return;
+  }
   if (_isServer)
   {
     serverResponseProcess();
@@ -323,6 +333,7 @@ void ModbusBridge::clientrRequestProcess()
   {
     return;
   }
+
   uint16_t pacadgeSize = flprogModus::slaveRTUPacadgeSize(_bufferSize, _buffer);
   if ((pacadgeSize == 0) || (_bufferSize < pacadgeSize))
   {
@@ -337,10 +348,8 @@ void ModbusBridge::clientrRequestProcess()
   }
   if (!flprogModus::checkCRCOnBuffer(pacadgeSize, _buffer))
   {
-    _bufferSize = 0;
     return;
   }
-
   if (!_tcpClient.connected())
   {
     _bufferSize = 0;
@@ -372,6 +381,61 @@ void ModbusBridge::clientrRequestProcess()
   _currentStep = FLPROG_BRIDGE_WAITING_FOR_RESPONSE;
 }
 
+void ModbusBridge::kascadaCloudRequestProcess()
+{
+
+  if (!_tcpClient.connected())
+  {
+    return;
+  }
+  if (!_tcpClient.available())
+  {
+    return;
+  }
+  uint8_t byteIndex = 0;
+  while (_tcpClient.available())
+  {
+    if (byteIndex < 6)
+    {
+      _mbapBuffer[byteIndex] = _tcpClient.read();
+      byteIndex++;
+    }
+    else
+    {
+      if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+      {
+
+        _buffer[_bufferSize] = _tcpClient.read();
+        _bufferSize++;
+      }
+      else
+      {
+        _tcpClient.read();
+      }
+    }
+  }
+  if (byteIndex < 6)
+  {
+    return;
+  }
+  uint16_t pacadgeSize = (uint16_t)word(_mbapBuffer[4], _mbapBuffer[5]);
+  if (pacadgeSize == 0)
+  {
+    return;
+  }
+  if (pacadgeSize != _bufferSize)
+  {
+    return;
+  }
+  while (_executor->availableUart(_uart))
+  {
+    _executor->readUart(_uart);
+  }
+  sendRTUBuffer();
+  _rtuSendTime = millis();
+  _currentStep = FLPROG_BRIDGE_WAITING_FOR_RESPONSE;
+}
+
 void ModbusBridge::serverTcpModeRequestProcess()
 {
   uint8_t byteIndex = 0;
@@ -395,6 +459,7 @@ void ModbusBridge::serverTcpModeRequestProcess()
       }
     }
   }
+
   if (byteIndex < 6)
   {
     return;
@@ -402,10 +467,12 @@ void ModbusBridge::serverTcpModeRequestProcess()
   uint16_t pacadgeSize = (uint16_t)word(_mbapBuffer[4], _mbapBuffer[5]);
   if (pacadgeSize == 0)
   {
+
     return;
   }
   if (pacadgeSize != _bufferSize)
   {
+
     return;
   }
   while (_executor->availableUart(_uart))
@@ -414,6 +481,7 @@ void ModbusBridge::serverTcpModeRequestProcess()
   }
   sendRTUBuffer();
   _rtuSendTime = millis();
+
   _currentStep = FLPROG_BRIDGE_WAITING_FOR_RESPONSE;
 }
 
@@ -577,7 +645,6 @@ void ModbusBridge::clientRtuOverTCPModeResponseProcess()
 
 void ModbusBridge::clientTCPModeResponseProcess()
 {
-
   uint8_t byteIndex = 0;
   while (_tcpClient.available())
   {
@@ -630,6 +697,54 @@ void ModbusBridge::clientTCPModeResponseProcess()
   _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
 }
 
+void ModbusBridge::kascadaCloudResponseProcess()
+{
+  if (flprog::isTimer(_rtuSendTime, _timeoutTime))
+  {
+    _bufferSize = 0;
+    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+    return;
+  }
+  if (!(_executor->availableUart(_uart)))
+  {
+    return;
+  }
+  while (_executor->availableUart(_uart))
+  {
+    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+    {
+      _buffer[_bufferSize] = _executor->readUart(_uart);
+      _bufferSize++;
+    }
+    else
+    {
+      _executor->readUart(_uart);
+    }
+  }
+  uint16_t pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
+  if ((pacadgeSize == 0) || (_bufferSize < pacadgeSize))
+  {
+    return;
+  }
+  if (!_tcpClient.connected())
+  {
+    _bufferSize = 0;
+    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+    return;
+  }
+  while (_tcpClient.available())
+  {
+    _tcpClient.read();
+  }
+  _bufferSize = pacadgeSize - 2;
+  _mbapBuffer[4] = highByte(_bufferSize);
+  _mbapBuffer[5] = lowByte(_bufferSize);
+  _tcpClient.write(_mbapBuffer, 6);
+  _tcpClient.write(_buffer, _bufferSize);
+  _bufferSize = 0;
+  _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+}
+
 void ModbusBridge::begin()
 {
   _isInit = true;
@@ -647,50 +762,6 @@ void ModbusBridge::begin()
     _server.setPort(_port);
   }
   _kaScadaCloudTimeStartTime = flprog::timeBack(5000);
-}
-
-void ModbusBridge::rtuPool()
-{
-
-  uint8_t avalibleBytes = _executor->availableUart(_uart);
-  if (avalibleBytes == 0)
-  {
-    return;
-  }
-  if (avalibleBytes != _lastRec)
-  {
-    _lastRec = avalibleBytes;
-    _startT35 = millis();
-    return;
-  }
-  if (!(flprog::isTimer(_startT35, (flprogModus::t35TimeForSpeed(_executor->getSpeedUart(_uart))))))
-  {
-    return;
-  }
-  _lastRec = 0;
-  getRTURxBuffer();
-  if (_bufferSize < 5)
-  {
-    return;
-  }
-  sendTCPBuffer();
-}
-
-void ModbusBridge::getRTURxBuffer()
-{
-  _bufferSize = 0;
-  while (_executor->availableUart(_uart))
-  {
-    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
-    {
-      _buffer[_bufferSize] = _executor->readUart(_uart);
-      _bufferSize++;
-    }
-    else
-    {
-      _executor->readUart(_uart);
-    }
-  }
 }
 
 void ModbusBridge::sendRTUBuffer()
@@ -713,247 +784,4 @@ void ModbusBridge::sendRTUBuffer()
     _status = FLPROG_MODBUS_WAITING_SENDING;
   }
   _bufferSize = 0;
-}
-
-void ModbusBridge::tcpPool()
-{
-  if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
-  {
-    rtuOverTspModeTcpPool();
-    return;
-  }
-  tspModeTcpPool();
-}
-
-void ModbusBridge::tspModeTcpPool()
-{
-  _bufferSize = 0;
-
-  if (_isServer && (_mode != FLPROG_KASCADA_CLOUD_MODBUS))
-  {
-    tspModeAsServerTcpPool();
-  }
-  else
-  {
-    tspModeAsClientTcpPool();
-  }
-  if (_bufferSize > 0)
-  {
-    sendRTUBuffer();
-  }
-}
-
-void ModbusBridge::rtuOverTspModeTcpPool()
-{
-  _bufferSize = 0;
-
-  if (_isServer)
-  {
-    rtuOverTspModeAsServerTcpPool();
-  }
-  else
-  {
-    rtuOverTspModeAsClientTcpPool();
-  }
-  if (_bufferSize > 0)
-  {
-    sendRTUBuffer();
-  }
-}
-
-void ModbusBridge::tspModeAsServerTcpPool()
-{
-  if (!_server.connected())
-  {
-    return;
-  }
-
-  if (!_server.available())
-  {
-    return;
-  }
-  uint8_t byteIndex = 0;
-  while (_server.available())
-  {
-    if (byteIndex < 6)
-    {
-      _mbapBuffer[byteIndex] = _server.read();
-      byteIndex++;
-    }
-    else
-    {
-      if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
-      {
-        _buffer[_bufferSize] = _server.read();
-        _bufferSize++;
-      }
-      else
-      {
-        _server.read();
-      }
-    }
-  }
-}
-
-void ModbusBridge::rtuOverTspModeAsServerTcpPool()
-{
-  if (!_server.connected())
-  {
-    return;
-  }
-
-  if (!_server.available())
-  {
-    return;
-  }
-  while (_server.available())
-  {
-    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
-    {
-      _buffer[_bufferSize] = _server.read();
-      _bufferSize++;
-    }
-    else
-    {
-      _server.read();
-    }
-  }
-}
-
-void ModbusBridge::tspModeAsClientTcpPool()
-{
-  if (!_tcpClient.connected())
-  {
-    return;
-  }
-  if (!_tcpClient.available())
-  {
-    return;
-  }
-  uint8_t byteIndex = 0;
-  while (_tcpClient.available())
-  {
-    if (byteIndex < 6)
-    {
-      _mbapBuffer[byteIndex] = _tcpClient.read();
-      byteIndex++;
-    }
-    else
-    {
-      if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
-      {
-
-        _buffer[_bufferSize] = _tcpClient.read();
-        _bufferSize++;
-      }
-      else
-      {
-        _tcpClient.read();
-      }
-    }
-  }
-}
-
-void ModbusBridge::rtuOverTspModeAsClientTcpPool()
-{
-  if (!_tcpClient.connected())
-  {
-    return;
-  }
-  if (!_tcpClient.available())
-  {
-    return;
-  }
-  while (_tcpClient.available())
-  {
-    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
-    {
-      _buffer[_bufferSize] = _tcpClient.read();
-      _bufferSize++;
-    }
-    else
-    {
-      _tcpClient.read();
-    }
-  }
-}
-
-void ModbusBridge::sendTCPBuffer()
-{
-  if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
-  {
-    rtuOverTspModeSendTCPBuffer();
-    return;
-  }
-  tspModeSendTCPBuffer();
-}
-
-void ModbusBridge::tspModeSendTCPBuffer()
-{
-  if (_isServer && (_mode != FLPROG_KASCADA_CLOUD_MODBUS))
-  {
-    tspModeSendAsServerTCPBuffer();
-  }
-  else
-  {
-    tspModeSendAsClientTCPBuffer();
-  }
-  _bufferSize = 0;
-}
-
-void ModbusBridge::rtuOverTspModeSendTCPBuffer()
-{
-  if (_isServer)
-  {
-    rtuOverTspModeSendAsServerTCPBuffer();
-  }
-  else
-  {
-    rtuOverTspModeSendAsClientTCPBuffer();
-  }
-  _bufferSize = 0;
-}
-
-void ModbusBridge::tspModeSendAsServerTCPBuffer()
-{
-  if (!_server.connected())
-  {
-    return;
-  }
-  _bufferSize -= 2;
-  _mbapBuffer[4] = highByte(_bufferSize);
-  _mbapBuffer[5] = lowByte(_bufferSize);
-  _server.write(_mbapBuffer, 6);
-  _server.write(_buffer, _bufferSize);
-}
-
-void ModbusBridge::rtuOverTspModeSendAsServerTCPBuffer()
-{
-  if (!_server.connected())
-  {
-    return;
-  }
-  _server.write(_buffer, _bufferSize);
-}
-
-void ModbusBridge::tspModeSendAsClientTCPBuffer()
-{
-  if (!_tcpClient.connected())
-  {
-    return;
-  }
-  _bufferSize -= 2;
-  _mbapBuffer[4] = highByte(_bufferSize);
-  _mbapBuffer[5] = lowByte(_bufferSize);
-  _tcpClient.write(_mbapBuffer, 6);
-  _tcpClient.write(_buffer, _bufferSize);
-}
-
-void ModbusBridge::rtuOverTspModeSendAsClientTCPBuffer()
-{
-  if (!_tcpClient.connected())
-  {
-    return;
-  }
-  _tcpClient.write(_buffer, _bufferSize);
 }

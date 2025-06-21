@@ -20,8 +20,11 @@ public:
   void setPinRxUart(uint8_t pin) { _executor->setPinRxUart(pin, _uart); };
   void setPinTxUart(uint8_t pin) { _executor->setPinTxUart(pin, _uart); };
 
-  void setTCPPort(int port);
-  int tcpPort() { return _port; };
+  void setTCPPort(int16_t port);
+  int16_t tcpPort() { return _port; };
+
+  void setTimeoutTime(uint32_t value) { _timeoutTime = value; };
+  uint32_t getTimeoutTime() { return _timeoutTime; };
 
   void setTCPRemoteIp(IPAddress newIp);
   void setTCPRemoteIp(uint8_t newIpFirst, uint8_t newIpSecond, uint8_t newIpThird, uint8_t newIpFourtiph);
@@ -65,30 +68,8 @@ protected:
   void onPeDePin();
   void offPeDePin();
   void begin();
-
-  void tcpPool();
-  void tspModeTcpPool();
-  void tspModeAsServerTcpPool();
-  void tspModeAsClientTcpPool();
-  void rtuOverTspModeTcpPool();
-  void rtuOverTspModeAsServerTcpPool();
-  void rtuOverTspModeAsClientTcpPool();
-
-  void sendTCPBuffer();
-  void tspModeSendTCPBuffer();
-  void tspModeSendAsServerTCPBuffer();
-  void tspModeSendAsClientTCPBuffer();
-  void rtuOverTspModeSendTCPBuffer();
-  void rtuOverTspModeSendAsServerTCPBuffer();
-  void rtuOverTspModeSendAsClientTCPBuffer();
-
-  void rtuPool();
-
-  void getRTURxBuffer();
   void sendRTUBuffer();
-
   void connect();
-
   void requestProcess();
   void responseProcess();
   void serverRequestProcess();
@@ -99,6 +80,8 @@ protected:
   void clientResponseProcess();
   void clientTCPModeResponseProcess();
   void clientRtuOverTCPModeResponseProcess();
+  void kascadaCloudRequestProcess();
+  void kascadaCloudResponseProcess();
 
   FlprogAbstractUartExecutor *_executor = 0;
 
@@ -107,7 +90,7 @@ protected:
 
   uint8_t _status = FLPROG_MODBUS_READY;
   uint8_t _uart = 0;
-  int _port = 502;
+  int16_t _port = 502;
   int _kasCadaCloudPort = 25000;
   IPAddress _kasCadaCloudIP = IPAddress(94, 250, 249, 225);
   char _cloudHost[FLPROG_HOST_NAME_LENGTH] = "";
@@ -137,7 +120,7 @@ protected:
   uint8_t _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
   uint16_t _transactionId = 1;
   uint32_t _rtuSendTime;
-  uint32_t _timeoutTime = 100;
+  uint32_t _timeoutTime = 500;
 
   String _deniceId;
   uint32_t _kaScadaCloudTimeStartTime;
