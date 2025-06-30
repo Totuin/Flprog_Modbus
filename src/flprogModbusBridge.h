@@ -63,6 +63,8 @@ public:
   void setSkippingEvents(uint16_t value) { _skippingEvents = value; };
   void isPause(bool value) { _isPause = value; };
   bool isPause() { return _isPause; };
+   void setEnable(bool enable){_enable=enable;};
+   bool getEnable( ){return _enable;};
 
 protected:
   void onPeDePin();
@@ -124,4 +126,5 @@ protected:
 
   String _deniceId;
   uint32_t _kaScadaCloudTimeStartTime;
+   bool _enable = true;
 };

@@ -487,6 +487,10 @@ bool ModbusMasterTCP::hasServer(uint8_t serverIndex)
 
 void ModbusMasterTCP::pool()
 {
+  if(!_enable)
+  {
+    return;
+  }
   if (_interface == 0)
   {
     return;

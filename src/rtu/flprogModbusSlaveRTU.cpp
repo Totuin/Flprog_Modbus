@@ -21,6 +21,10 @@ void ModbusSlaveRTU::begin()
 
 void ModbusSlaveRTU::pool()
 {
+  if(!_enable)
+  {
+    return;
+  }
   if (_eventsCount < _skippingEvents)
   {
     _eventsCount++;

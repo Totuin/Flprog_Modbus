@@ -11,6 +11,8 @@ public:
   void setSkippingEvents(uint16_t value) { _skippingEvents = value; };
   void isPause(bool value) { _isPause = value; };
   bool isPause() { return _isPause; };
+   void setEnable(bool enable){_enable=enable;};
+   bool getEnable( ){return _enable;};
 
 protected:
   virtual void sendTxBuffer() = 0;
@@ -45,4 +47,5 @@ protected:
   bool _isPause = false;
   uint16_t _skippingEvents = 0;
   uint16_t _eventsCount = 0;
+  bool _enable = true;
 };

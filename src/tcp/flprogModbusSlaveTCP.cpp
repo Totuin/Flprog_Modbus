@@ -46,6 +46,10 @@ void ModbusSlaveTCP::begin()
 
 void ModbusSlaveTCP::pool()
 {
+  if(!_enable)
+  {
+    return;
+  }
   if (_interface == 0)
   {
     return;

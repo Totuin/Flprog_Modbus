@@ -201,6 +201,10 @@ void ModbusBridge::connect()
 
 void ModbusBridge::pool()
 {
+  if(!_enable)
+  {
+    return;
+  }
   if (_interface == 0)
   {
     return;
@@ -690,7 +694,6 @@ void ModbusBridge::clientTCPModeResponseProcess()
   {
     _bufferSize = 0;
     _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-
     return;
   }
   sendRTUBuffer();
