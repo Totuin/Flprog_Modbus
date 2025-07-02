@@ -13,6 +13,8 @@ public:
   void setPinRxUart(uint8_t pin) { _executor->setPinRxUart(pin, _uartPortNumber); };
   void setPinTxUart(uint8_t pin) { _executor->setPinTxUart(pin, _uartPortNumber); };
   void setPinPeDe(uint8_t pin) { _pinPeDe = pin; };
+  void setPort(uint8_t value){_uartPortNumber = value;};
+  uint8_t getPort(){return _uartPortNumber;};
 
 protected:
   void onPeDePin();
