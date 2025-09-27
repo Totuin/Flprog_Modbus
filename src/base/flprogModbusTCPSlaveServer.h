@@ -67,6 +67,9 @@ public:
   uint32_t readUnsignedLong(uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
   bool readBool(uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
 
+  int16_t getAdress(uint8_t slaveAddres, uint8_t table, int16_t index);
+  void setAdress(uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr);
+
   uint8_t getLastError(uint8_t slaveAdr, bool isIndex = false);
   void status(uint8_t slaveAdr, bool status, bool isIndex = false);
   bool slaveStatus(uint8_t slaveAddres, bool isIndex);

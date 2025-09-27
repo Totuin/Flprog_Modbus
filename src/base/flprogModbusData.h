@@ -15,6 +15,7 @@ public:
 
   int16_t indexForAddres(int16_t addr);
   int16_t adressForIndex(int16_t index);
+  void adressForIndex(int16_t index, int16_t addr);
 
   int16_t firstWriteAddress();
   int16_t writeRegsSize(int16_t startAddres);
@@ -88,6 +89,9 @@ public:
   ModbusTable *tableForType(uint8_t table);
   bool hasTable(uint8_t table);
   void setCallBack(FLProgModbusNewDataCallback func);
+
+  int16_t getAdress(uint8_t table, int16_t index);
+  void setAdress(uint8_t table, int16_t index, int16_t addr);
 
 protected:
   ModbusTable *_tableCoil = 0;

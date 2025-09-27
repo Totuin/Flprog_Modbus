@@ -35,6 +35,9 @@ public:
   uint32_t readUnsignedLong(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
   bool readBool(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
 
+  int16_t getAdress(uint8_t slaveAddres, uint8_t table, int16_t index);
+  void setAdress(uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr);
+
   void setPollingPeriod(uint8_t slaveAddres, uint32_t period, bool isIndex = false);
   uint32_t pollingPeriod(uint8_t slaveAddres, bool isIndex);
 

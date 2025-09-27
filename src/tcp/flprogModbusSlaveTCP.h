@@ -48,6 +48,9 @@ public:
   void byKasCadaCloud() { setMode(FLPROG_KASCADA_CLOUD_MODBUS); };
   uint8_t mode() { return _mode; };
 
+  int16_t getAdress(uint8_t table, int16_t index) { return mainData()->getAdress(table, index); };
+  void setAdress(uint8_t table, int16_t index, int16_t addr) { mainData()->setAdress(table, index, addr); };
+
   ModbusMainData *mainData();
 
   void setLongOrder(uint8_t order) { mainData()->setLongOrder(order); };

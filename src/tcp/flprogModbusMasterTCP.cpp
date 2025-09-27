@@ -401,6 +401,26 @@ bool ModbusMasterTCP::readBool(uint8_t serverIndex, uint8_t slaveAddres, uint8_t
   return serv->readBool(slaveAddres, table, startAddres, isIndex);
 }
 
+int16_t ModbusMasterTCP::getAdress(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t index)
+{
+  ModbusTCPSlaveServer *serv = server(serverIndex);
+  if (serv == 0)
+  {
+    return -1;
+  }
+  return serv->getAdress(slaveAddres, table, index);
+}
+
+void ModbusMasterTCP::setAdress(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr)
+{
+  ModbusTCPSlaveServer *serv = server(serverIndex);
+  if (serv == 0)
+  {
+    return;
+  }
+  serv->setAdress(slaveAddres, table, index, addr);
+}
+
 uint8_t ModbusMasterTCP::getLastError(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
@@ -487,7 +507,7 @@ bool ModbusMasterTCP::hasServer(uint8_t serverIndex)
 
 void ModbusMasterTCP::pool()
 {
-  if(!_enable)
+  if (!_enable)
   {
     return;
   }

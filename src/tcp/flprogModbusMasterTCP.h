@@ -56,6 +56,9 @@ public:
   void saveByte(uint8_t serverIndex, uint8_t slaveAdr, uint8_t value, uint8_t table, int startAddres, bool isIndex = false);
   void saveBool(uint8_t serverIndex, uint8_t slaveAdr, bool value, uint8_t table, int startAddres, bool isIndex = false);
 
+  int16_t getAdress(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t index);
+  void setAdress(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr);
+
   uint8_t readByte(uint8_t serverIndex, uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
   int readInteger(uint8_t serverIndex, uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
   float readFloat(uint8_t serverIndex, uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);

@@ -384,6 +384,26 @@ bool ModbusTCPSlaveServer::readBool(uint8_t slaveAddres, uint8_t table, int star
   return sl->readBool(table, startAddres);
 }
 
+int16_t ModbusTCPSlaveServer::getAdress(uint8_t slaveAddres, uint8_t table, int16_t index)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAddres, true);
+  if (sl == 0)
+  {
+    return -1;
+  }
+  return sl->getAdress(table, index);
+}
+
+void ModbusTCPSlaveServer::setAdress(uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAddres, true);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setAdress(table, index, addr);
+}
+
 uint8_t ModbusTCPSlaveServer::getLastError(uint8_t slaveAddres, bool isIndex)
 {
   ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);

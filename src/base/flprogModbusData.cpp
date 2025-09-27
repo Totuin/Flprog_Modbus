@@ -222,8 +222,11 @@ int16_t ModbusTable::indexForAddres(int16_t addr)
 
 int16_t ModbusTable::adressForIndex(int16_t index)
 {
-
-  if (!(index < _tableSize))
+  if (index < 0)
+  {
+    return -1;
+  }
+  if (index >= _tableSize)
   {
     return -1;
   }
@@ -236,6 +239,23 @@ int16_t ModbusTable::adressForIndex(int16_t index)
     return _startAddres + index;
   }
   return _adresses[index];
+}
+
+void ModbusTable::adressForIndex(int16_t index, int16_t addr)
+{
+  if (index < 0)
+  {
+    return;
+  }
+  if (index >= _tableSize)
+  {
+    return;
+  }
+  if (_adresses == 0)
+  {
+    return;
+  }
+  _adresses[index] = addr;
 }
 
 int16_t ModbusTable::firstWriteAddress()
@@ -527,6 +547,34 @@ ModbusTable *ModbusMainData::tableForStartArddres(uint8_t table, int16_t startAd
     }
   }
   return 0;
+}
+
+int16_t ModbusMainData::getAdress(uint8_t table, int16_t index)
+{
+  if (!hasTable(table))
+  {
+    return -1;
+  }
+  ModbusTable *tableData = tableForType(table);
+  if (tableData == 0)
+  {
+    return -1;
+  }
+  return tableData->adressForIndex(index);
+}
+
+void ModbusMainData::setAdress(uint8_t table, int16_t index, int16_t addr)
+{
+  if (!hasTable(table))
+  {
+    return;
+  }
+  ModbusTable *tableData = tableForType(table);
+  if (tableData == 0)
+  {
+    return;
+  }
+  tableData->adressForIndex(index, addr);
 }
 
 void ModbusMainData::saveLong(int32_t value, uint8_t table, int16_t startAddres)

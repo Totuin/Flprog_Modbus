@@ -42,7 +42,7 @@ ModbusSlaveInMaster *ModbusMasterRTU::slaveOnIndex(uint8_t slaveIndex)
 
 void ModbusMasterRTU::pool()
 {
-  if(!_enable)
+  if (!_enable)
   {
     return;
   }
@@ -586,6 +586,28 @@ bool ModbusMasterRTU::readBool(uint8_t slaveAddres, uint8_t table, int16_t start
     return 0;
   }
   return sl->readBool(table, startAddres);
+}
+
+int16_t ModbusMasterRTU::getAdress(uint8_t slaveAddres, uint8_t table, int16_t index)
+{
+  ModbusSlaveInMaster *sl;
+  sl = slaveOnIndex(slaveAddres);
+  if (sl == 0)
+  {
+    return -1;
+  }
+  return sl->getAdress(table, index);
+}
+
+void ModbusMasterRTU::setAdress(uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr)
+{
+  ModbusSlaveInMaster *sl;
+  sl = slaveOnIndex(slaveAddres);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->setAdress(table, index, addr);
 }
 
 void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, ModbusTable *table)

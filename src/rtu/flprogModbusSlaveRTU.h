@@ -40,6 +40,9 @@ public:
   uint8_t floatOrder() { return mainData()->floatOrder(); };
   uint8_t unsignedlongOrder() { return mainData()->unsignedlongOrder(); };
 
+  int16_t getAdress(uint8_t table, int16_t index) { return mainData()->getAdress(table, index); };
+  void setAdress(uint8_t table, int16_t index, int16_t addr) { mainData()->setAdress(table, index, addr); };
+
   ModbusMainData *mainData();
   void setCallBack(FLProgModbusNewDataCallback func);
 

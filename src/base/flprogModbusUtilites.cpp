@@ -100,11 +100,20 @@ uint16_t flprogModus::slaveRTUPacadgeSize(uint16_t length, uint8_t bufferArray[]
   {
     return 0;
   }
-  if ((bufferArray[1] & 0x80) != 0)
+  uint8_t function = bufferArray[1];
+  if ((function & 128) != 0)
   {
     return 5;
   }
-  if (bufferArray[1] < 0xF)
+  if ((function > 6) && (function < 15))
+  {
+    return 0;
+  }
+  if (function > 16)
+  {
+    return 0;
+  }
+  if (function < 15)
   {
     return 8;
   }
@@ -121,11 +130,20 @@ uint16_t flprogModus::masterRTUPacadgeSize(uint16_t length, uint8_t bufferArray[
   {
     return 0;
   }
-  if ((bufferArray[1] & 0x80) != 0)
+  uint8_t function = bufferArray[1];
+  if ((function & 128) != 0)
   {
     return 5;
   }
-  if (bufferArray[1] > 0x4)
+  if ((function > 6) && (function < 15))
+  {
+    return 0;
+  }
+  if (function > 16)
+  {
+    return 0;
+  }
+  if (function > 4)
   {
     return 8;
   }
@@ -135,4 +153,3 @@ uint16_t flprogModus::masterRTUPacadgeSize(uint16_t length, uint8_t bufferArray[
   }
   return bufferArray[2] + 5;
 }
-
