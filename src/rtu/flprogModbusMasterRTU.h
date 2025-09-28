@@ -11,7 +11,7 @@ public:
   void begin();
 
   void setDataTable(uint8_t slaveAddres, ModbusTable *table);
-  void setDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int *_adresses);
+  void setDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int16_t *_adresses);
   void configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize);
   void configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int16_t _startAdr);
 
@@ -55,6 +55,11 @@ public:
   uint8_t floatOrder(uint8_t slaveAddres, bool isIndex);
   uint8_t unsignedlongOrder(uint8_t slaveAddres, bool isIndex);
 
+  uint8_t hrSendMode(uint8_t slaveAddres, bool isIndex = false);
+  void setHrSendMode(uint8_t slaveAddres, uint8_t mode, bool isIndex = false);
+  uint8_t coilSendMode(uint8_t slaveAddres, bool isIndex = false);
+  void setCoilSendMode(uint8_t slaveAddres, uint8_t mode, bool isIndex = false);
+
   uint8_t getLastError(uint8_t slaveAddres, bool isIndex = false);
   void status(uint8_t slaveAddres, bool status, bool isIndex = false);
   bool slaveStatus(uint8_t slaveAddres, bool isIndex);
@@ -89,4 +94,6 @@ protected:
   void sendQuery();
   bool nextStep();
   virtual uint16_t rtuPacadgeSize(uint16_t length, uint8_t bufferArray[]);
+  uint8_t calculateSendRegSize();
+  uint8_t selectSendFunction();
 };

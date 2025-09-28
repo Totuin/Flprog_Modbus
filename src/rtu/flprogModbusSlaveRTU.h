@@ -13,22 +13,22 @@ public:
   void setData(ModbusMainData *data) { _data = data; };
 
   void setDataTable(ModbusTable *table) { mainData()->setDataTable(table); };
-  void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses) { mainData()->setDataTable(_table, dataSize, _adresses); };
+  void setDataTable(uint8_t _table, uint16_t dataSize, int16_t *_adresses) { mainData()->setDataTable(_table, dataSize, _adresses); };
   void configDataTable(uint8_t _table, uint16_t dataSize, int16_t _startAdr = 0) { mainData()->configDataTable(_table, dataSize, _startAdr); };
 
-  void saveLong(int32_t val, uint8_t table, int adr) { mainData()->saveLong(val, table, adr); };
-  void saveUnsignedLong(uint32_t val, uint8_t table, int adr) { mainData()->saveUnsignedLong(val, table, adr); };
-  void saveFloat(float val, uint8_t table, int adr) { mainData()->saveFloat(val, table, adr); };
-  void saveInteger(int val, uint8_t table, int adr) { mainData()->saveInteger(val, table, adr); };
-  void saveByte(uint8_t val, uint8_t table, int adr) { mainData()->saveByte(val, table, adr); };
-  void saveBool(bool val, uint8_t table, int adr) { mainData()->saveBool(val, table, adr); };
+  void saveLong(int32_t val, uint8_t table, int16_t adr) { mainData()->saveLong(val, table, adr); };
+  void saveUnsignedLong(uint32_t val, uint8_t table, int16_t adr) { mainData()->saveUnsignedLong(val, table, adr); };
+  void saveFloat(float val, uint8_t table, int16_t adr) { mainData()->saveFloat(val, table, adr); };
+  void saveInteger(int16_t val, uint8_t table, int16_t adr) { mainData()->saveInteger(val, table, adr); };
+  void saveByte(uint8_t val, uint8_t table, int16_t adr) { mainData()->saveByte(val, table, adr); };
+  void saveBool(bool val, uint8_t table, int16_t adr) { mainData()->saveBool(val, table, adr); };
 
-  uint8_t readByte(uint8_t table, int adr) { return mainData()->readByte(table, adr); };
-  int readInteger(uint8_t table, int adr) { return mainData()->readInteger(table, adr); };
-  float readFloat(uint8_t table, int adr) { return mainData()->readFloat(table, adr); };
-  int32_t readLong(uint8_t table, int adr) { return mainData()->readLong(table, adr); };
-  uint32_t readUnsignedLong(uint8_t table, int adr) { return mainData()->readUnsignedLong(table, adr); };
-  bool readBool(uint8_t table, int adr) { return mainData()->readBool(table, adr); };
+  uint8_t readByte(uint8_t table, int16_t adr) { return mainData()->readByte(table, adr); };
+  uint16_t readInteger(uint8_t table, int16_t adr) { return mainData()->readInteger(table, adr); };
+  float readFloat(uint8_t table, int16_t adr) { return mainData()->readFloat(table, adr); };
+  int32_t readLong(uint8_t table, int16_t adr) { return mainData()->readLong(table, adr); };
+  uint32_t readUnsignedLong(uint8_t table, int16_t adr) { return mainData()->readUnsignedLong(table, adr); };
+  bool readBool(uint8_t table, int16_t adr) { return mainData()->readBool(table, adr); };
 
   void setLongOrder(uint8_t order) { mainData()->setLongOrder(order); };
   void setFloatOrder(uint8_t order) { mainData()->setFloatOrder(order); };

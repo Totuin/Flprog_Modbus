@@ -4,12 +4,12 @@
 class ModbusTable
 {
 public:
-  ModbusTable(uint8_t _table, uint16_t dataSize, uint16_t startAddres = 0);
-  ModbusTable(uint8_t _table, uint16_t dataSize, int *_adresses);
+  ModbusTable(uint8_t _table, uint16_t dataSize, int16_t startAddres = 0);
+  ModbusTable(uint8_t _table, uint16_t dataSize, int16_t *_adresses);
 
-  void init(int16_t dataSize, uint16_t startAddres);
+  void init(int16_t dataSize, int16_t startAddres);
 
-  void init(int16_t dataSize, int *_adresses);
+  void init(int16_t dataSize, int16_t *_adresses);
 
   void init(int16_t dataSize);
 
@@ -43,8 +43,7 @@ private:
   int16_t _maxAdress = -1;
   uint8_t _table = 0;
   int16_t _tableSize = 0;
-  int16_t _startAddres = -1;
-  int *_adresses = 0;
+  int16_t *_adresses = 0;
   int16_t *_worldData;
   bool *_boolData;
   bool *_sendRegisters;
@@ -57,7 +56,7 @@ class ModbusMainData
 public:
   ModbusMainData() {};
   void setDataTable(ModbusTable *_table);
-  void setDataTable(uint8_t _table, uint16_t dataSize, int *_adresses);
+  void setDataTable(uint8_t _table, uint16_t dataSize, int16_t *_adresses);
   void configDataTable(uint8_t _table, uint16_t dataSize, int16_t startAddres = 0);
 
   void setIntOrder(uint8_t order);
@@ -143,7 +142,14 @@ public:
   uint8_t slaveAddress() { return _slaveAddres; };
   uint8_t getSlaveAddress() { return _slaveAddres; };
 
+  uint8_t hrSendMode() { return _hrSendMode; };
+  void hrSendMode(uint8_t mode) { _hrSendMode = mode; };
+  uint8_t coilSendMode() { return _coilSendMode; };
+  void coilSendMode(uint8_t mode) { _coilSendMode = mode; };
+
 protected:
+  uint8_t _hrSendMode = FLPROG_SEND_AUTO;
+  uint8_t _coilSendMode = FLPROG_SEND_AUTO;
   bool _isActive = true;
   uint32_t _lastReqestTime;
   bool _initFlag = false;

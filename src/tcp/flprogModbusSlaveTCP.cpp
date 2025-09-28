@@ -21,7 +21,7 @@ void ModbusSlaveTCP::setMode(uint8_t mode)
   _isInit = false;
 }
 
-void ModbusSlaveTCP::setTcpPort(int port)
+void ModbusSlaveTCP::setTcpPort(int16_t port)
 {
   if (_port == port)
   {
@@ -362,7 +362,7 @@ void ModbusSlaveTCP::setKaScadaCloudHost(String host)
   _isInit = false;
 }
 
-void ModbusSlaveTCP::setKaScadaCloudPort(int newPort)
+void ModbusSlaveTCP::setKaScadaCloudPort(int16_t newPort)
 {
   if (_cloudPort == newPort)
 

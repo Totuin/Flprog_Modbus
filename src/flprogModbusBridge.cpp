@@ -122,7 +122,7 @@ void ModbusBridge::setKaScadaCloudHost(String host)
   _isInit = false;
 }
 
-void ModbusBridge::setKaScadaCloudPort(int port)
+void ModbusBridge::setKaScadaCloudPort(int16_t port)
 {
   if (port == _kasCadaCloudPort)
   {

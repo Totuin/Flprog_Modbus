@@ -24,7 +24,7 @@ protected:
   virtual bool checkAvaliblePacage();
   virtual uint16_t rtuPacadgeSize(uint16_t length, uint8_t bufferArray[]);
   void clearRXBuffer();
-  int _pinPeDe = -1;
+  int16_t _pinPeDe = -1;
   uint8_t _lastRec = 0;
   unsigned long _time;
   uint8_t _uartPortNumber = 0;

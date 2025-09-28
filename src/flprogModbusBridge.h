@@ -40,8 +40,8 @@ public:
   void setKaScadaCloudIp(uint8_t first_octet, uint8_t second_octet, uint8_t third_octet, uint8_t fourth_octet);
   IPAddress kaScadaCloudIp() { return _kasCadaCloudIP; };
 
-  void setKaScadaCloudPort(int port);
-  int kaScadaCloudPort() { return _kasCadaCloudPort; };
+  void setKaScadaCloudPort(int16_t port);
+  int16_t kaScadaCloudPort() { return _kasCadaCloudPort; };
 
   void setKaScadaCloudDevceId(String id);
   String kaScadaCloudDevceId() { return _deniceId; };
@@ -93,19 +93,19 @@ protected:
   uint8_t _status = FLPROG_MODBUS_READY;
   uint8_t _uart = 0;
   int16_t _port = 502;
-  int _kasCadaCloudPort = 25000;
+  int16_t _kasCadaCloudPort = 25000;
   IPAddress _kasCadaCloudIP = IPAddress(94, 250, 249, 225);
   char _cloudHost[FLPROG_HOST_NAME_LENGTH] = "";
   bool _cloudAdressAsHost = false;
 
   bool _isServer = false;
-  int _pinPeDe = -1;
+  int16_t _pinPeDe = -1;
   uint8_t _bufferSize = 0;
   uint8_t _buffer[FLPROG_MODBUS_BUFER_SIZE];
   uint8_t _lastRec = 0;
   uint32_t _startT35;
   uint32_t _startSendTime;
-  int _timeOfSend;
+  int16_t _timeOfSend;
   IPAddress _ip = FLPROG_INADDR_NONE;
   char _remoteServerHost[FLPROG_HOST_NAME_LENGTH] = "";
   bool _remoteServerAsHost = false;

@@ -31,7 +31,7 @@ public:
   ModbusSlaveInMaster *slave(uint8_t slaveAddr, bool isIndex = false);
 
   void setDataTable(uint8_t slaveAdr, ModbusTable *table);
-  void setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int *_adresses);
+  void setDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, int16_t *_adresses);
 
   void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize);
   void configDataTable(uint8_t slaveAdr, uint8_t _table, int16_t dataSize, uint16_t _startAdr);
@@ -53,19 +53,24 @@ public:
   uint8_t unsignedlongOrder(uint8_t slaveAdr, bool isIndex = false);
   uint8_t intOrder(uint8_t slaveAdr, bool isIndex = false);
 
-  void saveLong(uint8_t slaveAdr, int32_t value, uint8_t table, int startAddres, bool isIndex = false);
-  void saveUnsignedLong(uint8_t slaveAdr, uint32_t value, uint8_t table, int startAddres, bool isIndex = false);
-  void saveFloat(uint8_t slaveAdr, float value, uint8_t table, int startAddres, bool isIndex = false);
-  void saveInteger(uint8_t slaveAdr, int value, uint8_t table, int startAddres, bool isIndex = false);
-  void saveByte(uint8_t slaveAdr, uint8_t value, uint8_t table, int startAddres, bool isIndex = false);
-  void saveBool(uint8_t slaveAdr, bool value, uint8_t table, int startAddres, bool isIndex = false);
+  void saveLong(uint8_t slaveAdr, int32_t value, uint8_t table, int16_t startAddres, bool isIndex = false);
+  void saveUnsignedLong(uint8_t slaveAdr, uint32_t value, uint8_t table, int16_t startAddres, bool isIndex = false);
+  void saveFloat(uint8_t slaveAdr, float value, uint8_t table, int16_t startAddres, bool isIndex = false);
+  void saveInteger(uint8_t slaveAdr, uint16_t value, uint8_t table, int16_t startAddres, bool isIndex = false);
+  void saveByte(uint8_t slaveAdr, uint8_t value, uint8_t table, int16_t startAddres, bool isIndex = false);
+  void saveBool(uint8_t slaveAdr, bool value, uint8_t table, int16_t startAddres, bool isIndex = false);
 
-  uint8_t readByte(uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
-  int readInteger(uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
-  float readFloat(uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
-  int32_t readLong(uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
-  uint32_t readUnsignedLong(uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
-  bool readBool(uint8_t slaveAdr, uint8_t table, int startAddres, bool isIndex = false);
+  uint8_t readByte(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex = false);
+  uint16_t readInteger(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex = false);
+  float readFloat(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex = false);
+  int32_t readLong(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex = false);
+  uint32_t readUnsignedLong(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex = false);
+  bool readBool(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex = false);
+
+  uint8_t hrSendMode(uint8_t slaveAddres, bool isIndex = false);
+  void setHrSendMode(uint8_t slaveAddres, uint8_t mode, bool isIndex = false);
+  uint8_t coilSendMode(uint8_t slaveAddres, bool isIndex = false);
+  void setCoilSendMode(uint8_t slaveAddres, uint8_t mode, bool isIndex = false);
 
   int16_t getAdress(uint8_t slaveAddres, uint8_t table, int16_t index);
   void setAdress(uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr);
@@ -80,10 +85,10 @@ public:
 
   bool hasWriteRegisters();
   bool isReady();
-  int getPort() { return _port; };
+  int16_t getPort() { return _port; };
 
 protected:
-  int _port = 502;
+  int16_t _port = 502;
   IPAddress _serverIp;
   char _serverHost[FLPROG_HOST_NAME_LENGTH] = "";
   bool _serverAsHost = false;

@@ -177,7 +177,6 @@ ModbusSlaveInMaster *ModbusMasterRTU::firstWriteSlave()
 
 bool ModbusMasterRTU::createNewTelegramm()
 {
-
   if (hasWriteRegisters())
   {
     return createWriteTelegramm();
@@ -186,7 +185,6 @@ bool ModbusMasterRTU::createNewTelegramm()
   {
     return false;
   }
-
   return createReadTelegram();
 }
 
@@ -216,39 +214,75 @@ bool ModbusMasterRTU::createReadTelegram()
   return true;
 }
 
+uint8_t ModbusMasterRTU::calculateSendRegSize()
+{
+  if (_telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
+  {
+    if (_telegrammSlave->hrSendMode() == FLPROG_SEND_HR_F6)
+    {
+      return 1;
+    }
+  }
+  else
+  {
+    if (_telegrammSlave->coilSendMode() == FLPROG_SEND_COIL_F5)
+    {
+      return 1;
+    }
+  }
+  return _telegrammTable->writeRegsSize(_telegrammStartAddres);
+}
+
+uint8_t ModbusMasterRTU::selectSendFunction()
+{
+  if (_telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
+  {
+    if (_telegrammSlave->hrSendMode() == FLPROG_SEND_HR_F6)
+    {
+      return FLPROG_SEND_HR_F6;
+    }
+    if (_telegrammSlave->hrSendMode() == FLPROG_SEND_HR_F16)
+    {
+      return FLPROG_SEND_HR_F16;
+    }
+    if (_telegrammNumbeRegs == 1)
+    {
+      return FLPROG_SEND_HR_F6;
+    }
+    else
+    {
+      return FLPROG_SEND_HR_F16;
+    }
+  }
+  if (_telegrammSlave->coilSendMode() == FLPROG_SEND_COIL_F5)
+  {
+    return FLPROG_SEND_COIL_F5;
+  }
+  if (_telegrammSlave->coilSendMode() == FLPROG_SEND_COIL_F15)
+  {
+    return FLPROG_SEND_COIL_F15;
+  }
+  if (_telegrammNumbeRegs == 1)
+  {
+    return FLPROG_SEND_COIL_F5;
+  }
+  else
+  {
+    return FLPROG_SEND_COIL_F15 ;
+  }
+}
+
 bool ModbusMasterRTU::createWriteTelegramm()
 {
   _telegrammSlave = firstWriteSlave();
   _telegrammTable = _telegrammSlave->firstWriteTable();
   _telegrammStartAddres = _telegrammTable->firstWriteAddress();
-  _telegrammNumbeRegs = _telegrammTable->writeRegsSize(_telegrammStartAddres);
-  if (_telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
-  {
-    if (_telegrammNumbeRegs == 1)
-    {
-      _telegrammFunction = 6;
-    }
-    else
-    {
-      _telegrammFunction = 16;
-    }
-  }
-  else
-  {
-    if (_telegrammNumbeRegs == 1)
-    {
-      _telegrammFunction = 5;
-    }
-    else
-    {
-      _telegrammFunction = 15;
-    }
-  }
+  _telegrammNumbeRegs = calculateSendRegSize();
+  _telegrammFunction = selectSendFunction();
   for (uint8_t i = 0; i < _telegrammNumbeRegs; i++)
   {
     _telegrammTable->resetWriteFlag(_telegrammStartAddres + i);
   }
-
   return true;
 }
 
@@ -439,7 +473,6 @@ void ModbusMasterRTU::saveInteger(uint8_t slaveAddres, int16_t value, uint8_t ta
   {
     return;
   }
-
   sl->saveInteger(value, table, startAddres);
 }
 
@@ -621,7 +654,7 @@ void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, ModbusTable *table)
   sl->setDataTable(table);
 }
 
-void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int *_adresses)
+void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int16_t *_adresses)
 {
   ModbusSlaveInMaster *sl;
   sl = slave(slaveAddres);
@@ -777,6 +810,78 @@ uint8_t ModbusMasterRTU::unsignedlongOrder(uint8_t slaveAddres, bool isIndex)
     return 0;
   }
   return sl->unsignedlongOrder();
+}
+
+uint8_t ModbusMasterRTU::hrSendMode(uint8_t slaveAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->hrSendMode();
+}
+
+void ModbusMasterRTU::setHrSendMode(uint8_t slaveAddres, uint8_t mode, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->hrSendMode(mode);
+}
+
+uint8_t ModbusMasterRTU::coilSendMode(uint8_t slaveAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->coilSendMode();
+}
+
+void ModbusMasterRTU::setCoilSendMode(uint8_t slaveAddres, uint8_t mode, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->coilSendMode(mode);
 }
 
 bool ModbusMasterRTU::slaveStatus(uint8_t slaveAddres, bool isIndex)

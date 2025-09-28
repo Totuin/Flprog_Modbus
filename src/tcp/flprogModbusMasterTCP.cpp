@@ -130,7 +130,7 @@ void ModbusMasterTCP::setDataTable(uint8_t serverIndex, uint8_t slaveAddres, Mod
   serv->setDataTable(slaveAddres, table);
 }
 
-void ModbusMasterTCP::setDataTable(uint8_t serverIndex, uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int *_adresses)
+void ModbusMasterTCP::setDataTable(uint8_t serverIndex, uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int16_t *_adresses)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -281,7 +281,7 @@ uint8_t ModbusMasterTCP::unsignedlongOrder(uint8_t serverIndex, uint8_t slaveAdd
   return serv->unsignedlongOrder(slaveAddres, isIndex);
 }
 
-void ModbusMasterTCP::saveLong(uint8_t serverIndex, uint8_t slaveAddres, int32_t value, uint8_t table, int startAddres, bool isIndex)
+void ModbusMasterTCP::saveLong(uint8_t serverIndex, uint8_t slaveAddres, int32_t value, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -291,7 +291,7 @@ void ModbusMasterTCP::saveLong(uint8_t serverIndex, uint8_t slaveAddres, int32_t
   serv->saveLong(slaveAddres, value, table, startAddres, isIndex);
 }
 
-void ModbusMasterTCP::saveUnsignedLong(uint8_t serverIndex, uint8_t slaveAddres, uint32_t value, uint8_t table, int startAddres, bool isIndex)
+void ModbusMasterTCP::saveUnsignedLong(uint8_t serverIndex, uint8_t slaveAddres, uint32_t value, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -301,7 +301,7 @@ void ModbusMasterTCP::saveUnsignedLong(uint8_t serverIndex, uint8_t slaveAddres,
   serv->saveUnsignedLong(slaveAddres, value, table, startAddres, isIndex);
 }
 
-void ModbusMasterTCP::saveFloat(uint8_t serverIndex, uint8_t slaveAddres, float value, uint8_t table, int startAddres, bool isIndex)
+void ModbusMasterTCP::saveFloat(uint8_t serverIndex, uint8_t slaveAddres, float value, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -311,7 +311,7 @@ void ModbusMasterTCP::saveFloat(uint8_t serverIndex, uint8_t slaveAddres, float 
   serv->saveFloat(slaveAddres, value, table, startAddres, isIndex);
 }
 
-void ModbusMasterTCP::saveInteger(uint8_t serverIndex, uint8_t slaveAddres, int value, uint8_t table, int startAddres, bool isIndex)
+void ModbusMasterTCP::saveInteger(uint8_t serverIndex, uint8_t slaveAddres, uint16_t value, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -321,7 +321,7 @@ void ModbusMasterTCP::saveInteger(uint8_t serverIndex, uint8_t slaveAddres, int 
   serv->saveInteger(slaveAddres, value, table, startAddres, isIndex);
 }
 
-void ModbusMasterTCP::saveByte(uint8_t serverIndex, uint8_t slaveAddres, uint8_t value, uint8_t table, int startAddres, bool isIndex)
+void ModbusMasterTCP::saveByte(uint8_t serverIndex, uint8_t slaveAddres, uint8_t value, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -331,7 +331,7 @@ void ModbusMasterTCP::saveByte(uint8_t serverIndex, uint8_t slaveAddres, uint8_t
   serv->saveByte(slaveAddres, value, table, startAddres, isIndex);
 }
 
-void ModbusMasterTCP::saveBool(uint8_t serverIndex, uint8_t slaveAddres, bool value, uint8_t table, int startAddres, bool isIndex)
+void ModbusMasterTCP::saveBool(uint8_t serverIndex, uint8_t slaveAddres, bool value, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -341,7 +341,7 @@ void ModbusMasterTCP::saveBool(uint8_t serverIndex, uint8_t slaveAddres, bool va
   serv->saveBool(slaveAddres, value, table, startAddres, isIndex);
 }
 
-uint8_t ModbusMasterTCP::readByte(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
+uint8_t ModbusMasterTCP::readByte(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -351,7 +351,7 @@ uint8_t ModbusMasterTCP::readByte(uint8_t serverIndex, uint8_t slaveAddres, uint
   return serv->readByte(slaveAddres, table, startAddres, isIndex);
 }
 
-int ModbusMasterTCP::readInteger(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
+uint16_t ModbusMasterTCP::readInteger(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -361,7 +361,7 @@ int ModbusMasterTCP::readInteger(uint8_t serverIndex, uint8_t slaveAddres, uint8
   return serv->readInteger(slaveAddres, table, startAddres, isIndex);
 }
 
-float ModbusMasterTCP::readFloat(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
+float ModbusMasterTCP::readFloat(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -371,7 +371,7 @@ float ModbusMasterTCP::readFloat(uint8_t serverIndex, uint8_t slaveAddres, uint8
   return serv->readFloat(slaveAddres, table, startAddres, isIndex);
 }
 
-int32_t ModbusMasterTCP::readLong(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
+int32_t ModbusMasterTCP::readLong(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -381,7 +381,7 @@ int32_t ModbusMasterTCP::readLong(uint8_t serverIndex, uint8_t slaveAddres, uint
   return serv->readLong(slaveAddres, table, startAddres, isIndex);
 }
 
-uint32_t ModbusMasterTCP::readUnsignedLong(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
+uint32_t ModbusMasterTCP::readUnsignedLong(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -391,7 +391,7 @@ uint32_t ModbusMasterTCP::readUnsignedLong(uint8_t serverIndex, uint8_t slaveAdd
   return serv->readUnsignedLong(slaveAddres, table, startAddres, isIndex);
 }
 
-bool ModbusMasterTCP::readBool(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int startAddres, bool isIndex)
+bool ModbusMasterTCP::readBool(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);
   if (serv == 0)
@@ -399,6 +399,46 @@ bool ModbusMasterTCP::readBool(uint8_t serverIndex, uint8_t slaveAddres, uint8_t
     return false;
   }
   return serv->readBool(slaveAddres, table, startAddres, isIndex);
+}
+
+uint8_t ModbusMasterTCP::hrSendMode(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
+{
+  ModbusTCPSlaveServer *serv = server(serverIndex);
+  if (serv == 0)
+  {
+    return 0;
+  }
+  return serv->hrSendMode(slaveAddres, isIndex);
+}
+
+void ModbusMasterTCP::setHrSendMode(uint8_t serverIndex, uint8_t slaveAddres, uint8_t mode, bool isIndex)
+{
+  ModbusTCPSlaveServer *serv = server(serverIndex);
+  if (serv == 0)
+  {
+    return;
+  }
+  serv->setHrSendMode(slaveAddres, mode, isIndex);
+}
+
+uint8_t ModbusMasterTCP::coilSendMode(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex)
+{
+  ModbusTCPSlaveServer *serv = server(serverIndex);
+  if (serv == 0)
+  {
+    return 0;
+  }
+  return serv->coilSendMode(slaveAddres, isIndex);
+}
+
+void ModbusMasterTCP::setCoilSendMode(uint8_t serverIndex, uint8_t slaveAddres, uint8_t mode, bool isIndex)
+{
+  ModbusTCPSlaveServer *serv = server(serverIndex);
+  if (serv == 0)
+  {
+    return;
+  }
+  serv->setCoilSendMode(slaveAddres, mode, isIndex);
 }
 
 int16_t ModbusMasterTCP::getAdress(uint8_t serverIndex, uint8_t slaveAddres, uint8_t table, int16_t index)
@@ -777,7 +817,7 @@ bool ModbusMasterTCP::nextServer()
 
 ModbusTCPSlaveServer *ModbusMasterTCP::firstReadyServer()
 {
-  for (int i = 0; i < _serversSize; i++)
+  for (int16_t i = 0; i < _serversSize; i++)
   {
     if (servers()[i].isReady())
     {
@@ -790,7 +830,7 @@ ModbusTCPSlaveServer *ModbusMasterTCP::firstReadyServer()
 ModbusTCPSlaveServer *ModbusMasterTCP::nextReadyServer(ModbusTCPSlaveServer *oldServer)
 {
   bool isFindServer = false;
-  for (int i = 0; i < _serversSize; i++)
+  for (int16_t i = 0; i < _serversSize; i++)
   {
     if (isFindServer)
     {
@@ -812,7 +852,7 @@ ModbusTCPSlaveServer *ModbusMasterTCP::nextReadyServer(ModbusTCPSlaveServer *old
 
 bool ModbusMasterTCP::hasReadyServer()
 {
-  for (int i = 0; i < _serversSize; i++)
+  for (int16_t i = 0; i < _serversSize; i++)
   {
     if (server(i)->isReady())
     {
@@ -837,35 +877,72 @@ void ModbusMasterTCP::sendQuery()
   //_status = FLPROG_MODBUS_WAITING_ANSWER;
 }
 
+uint8_t ModbusMasterTCP::calculateSendRegSize()
+{
+  if (_telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
+  {
+    if (_telegrammSlave->hrSendMode() == FLPROG_SEND_HR_F6)
+    {
+      return 1;
+    }
+  }
+  else
+  {
+    if (_telegrammSlave->coilSendMode() == FLPROG_SEND_COIL_F5)
+    {
+      return 1;
+    }
+  }
+  return _telegrammTable->writeRegsSize(_telegrammStartAddres);
+}
+
+uint8_t ModbusMasterTCP::selectSendFunction()
+{
+  if (_telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
+  {
+    if (_telegrammSlave->hrSendMode() == FLPROG_SEND_HR_F6)
+    {
+      return FLPROG_SEND_HR_F6;
+    }
+    if (_telegrammSlave->hrSendMode() == FLPROG_SEND_HR_F16)
+    {
+      return FLPROG_SEND_HR_F16;
+    }
+    if (_telegrammNumbeRegs == 1)
+    {
+      return FLPROG_SEND_HR_F6;
+    }
+    else
+    {
+      return FLPROG_SEND_HR_F16;
+    }
+  }
+  if (_telegrammSlave->coilSendMode() == FLPROG_SEND_COIL_F5)
+  {
+    return FLPROG_SEND_COIL_F5;
+  }
+  if (_telegrammSlave->coilSendMode() == FLPROG_SEND_COIL_F15)
+  {
+    return FLPROG_SEND_COIL_F15;
+  }
+  if (_telegrammNumbeRegs == 1)
+  {
+    return FLPROG_SEND_COIL_F5;
+  }
+  else
+  {
+    return FLPROG_SEND_COIL_F15;
+  }
+}
+
 bool ModbusMasterTCP::createWriteTelegramm(ModbusTCPSlaveServer *writeServer)
 {
   _telegrammServer = writeServer;
   _telegrammSlave = _telegrammServer->firstWriteSlave();
   _telegrammTable = _telegrammSlave->firstWriteTable();
   _telegrammStartAddres = _telegrammTable->firstWriteAddress();
-  _telegrammNumbeRegs = _telegrammTable->writeRegsSize(_telegrammStartAddres);
-  if (_telegrammTable->tableType() == FLPROG_HOLDING_REGISTR)
-  {
-    if (_telegrammNumbeRegs == 1)
-    {
-      _telegrammFunction = 6;
-    }
-    else
-    {
-      _telegrammFunction = 16;
-    }
-  }
-  else
-  {
-    if (_telegrammNumbeRegs == 1)
-    {
-      _telegrammFunction = 5;
-    }
-    else
-    {
-      _telegrammFunction = 15;
-    }
-  }
+  _telegrammNumbeRegs = calculateSendRegSize();
+  _telegrammFunction = selectSendFunction();
   for (uint8_t i = 0; i < _telegrammNumbeRegs; i++)
   {
     _telegrammTable->resetWriteFlag(_telegrammStartAddres + i);
@@ -875,7 +952,7 @@ bool ModbusMasterTCP::createWriteTelegramm(ModbusTCPSlaveServer *writeServer)
 
 ModbusTCPSlaveServer *ModbusMasterTCP::firstWriteServer()
 {
-  for (int i = 0; i < _serversSize; i++)
+  for (int16_t i = 0; i < _serversSize; i++)
   {
     if (server(i)->hasWriteRegisters())
     {
@@ -903,7 +980,7 @@ void ModbusMasterTCP::sendTxBuffer()
   connect(_telegrammServer);
 }
 
-void ModbusMasterTCP::setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster table[], int size)
+void ModbusMasterTCP::setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster table[], int16_t size)
 {
   if (hasServer(serverIndex))
   {
