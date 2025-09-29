@@ -28,12 +28,26 @@ public:
   void saveByte(uint8_t slaveAddres, uint8_t val, uint8_t table, int16_t adr, bool isIndex = false);
   void saveBool(uint8_t slaveAddres, bool val, uint8_t table, int16_t adr, bool isIndex = false);
 
+  void saveLongByIndex(uint8_t slaveAddres, int32_t val, uint8_t table, int16_t adr, bool isIndex = false);
+  void saveUnsignedLongByIndex(uint8_t slaveAddres, uint32_t val, uint8_t table, int16_t adr, bool isIndex = false);
+  void saveFloatByIndex(uint8_t slaveAddres, float val, uint8_t table, int16_t adr, bool isIndex = false);
+  void saveIntegerByIndex(uint8_t slaveAddres, int16_t val, uint8_t table, int16_t adr, bool isIndex = false);
+  void saveByteByIndex(uint8_t slaveAddres, uint8_t val, uint8_t table, int16_t adr, bool isIndex = false);
+  void saveBoolByIndex(uint8_t slaveAddres, bool val, uint8_t table, int16_t adr, bool isIndex = false);
+
   uint8_t readByte(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
   int16_t readInteger(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
   float readFloat(uint8_t slaveAddres, uint8_t table, int16_t ad, bool isIndex = false);
   int32_t readLong(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
   uint32_t readUnsignedLong(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
   bool readBool(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
+
+  uint8_t readByteByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
+  int16_t readIntegerByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
+  float readFloatByIndex(uint8_t slaveAddres, uint8_t table, int16_t ad, bool isIndex = false);
+  int32_t readLongByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
+  uint32_t readUnsignedLongByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
+  bool readBoolByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex = false);
 
   int16_t getAdress(uint8_t slaveAddres, uint8_t table, int16_t index);
   void setAdress(uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr);

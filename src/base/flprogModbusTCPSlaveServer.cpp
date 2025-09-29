@@ -364,6 +364,66 @@ void ModbusTCPSlaveServer::saveBool(uint8_t slaveAddres, bool value, uint8_t tab
   sl->saveBool(value, table, startAddres);
 }
 
+void ModbusTCPSlaveServer::saveLongByIndex(uint8_t slaveAdr, int32_t value, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveLongByIndex(value, table, startAddres);
+}
+
+void ModbusTCPSlaveServer::saveUnsignedLongByIndex(uint8_t slaveAdr, uint32_t value, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveUnsignedLongByIndex(value, table, startAddres);
+}
+
+void ModbusTCPSlaveServer::saveFloatByIndex(uint8_t slaveAdr, float value, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveFloatByIndex(value, table, startAddres);
+}
+
+void ModbusTCPSlaveServer::saveIntegerByIndex(uint8_t slaveAdr, uint16_t value, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveIntegerByIndex(value, table, startAddres);
+}
+
+void ModbusTCPSlaveServer::saveByteByIndex(uint8_t slaveAdr, uint8_t value, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveByteByIndex(value, table, startAddres);
+}
+
+void ModbusTCPSlaveServer::saveBoolByIndex(uint8_t slaveAdr, bool value, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveBoolByIndex(value, table, startAddres);
+}
+
 uint8_t ModbusTCPSlaveServer::readByte(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
 {
   ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);
@@ -422,6 +482,66 @@ bool ModbusTCPSlaveServer::readBool(uint8_t slaveAddres, uint8_t table, int16_t 
     return false;
   }
   return sl->readBool(table, startAddres);
+}
+
+uint8_t ModbusTCPSlaveServer::readByteByIndex(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return false;
+  }
+  return sl->readByteByIndex(table, startAddres);
+}
+
+uint16_t ModbusTCPSlaveServer::readIntegerByIndex(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return false;
+  }
+  return sl->readIntegerByIndex(table, startAddres);
+}
+
+float ModbusTCPSlaveServer::readFloatByIndex(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return false;
+  }
+  return sl->readFloatByIndex(table, startAddres);
+}
+
+int32_t ModbusTCPSlaveServer::readLongByIndex(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return false;
+  }
+  return sl->readLongByIndex(table, startAddres);
+}
+
+uint32_t ModbusTCPSlaveServer::readUnsignedLongByIndex(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return false;
+  }
+  return sl->readUnsignedLongByIndex(table, startAddres);
+}
+
+bool ModbusTCPSlaveServer::readBoolByIndex(uint8_t slaveAdr, uint8_t table, int16_t startAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return false;
+  }
+  return sl->readBoolByIndex(table, startAddres);
 }
 
 int16_t ModbusTCPSlaveServer::getAdress(uint8_t slaveAddres, uint8_t table, int16_t index)

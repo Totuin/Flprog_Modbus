@@ -25,12 +25,21 @@ public:
   int16_t getMaxAdress();
   void resetWriteFlag(int16_t addres);
   bool hasAdress(int16_t address);
+
   void setData(int16_t adress, bool value);
   void setData(int16_t adress, int16_t value);
+
+  void setDataByIndex(int16_t adress, bool value);
+  void setDataByIndex(int16_t adress, int16_t value);
+
   void writeRegister(int16_t adress, bool value);
   void writeRegister(int16_t adress, int16_t value);
   int16_t readWorldRegister(int16_t adress);
   bool readBoolRegister(int16_t adress);
+
+  int16_t readWorldRegisterByIndex(int16_t adress);
+  bool readBoolRegisterByIndex(int16_t adress);
+
   uint8_t tableType() { return _table; };
 
   void setCallBack(FLProgModbusNewDataCallback func) { _newDataCallback = func; };
@@ -72,18 +81,35 @@ public:
   int16_t indexForAddres(int16_t addr, uint8_t table);
   bool checkModbusAddres(int16_t addr, uint8_t table);
   bool checkModbusRange(int16_t startAddr, int16_t addrNumber, uint8_t table);
+
   void saveLong(int32_t value, uint8_t table, int16_t startAddres);
   void saveUnsignedLong(uint32_t value, uint8_t table, int16_t startAddres);
   void saveFloat(float value, uint8_t table, int16_t startAddres);
   void saveInteger(int16_t value, uint8_t table, int16_t startAddres);
   void saveByte(uint8_t value, uint8_t table, int16_t startAddres);
   void saveBool(bool value, uint8_t table, int16_t startAddres);
+
+  void saveLongByIndex(int32_t value, uint8_t table, int16_t startAddres);
+  void saveUnsignedLongByIndex(uint32_t value, uint8_t table, int16_t startAddres);
+  void saveFloatByIndex(float value, uint8_t table, int16_t startAddres);
+  void saveIntegerByIndex(int16_t value, uint8_t table, int16_t startAddres);
+  void saveByteByIndex(uint8_t value, uint8_t table, int16_t startAddres);
+  void saveBoolByIndex(bool value, uint8_t table, int16_t startAddres);
+
   uint8_t readByte(uint8_t table, int16_t startAddres);
   int16_t readInteger(uint8_t table, int16_t startAddres);
   float readFloat(uint8_t table, int16_t startAddres);
   int32_t readLong(uint8_t table, int16_t startAddres);
   uint32_t readUnsignedLong(uint8_t table, int16_t startAddres);
   bool readBool(uint8_t table, int16_t startAddres);
+
+  uint8_t readByteByIndex(uint8_t table, int16_t startAddres);
+  int16_t readIntegerByIndex(uint8_t table, int16_t startAddres);
+  float readFloatByIndex(uint8_t table, int16_t startAddres);
+  int32_t readLongByIndex(uint8_t table, int16_t startAddres);
+  uint32_t readUnsignedLongByIndex(uint8_t table, int16_t startAddres);
+  bool readBoolByIndex(uint8_t table, int16_t startAddres);
+
   bool isSupportFunction(uint8_t function);
   ModbusTable *tableForType(uint8_t table);
   bool hasTable(uint8_t table);
@@ -101,8 +127,13 @@ protected:
   uint8_t _longOrder = 1;
   uint8_t _floatOrder = 1;
   uint8_t _unsignedlongOrder = 1;
+
   void saveForByteWithOrder(unsigned char *sourse, uint8_t table, int16_t startAddres, uint8_t order);
+  void saveForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int16_t startAddres, uint8_t order);
+
   void readForByteWithOrder(unsigned char *sourse, uint8_t table, int16_t startAddres, uint8_t order);
+  void readForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int16_t startAddres, uint8_t order);
+
   ModbusTable *tableForStartArddres(uint8_t table, int16_t startAddres, bool isTwoWord);
   virtual bool canSaveTable(uint8_t table);
 };

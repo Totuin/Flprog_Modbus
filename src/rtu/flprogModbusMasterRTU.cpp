@@ -268,7 +268,7 @@ uint8_t ModbusMasterRTU::selectSendFunction()
   }
   else
   {
-    return FLPROG_SEND_COIL_F15 ;
+    return FLPROG_SEND_COIL_F15;
   }
 }
 
@@ -435,7 +435,6 @@ void ModbusMasterRTU::saveUnsignedLong(uint8_t slaveAddres, uint32_t value, uint
   {
     return;
   }
-
   sl->saveUnsignedLong(value, table, startAddres);
 }
 
@@ -454,7 +453,6 @@ void ModbusMasterRTU::saveFloat(uint8_t slaveAddres, float value, uint8_t table,
   {
     return;
   }
-
   sl->saveFloat(value, table, startAddres);
 }
 
@@ -510,6 +508,114 @@ void ModbusMasterRTU::saveBool(uint8_t slaveAddres, bool val, uint8_t table, int
     return;
   }
   sl->saveBool(val, table, adr);
+}
+
+void ModbusMasterRTU::saveLongByIndex(uint8_t slaveAddres, int32_t val, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveLongByIndex(val, table, adr);
+}
+
+void ModbusMasterRTU::saveUnsignedLongByIndex(uint8_t slaveAddres, uint32_t val, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveUnsignedLongByIndex(val, table, adr);
+}
+
+void ModbusMasterRTU::saveFloatByIndex(uint8_t slaveAddres, float val, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveFloatByIndex(val, table, adr);
+}
+
+void ModbusMasterRTU::saveIntegerByIndex(uint8_t slaveAddres, int16_t val, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveIntegerByIndex(val, table, adr);
+}
+
+void ModbusMasterRTU::saveByteByIndex(uint8_t slaveAddres, uint8_t val, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveByteByIndex(val, table, adr);
+}
+
+void ModbusMasterRTU::saveBoolByIndex(uint8_t slaveAddres, bool val, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return;
+  }
+  sl->saveBoolByIndex(val, table, adr);
 }
 
 uint8_t ModbusMasterRTU::readByte(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
@@ -619,6 +725,114 @@ bool ModbusMasterRTU::readBool(uint8_t slaveAddres, uint8_t table, int16_t start
     return 0;
   }
   return sl->readBool(table, startAddres);
+}
+
+uint8_t ModbusMasterRTU::readByteByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readByteByIndex(table, adr);
+}
+
+int16_t ModbusMasterRTU::readIntegerByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readIntegerByIndex(table, adr);
+}
+
+float ModbusMasterRTU::readFloatByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readFloatByIndex(table, adr);
+}
+
+int32_t ModbusMasterRTU::readLongByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readLongByIndex(table, adr);
+}
+
+uint32_t ModbusMasterRTU::readUnsignedLongByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readUnsignedLongByIndex(table, adr);
+}
+
+bool ModbusMasterRTU::readBoolByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->readBoolByIndex(table, adr);
 }
 
 int16_t ModbusMasterRTU::getAdress(uint8_t slaveAddres, uint8_t table, int16_t index)

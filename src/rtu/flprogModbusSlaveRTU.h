@@ -23,6 +23,13 @@ public:
   void saveByte(uint8_t val, uint8_t table, int16_t adr) { mainData()->saveByte(val, table, adr); };
   void saveBool(bool val, uint8_t table, int16_t adr) { mainData()->saveBool(val, table, adr); };
 
+  void saveLongByIndex(int32_t val, uint8_t table, int16_t adr) { mainData()->saveLongByIndex(val, table, adr); };
+  void saveUnsignedLongByIndex(uint32_t val, uint8_t table, int16_t adr) { mainData()->saveUnsignedLongByIndex(val, table, adr); };
+  void saveFloatByIndex(float val, uint8_t table, int16_t adr) { mainData()->saveFloatByIndex(val, table, adr); };
+  void saveIntegerByIndex(int16_t val, uint8_t table, int16_t adr) { mainData()->saveIntegerByIndex(val, table, adr); };
+  void saveByteByIndex(uint8_t val, uint8_t table, int16_t adr) { mainData()->saveByteByIndex(val, table, adr); };
+  void saveBoolByIndex(bool val, uint8_t table, int16_t adr) { mainData()->saveBoolByIndex(val, table, adr); };
+
   uint8_t readByte(uint8_t table, int16_t adr) { return mainData()->readByte(table, adr); };
   uint16_t readInteger(uint8_t table, int16_t adr) { return mainData()->readInteger(table, adr); };
   float readFloat(uint8_t table, int16_t adr) { return mainData()->readFloat(table, adr); };
@@ -30,10 +37,18 @@ public:
   uint32_t readUnsignedLong(uint8_t table, int16_t adr) { return mainData()->readUnsignedLong(table, adr); };
   bool readBool(uint8_t table, int16_t adr) { return mainData()->readBool(table, adr); };
 
+  uint8_t readByteByIndex(uint8_t table, int16_t adr) { return mainData()->readByteByIndex(table, adr); };
+  uint16_t readIntegerByIndex(uint8_t table, int16_t adr) { return mainData()->readIntegerByIndex(table, adr); };
+  float readFloatByIndex(uint8_t table, int16_t adr) { return mainData()->readFloatByIndex(table, adr); };
+  int32_t readLongByIndex(uint8_t table, int16_t adr) { return mainData()->readLongByIndex(table, adr); };
+  uint32_t readUnsignedLongByIndex(uint8_t table, int16_t adr) { return mainData()->readUnsignedLongByIndex(table, adr); };
+  bool readBoolByIndex(uint8_t table, int16_t adr) { return mainData()->readBoolByIndex(table, adr); };
+
   void setLongOrder(uint8_t order) { mainData()->setLongOrder(order); };
   void setFloatOrder(uint8_t order) { mainData()->setFloatOrder(order); };
   void setUnsignedlongOrder(uint8_t order) { mainData()->setUnsignedlongOrder(order); };
   void setIntOrder(uint8_t order) { mainData()->setIntOrder(order); };
+
 
   uint8_t intOrder() { return mainData()->intOrder(); };
   uint8_t longOrder() { return mainData()->longOrder(); };
