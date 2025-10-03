@@ -401,7 +401,7 @@ bool ModbusMasterRTU::hasSlaveOnIndex(uint8_t slaveIndex)
   return slaveIndex < slavesSize;
 }
 
-void ModbusMasterRTU::saveLong(uint8_t slaveAddres, int32_t value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveLong(uint8_t slaveAddres, int32_t value, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -417,10 +417,10 @@ void ModbusMasterRTU::saveLong(uint8_t slaveAddres, int32_t value, uint8_t table
     return;
   }
 
-  sl->saveLong(value, table, startAddres);
+  sl->saveLong(value, table, startAddress);
 }
 
-void ModbusMasterRTU::saveUnsignedLong(uint8_t slaveAddres, uint32_t value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveUnsignedLong(uint8_t slaveAddres, uint32_t value, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -435,10 +435,10 @@ void ModbusMasterRTU::saveUnsignedLong(uint8_t slaveAddres, uint32_t value, uint
   {
     return;
   }
-  sl->saveUnsignedLong(value, table, startAddres);
+  sl->saveUnsignedLong(value, table, startAddress);
 }
 
-void ModbusMasterRTU::saveFloat(uint8_t slaveAddres, float value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveFloat(uint8_t slaveAddres, float value, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -453,10 +453,10 @@ void ModbusMasterRTU::saveFloat(uint8_t slaveAddres, float value, uint8_t table,
   {
     return;
   }
-  sl->saveFloat(value, table, startAddres);
+  sl->saveFloat(value, table, startAddress);
 }
 
-void ModbusMasterRTU::saveInteger(uint8_t slaveAddres, int16_t value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveInteger(uint8_t slaveAddres, int16_t value, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -471,10 +471,10 @@ void ModbusMasterRTU::saveInteger(uint8_t slaveAddres, int16_t value, uint8_t ta
   {
     return;
   }
-  sl->saveInteger(value, table, startAddres);
+  sl->saveInteger(value, table, startAddress);
 }
 
-void ModbusMasterRTU::saveByte(uint8_t slaveAddres, uint8_t value, uint8_t table, int16_t startAddres, bool isIndex)
+void ModbusMasterRTU::saveByte(uint8_t slaveAddres, uint8_t value, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -489,10 +489,10 @@ void ModbusMasterRTU::saveByte(uint8_t slaveAddres, uint8_t value, uint8_t table
   {
     return;
   }
-  sl->saveByte(value, table, startAddres);
+  sl->saveByte(value, table, startAddress);
 }
 
-void ModbusMasterRTU::saveBool(uint8_t slaveAddres, bool val, uint8_t table, int16_t adr, bool isIndex)
+void ModbusMasterRTU::saveBool(uint8_t slaveAddres, bool val, uint8_t table, int32_t address, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -507,10 +507,10 @@ void ModbusMasterRTU::saveBool(uint8_t slaveAddres, bool val, uint8_t table, int
   {
     return;
   }
-  sl->saveBool(val, table, adr);
+  sl->saveBool(val, table, address);
 }
 
-void ModbusMasterRTU::saveLongByIndex(uint8_t slaveAddres, int32_t val, uint8_t table, int16_t adr, bool isIndex)
+void ModbusMasterRTU::saveLongByIndex(uint8_t slaveAddres, int32_t val, uint8_t table, int32_t address, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -525,10 +525,10 @@ void ModbusMasterRTU::saveLongByIndex(uint8_t slaveAddres, int32_t val, uint8_t 
   {
     return;
   }
-  sl->saveLongByIndex(val, table, adr);
+  sl->saveLongByIndex(val, table, address);
 }
 
-void ModbusMasterRTU::saveUnsignedLongByIndex(uint8_t slaveAddres, uint32_t val, uint8_t table, int16_t adr, bool isIndex)
+void ModbusMasterRTU::saveUnsignedLongByIndex(uint8_t slaveAddres, uint32_t val, uint8_t table, int32_t address, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -543,10 +543,10 @@ void ModbusMasterRTU::saveUnsignedLongByIndex(uint8_t slaveAddres, uint32_t val,
   {
     return;
   }
-  sl->saveUnsignedLongByIndex(val, table, adr);
+  sl->saveUnsignedLongByIndex(val, table, address);
 }
 
-void ModbusMasterRTU::saveFloatByIndex(uint8_t slaveAddres, float val, uint8_t table, int16_t adr, bool isIndex)
+void ModbusMasterRTU::saveFloatByIndex(uint8_t slaveAddres, float val, uint8_t table, int32_t address, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -561,10 +561,10 @@ void ModbusMasterRTU::saveFloatByIndex(uint8_t slaveAddres, float val, uint8_t t
   {
     return;
   }
-  sl->saveFloatByIndex(val, table, adr);
+  sl->saveFloatByIndex(val, table, address);
 }
 
-void ModbusMasterRTU::saveIntegerByIndex(uint8_t slaveAddres, int16_t val, uint8_t table, int16_t adr, bool isIndex)
+void ModbusMasterRTU::saveIntegerByIndex(uint8_t slaveAddres, int16_t val, uint8_t table, int32_t address, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -579,10 +579,10 @@ void ModbusMasterRTU::saveIntegerByIndex(uint8_t slaveAddres, int16_t val, uint8
   {
     return;
   }
-  sl->saveIntegerByIndex(val, table, adr);
+  sl->saveIntegerByIndex(val, table, address);
 }
 
-void ModbusMasterRTU::saveByteByIndex(uint8_t slaveAddres, uint8_t val, uint8_t table, int16_t adr, bool isIndex)
+void ModbusMasterRTU::saveByteByIndex(uint8_t slaveAddres, uint8_t val, uint8_t table, int32_t address, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -597,10 +597,10 @@ void ModbusMasterRTU::saveByteByIndex(uint8_t slaveAddres, uint8_t val, uint8_t 
   {
     return;
   }
-  sl->saveByteByIndex(val, table, adr);
+  sl->saveByteByIndex(val, table, address);
 }
 
-void ModbusMasterRTU::saveBoolByIndex(uint8_t slaveAddres, bool val, uint8_t table, int16_t adr, bool isIndex)
+void ModbusMasterRTU::saveBoolByIndex(uint8_t slaveAddres, bool val, uint8_t table, int32_t address, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -615,10 +615,10 @@ void ModbusMasterRTU::saveBoolByIndex(uint8_t slaveAddres, bool val, uint8_t tab
   {
     return;
   }
-  sl->saveBoolByIndex(val, table, adr);
+  sl->saveBoolByIndex(val, table, address);
 }
 
-uint8_t ModbusMasterRTU::readByte(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
+uint8_t ModbusMasterRTU::readByte(uint8_t slaveAddres, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -633,10 +633,10 @@ uint8_t ModbusMasterRTU::readByte(uint8_t slaveAddres, uint8_t table, int16_t st
   {
     return 0;
   }
-  return sl->readByte(table, startAddres);
+  return sl->readByte(table, startAddress);
 }
 
-int16_t ModbusMasterRTU::readInteger(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
+int16_t ModbusMasterRTU::readInteger(uint8_t slaveAddres, uint8_t table, int32_t startAddress, bool isIndex)
 {
 
   ModbusSlaveInMaster *sl;
@@ -652,10 +652,10 @@ int16_t ModbusMasterRTU::readInteger(uint8_t slaveAddres, uint8_t table, int16_t
   {
     return 0;
   }
-  return sl->readInteger(table, startAddres);
+  return sl->readInteger(table, startAddress);
 }
 
-float ModbusMasterRTU::readFloat(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
+float ModbusMasterRTU::readFloat(uint8_t slaveAddres, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -670,10 +670,10 @@ float ModbusMasterRTU::readFloat(uint8_t slaveAddres, uint8_t table, int16_t sta
   {
     return 0;
   }
-  return sl->readFloat(table, startAddres);
+  return sl->readFloat(table, startAddress);
 }
 
-int32_t ModbusMasterRTU::readLong(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
+int32_t ModbusMasterRTU::readLong(uint8_t slaveAddres, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -688,10 +688,10 @@ int32_t ModbusMasterRTU::readLong(uint8_t slaveAddres, uint8_t table, int16_t st
   {
     return 0;
   }
-  return sl->readLong(table, startAddres);
+  return sl->readLong(table, startAddress);
 }
 
-uint32_t ModbusMasterRTU::readUnsignedLong(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
+uint32_t ModbusMasterRTU::readUnsignedLong(uint8_t slaveAddres, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -706,10 +706,10 @@ uint32_t ModbusMasterRTU::readUnsignedLong(uint8_t slaveAddres, uint8_t table, i
   {
     return 0;
   }
-  return sl->readUnsignedLong(table, startAddres);
+  return sl->readUnsignedLong(table, startAddress);
 }
 
-bool ModbusMasterRTU::readBool(uint8_t slaveAddres, uint8_t table, int16_t startAddres, bool isIndex)
+bool ModbusMasterRTU::readBool(uint8_t slaveAddres, uint8_t table, int32_t startAddress, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -724,10 +724,10 @@ bool ModbusMasterRTU::readBool(uint8_t slaveAddres, uint8_t table, int16_t start
   {
     return 0;
   }
-  return sl->readBool(table, startAddres);
+  return sl->readBool(table, startAddress);
 }
 
-uint8_t ModbusMasterRTU::readByteByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+uint8_t ModbusMasterRTU::readByteByIndex(uint8_t slaveAddres, uint8_t table, int32_t addressIndex, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -742,10 +742,10 @@ uint8_t ModbusMasterRTU::readByteByIndex(uint8_t slaveAddres, uint8_t table, int
   {
     return 0;
   }
-  return sl->readByteByIndex(table, adr);
+  return sl->readByteByIndex(table, addressIndex);
 }
 
-int16_t ModbusMasterRTU::readIntegerByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+int16_t ModbusMasterRTU::readIntegerByIndex(uint8_t slaveAddres, uint8_t table, int32_t addressIndex, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -760,10 +760,10 @@ int16_t ModbusMasterRTU::readIntegerByIndex(uint8_t slaveAddres, uint8_t table, 
   {
     return 0;
   }
-  return sl->readIntegerByIndex(table, adr);
+  return sl->readIntegerByIndex(table, addressIndex);
 }
 
-float ModbusMasterRTU::readFloatByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+float ModbusMasterRTU::readFloatByIndex(uint8_t slaveAddres, uint8_t table, int32_t addressIndex, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -778,10 +778,10 @@ float ModbusMasterRTU::readFloatByIndex(uint8_t slaveAddres, uint8_t table, int1
   {
     return 0;
   }
-  return sl->readFloatByIndex(table, adr);
+  return sl->readFloatByIndex(table, addressIndex);
 }
 
-int32_t ModbusMasterRTU::readLongByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+int32_t ModbusMasterRTU::readLongByIndex(uint8_t slaveAddres, uint8_t table, int32_t addressIndex, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -796,10 +796,10 @@ int32_t ModbusMasterRTU::readLongByIndex(uint8_t slaveAddres, uint8_t table, int
   {
     return 0;
   }
-  return sl->readLongByIndex(table, adr);
+  return sl->readLongByIndex(table, addressIndex);
 }
 
-uint32_t ModbusMasterRTU::readUnsignedLongByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+uint32_t ModbusMasterRTU::readUnsignedLongByIndex(uint8_t slaveAddres, uint8_t table, int32_t addressIndex, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -814,10 +814,10 @@ uint32_t ModbusMasterRTU::readUnsignedLongByIndex(uint8_t slaveAddres, uint8_t t
   {
     return 0;
   }
-  return sl->readUnsignedLongByIndex(table, adr);
+  return sl->readUnsignedLongByIndex(table, addressIndex);
 }
 
-bool ModbusMasterRTU::readBoolByIndex(uint8_t slaveAddres, uint8_t table, int16_t adr, bool isIndex)
+bool ModbusMasterRTU::readBoolByIndex(uint8_t slaveAddres, uint8_t table, int32_t addressIndex, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
   if (isIndex)
@@ -832,10 +832,10 @@ bool ModbusMasterRTU::readBoolByIndex(uint8_t slaveAddres, uint8_t table, int16_
   {
     return 0;
   }
-  return sl->readBoolByIndex(table, adr);
+  return sl->readBoolByIndex(table, addressIndex);
 }
 
-int16_t ModbusMasterRTU::getAdress(uint8_t slaveAddres, uint8_t table, int16_t index)
+int32_t ModbusMasterRTU::getAdress(uint8_t slaveAddres, uint8_t table, int32_t index)
 {
   ModbusSlaveInMaster *sl;
   sl = slaveOnIndex(slaveAddres);
@@ -846,7 +846,7 @@ int16_t ModbusMasterRTU::getAdress(uint8_t slaveAddres, uint8_t table, int16_t i
   return sl->getAdress(table, index);
 }
 
-void ModbusMasterRTU::setAdress(uint8_t slaveAddres, uint8_t table, int16_t index, int16_t addr)
+void ModbusMasterRTU::setAdress(uint8_t slaveAddres, uint8_t table, int32_t index, int32_t address)
 {
   ModbusSlaveInMaster *sl;
   sl = slaveOnIndex(slaveAddres);
@@ -854,7 +854,7 @@ void ModbusMasterRTU::setAdress(uint8_t slaveAddres, uint8_t table, int16_t inde
   {
     return;
   }
-  sl->setAdress(table, index, addr);
+  sl->setAdress(table, index, address);
 }
 
 void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, ModbusTable *table)
@@ -868,7 +868,7 @@ void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, ModbusTable *table)
   sl->setDataTable(table);
 }
 
-void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int16_t *_adresses)
+void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, uint8_t _table, int32_t dataSize, int32_t *_adresses)
 {
   ModbusSlaveInMaster *sl;
   sl = slave(slaveAddres);
@@ -879,7 +879,7 @@ void ModbusMasterRTU::setDataTable(uint8_t slaveAddres, uint8_t _table, int16_t 
   sl->setDataTable(_table, dataSize, _adresses);
 }
 
-void ModbusMasterRTU::configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize)
+void ModbusMasterRTU::configDataTable(uint8_t slaveAddres, uint8_t _table, int32_t dataSize)
 {
   ModbusSlaveInMaster *sl;
   sl = slave(slaveAddres);
@@ -890,7 +890,7 @@ void ModbusMasterRTU::configDataTable(uint8_t slaveAddres, uint8_t _table, int16
   sl->configDataTable(_table, dataSize);
 }
 
-void ModbusMasterRTU::configDataTable(uint8_t slaveAddres, uint8_t _table, int16_t dataSize, int16_t _startAdr)
+void ModbusMasterRTU::configDataTable(uint8_t slaveAddres, uint8_t _table, int32_t dataSize, int32_t _startAddress)
 {
   ModbusSlaveInMaster *sl;
   sl = slave(slaveAddres);
@@ -898,7 +898,7 @@ void ModbusMasterRTU::configDataTable(uint8_t slaveAddres, uint8_t _table, int16
   {
     return;
   }
-  sl->configDataTable(_table, dataSize, _startAdr);
+  sl->configDataTable(_table, dataSize, _startAddress);
 }
 
 void ModbusMasterRTU::setSlaveAddress(uint8_t slaveIndex, uint8_t address)

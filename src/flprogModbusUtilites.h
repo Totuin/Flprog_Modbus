@@ -28,7 +28,7 @@
 #define FLPROG_SEND_COIL_F5 5
 #define FLPROG_SEND_COIL_F15 15
 
-typedef void (*FLProgModbusNewDataCallback)(uint8_t table, int16_t adress, int16_t value);
+typedef void (*FLProgModbusNewDataCallback)(uint8_t table, int32_t adress, int16_t value);
 
 namespace flprogModus
 {

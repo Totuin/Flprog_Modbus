@@ -26,7 +26,7 @@ protected:
   void clearRXBuffer();
   int16_t _pinPeDe = -1;
   uint8_t _lastRec = 0;
-  unsigned long _time;
+  uint32_t _time;
   uint8_t _uartPortNumber = 0;
   FlprogAbstractUartExecutor *_executor = 0;
 };

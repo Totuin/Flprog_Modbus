@@ -11,8 +11,8 @@ public:
   void setSkippingEvents(uint16_t value) { _skippingEvents = value; };
   void isPause(bool value) { _isPause = value; };
   bool isPause() { return _isPause; };
-   void setEnable(bool enable){_enable=enable;};
-   bool getEnable( ){return _enable;};
+  void setEnable(bool enable) { _enable = enable; };
+  bool getEnable() { return _enable; };
 
 protected:
   virtual void sendTxBuffer() = 0;
@@ -22,15 +22,15 @@ protected:
   void process_modbus_FC6(ModbusMainData *data);
   void process_modbus_FC15(ModbusMainData *data);
   void process_modbus_FC16(ModbusMainData *data);
-  void get_FC1(ModbusTable *table, int16_t startAddress, int16_t numberRegs);
-  void get_FC3(ModbusTable *table, int16_t startAddress, int16_t numberRegs);
+  void get_FC1(ModbusTable *table, int32_t startAddress, int16_t numberRegs);
+  void get_FC3(ModbusTable *table, int32_t startAddress, int16_t numberRegs);
   void create_Read(int16_t numberRegs);
-  void create_Write_FC5(ModbusTable *table, int16_t startAddress);
-  void create_Write_FC6(ModbusTable *table, int16_t startAddress);
-  void create_Write_FC15(ModbusTable *table, int16_t startAddress, int16_t numberRegs);
-  void create_Write_FC16(ModbusTable *table, int16_t startAddress, int16_t numberRegs);
-  void create_PDU(ModbusTable *table, int16_t startAddress, int16_t numberRegs);
-  void writeMaserData(ModbusTable *table, int16_t startAddress, int16_t numberRegs);
+  void create_Write_FC5(ModbusTable *table, int32_t startAddress);
+  void create_Write_FC6(ModbusTable *table, int32_t startAddress);
+  void create_Write_FC15(ModbusTable *table, int32_t startAddress, int16_t numberRegs);
+  void create_Write_FC16(ModbusTable *table, int32_t startAddress, int16_t numberRegs);
+  void create_PDU(ModbusTable *table, int32_t startAddress, int16_t numberRegs);
+  void writeMaserData(ModbusTable *table, int32_t startAddress, int16_t numberRegs);
   uint8_t validateSlaveReqest(ModbusMainData *data);
   void buildException(uint8_t exception);
   virtual uint8_t validateRequest() { return 0; };
@@ -41,8 +41,8 @@ protected:
   uint8_t _status = FLPROG_MODBUS_READY;
   uint8_t _bufferSize = 0;
   uint8_t _buffer[FLPROG_MODBUS_BUFER_SIZE];
-  unsigned long _startSendTime;
-  unsigned long _timeOfSend;
+  uint32_t _startSendTime;
+  uint32_t _timeOfSend;
   bool _isInit = false;
   bool _isPause = false;
   uint16_t _skippingEvents = 0;
