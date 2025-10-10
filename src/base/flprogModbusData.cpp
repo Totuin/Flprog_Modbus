@@ -183,7 +183,7 @@ void ModbusTable::writeRegister(int32_t address, bool value)
       {
         temp = 1;
       }
-      _newDataCallback(_table, address, temp);
+      _newDataCallback(_table, index, temp);
     }
   }
 }
@@ -204,7 +204,7 @@ void ModbusTable::writeRegister(int32_t address, int16_t value)
     _worldData[index] = value;
     if (_newDataCallback != 0)
     {
-      _newDataCallback(_table, address, value);
+      _newDataCallback(_table, index, value);
     }
   }
 }
@@ -689,21 +689,21 @@ void ModbusMainData::saveLongByIndex(int32_t value, uint8_t table, int32_t start
   saveForByteWithOrderByIndex(sourse, table, startAddress, _longOrder);
 }
 
-void ModbusMainData::saveUnsignedLongByIndex(uint32_t value, uint8_t table, int32_t startAddress)
+void ModbusMainData::saveUnsignedLongByIndex(uint32_t value, uint8_t table, int32_t startAddressIndex)
 {
   unsigned char sourse[4];
   memcpy(sourse, &value, 4);
-  saveForByteWithOrderByIndex(sourse, table, startAddress, _unsignedlongOrder);
+  saveForByteWithOrderByIndex(sourse, table, startAddressIndex, _unsignedlongOrder);
 }
 
-void ModbusMainData::saveFloatByIndex(float value, uint8_t table, int32_t startAddress)
+void ModbusMainData::saveFloatByIndex(float value, uint8_t table, int32_t startAddressIndex)
 {
   unsigned char sourse[4];
   memcpy(sourse, &value, 4);
-  saveForByteWithOrderByIndex(sourse, table, startAddress, _floatOrder);
+  saveForByteWithOrderByIndex(sourse, table, startAddressIndex, _floatOrder);
 }
 
-void ModbusMainData::saveIntegerByIndex(int16_t value, uint8_t table, int32_t startAddress)
+void ModbusMainData::saveIntegerByIndex(int16_t value, uint8_t table, int32_t startAddressIndex)
 {
   if (!canSaveTable(table))
   {
@@ -719,10 +719,10 @@ void ModbusMainData::saveIntegerByIndex(int16_t value, uint8_t table, int32_t st
   {
     w1 = (int16_t(word(lowByte(value), highByte(value))));
   }
-  tableData->setDataByIndex(startAddress, w1);
+  tableData->setDataByIndex(startAddressIndex, w1);
 }
 
-void ModbusMainData::saveByteByIndex(uint8_t value, uint8_t table, int32_t startAddress)
+void ModbusMainData::saveByteByIndex(uint8_t value, uint8_t table, int32_t startAddressIndex)
 {
   if (!canSaveTable(table))
   {
@@ -734,7 +734,7 @@ void ModbusMainData::saveByteByIndex(uint8_t value, uint8_t table, int32_t start
     return;
   }
   int16_t w1 = value;
-  tableData->setDataByIndex(startAddress, w1);
+  tableData->setDataByIndex(startAddressIndex, w1);
 }
 
 void ModbusMainData::saveBoolByIndex(bool value, uint8_t table, int32_t startAddress)
@@ -757,7 +757,7 @@ void ModbusMainData::saveForByteWithOrder(unsigned char *sourse, uint8_t table, 
   {
     return;
   }
-  ModbusTable *tableData = tableForStartArddres(table, startAddress, true);
+  ModbusTable *tableData = tableForType(table);
   if (tableData == 0)
   {
     return;
@@ -793,13 +793,13 @@ void ModbusMainData::saveForByteWithOrder(unsigned char *sourse, uint8_t table, 
   }
 }
 
-void ModbusMainData::saveForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order)
+void ModbusMainData::saveForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int32_t startAddressIndex, uint8_t order)
 {
   if (!canSaveTable(table))
   {
     return;
   }
-  ModbusTable *tableData = tableForStartArddres(table, startAddress, true);
+  ModbusTable *tableData = tableForType(table);
   if (tableData == 0)
   {
     return;
@@ -808,30 +808,30 @@ void ModbusMainData::saveForByteWithOrderByIndex(unsigned char *sourse, uint8_t 
   if (order == 1) //(ABCD)
   {
     temp = int16_t(word(sourse[3], sourse[2]));
-    tableData->setDataByIndex(startAddress, temp);
+    tableData->setDataByIndex(startAddressIndex, temp);
     temp = int16_t(word(sourse[1], sourse[0]));
-    tableData->setDataByIndex((startAddress + 1), temp);
+    tableData->setDataByIndex((startAddressIndex + 1), temp);
   }
   if (order == 2) //(CDAB)
   {
     temp = int16_t(word(sourse[1], sourse[0]));
-    tableData->setDataByIndex(startAddress, temp);
+    tableData->setDataByIndex(startAddressIndex, temp);
     temp = int16_t(word(sourse[3], sourse[2]));
-    tableData->setDataByIndex((startAddress + 1), temp);
+    tableData->setDataByIndex((startAddressIndex + 1), temp);
   }
   if (order == 3) //(BADC)
   {
     temp = int16_t(word(sourse[2], sourse[3]));
-    tableData->setDataByIndex(startAddress, temp);
+    tableData->setDataByIndex(startAddressIndex, temp);
     temp = int16_t(word(sourse[0], sourse[1]));
-    tableData->setDataByIndex((startAddress + 1), temp);
+    tableData->setDataByIndex((startAddressIndex + 1), temp);
   }
   if (order == 4) //(DCBA)
   {
     temp = int16_t(word(sourse[0], sourse[1]));
-    tableData->setDataByIndex(startAddress, temp);
+    tableData->setDataByIndex(startAddressIndex, temp);
     temp = int16_t(word(sourse[2], sourse[3]));
-    tableData->setDataByIndex((startAddress + 1), temp);
+    tableData->setDataByIndex((startAddressIndex + 1), temp);
   }
 }
 
