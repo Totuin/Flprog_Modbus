@@ -32,7 +32,7 @@ typedef void (*FLProgModbusNewDataCallback)(uint8_t table, int32_t adress, int16
 
 namespace flprogModus
 {
-  uint16_t modbusCalcCRC(uint16_t length, uint8_t bufferArray[]);
+  uint16_t modbusCalcCRC(uint16_t length, uint8_t bufferArray[], uint8_t offset = 0);
   uint8_t t35TimeForSpeed(uint16_t portSpeed);
   uint16_t timeForSendBytes(uint8_t portDataBits, uint8_t portStopBits, uint8_t portParity, uint16_t portSpeed, uint16_t dataSize);
   bool checkCRCOnBuffer(uint16_t length, uint8_t bufferArray[]);

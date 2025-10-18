@@ -2,12 +2,12 @@
 
 //------------------namespace flprogModus--------------------
 
-uint16_t flprogModus::modbusCalcCRC(uint16_t length, uint8_t bufferArray[])
+uint16_t flprogModus::modbusCalcCRC(uint16_t length, uint8_t bufferArray[], uint8_t offset)
 {
   uint16_t crc = 0xFFFF;
-  for (uint16_t pos = 0; pos < length; pos++)
+  for (uint16_t pos = offset; pos < length; pos++)
   {
-    crc ^= bufferArray[pos];
+    crc ^= (uint16_t)bufferArray[pos];
     for (uint8_t i = 8; i != 0; i--)
     {
       if ((crc & 0x0001) != 0)
