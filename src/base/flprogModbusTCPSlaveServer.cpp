@@ -10,10 +10,12 @@ void ModbusTCPSlaveServer::setIpAdress(IPAddress ip)
 {
   _serverAsHost = false;
   _serverIp = ip;
+  _tcpClient.stop();
 }
 
 void ModbusTCPSlaveServer::setHost(String host)
 {
+  _tcpClient.stop();
   if (host.length() == 0)
   {
     return;
@@ -596,11 +598,30 @@ bool ModbusTCPSlaveServer::slaveStatus(uint8_t slaveAddres, bool isIndex)
 
 bool ModbusTCPSlaveServer::hasWriteRegisters()
 {
+if (_isWorkPause)
+  {
+    if (flprog::isTimer(_startWorkPauseTime, _workPause))
+    {
+      _isWorkPause = false;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  if (!_isActive)
+  {
+    return false;
+  }
   return !(firstWriteSlave() == 0);
 }
 
 ModbusSlaveInMaster *ModbusTCPSlaveServer::firstWriteSlave()
 {
+  if (!_isActive)
+  {
+    return 0;
+  }
   for (int16_t i = 0; i < slavesSize; i++)
   {
     if ((slaves[i].status()) && (slaves[i].hasWriteRegisters()))
@@ -649,7 +670,21 @@ ModbusSlaveInMaster *ModbusTCPSlaveServer::nextSlave(ModbusSlaveInMaster *curren
 
 bool ModbusTCPSlaveServer::isReady()
 {
-
+  if (_isWorkPause)
+  {
+    if (flprog::isTimer(_startWorkPauseTime, _workPause))
+    {
+      _isWorkPause = false;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  if (!_isActive)
+  {
+    return false;
+  }
   for (int16_t i = 0; i < slavesSize; i++)
   {
     if (slaves[i].isReady())
@@ -658,4 +693,35 @@ bool ModbusTCPSlaveServer::isReady()
     }
   }
   return false;
+}
+
+uint8_t ModbusTCPSlaveServer::connect()
+{
+  if (serverAsHost())
+  {
+    return _tcpClient.connect(getHost(), getPort());
+  }
+  return _tcpClient.connect(getIp(), getPort());
+}
+
+bool ModbusTCPSlaveServer::getIsActive()
+{
+  return _isActive;
+}
+
+void ModbusTCPSlaveServer::setWorkPause(uint32_t time)
+{
+  _startWorkPauseTime = millis();
+  _workPause = time;
+  _isWorkPause = true;
+}
+
+uint32_t ModbusTCPSlaveServer::errorPauseTime()
+{
+  uint32_t result = 0;
+  for (uint8_t i = 0; i < slavesSize; i++)
+  {
+    result = result + (slaves[i].pollingPeriod()) + (slaves[i].getTimeOutTime());
+  }
+  return result;
 }

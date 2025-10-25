@@ -111,7 +111,7 @@ protected:
   bool nextSlave();
   bool nextTable();
   bool nextRegistor();
-
+  uint32_t errorPauseTime();
   uint8_t calculateSendRegSize();
   uint8_t selectSendFunction();
 
@@ -136,7 +136,6 @@ protected:
   int32_t _currentSlaveLastAddress = -1;
   int16_t _serversSize = 1;
   ModbusTCPSlaveServer *_servs = 0;
-  FLProgEthernetClient _tcpClient;
   uint8_t _mbapBuffer[6];
   FLProgAbstractTcpInterface *_interface = 0;
 };

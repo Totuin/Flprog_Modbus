@@ -1,4 +1,5 @@
 #pragma once
+#include "flprogEthernet.h"
 #include "flprogModbusData.h"
 
 class ModbusTCPSlaveServer
@@ -7,6 +8,7 @@ public:
   ModbusTCPSlaveServer() {};
   void setSlaves(ModbusSlaveInMaster *_table, uint8_t size);
   void setSlavesSize(uint8_t size);
+  uint8_t getSlavesSize() { return slavesSize; }
 
   void setPort(int16_t serverPort) { _port = serverPort; };
   int16_t port() { return _port; };
@@ -101,6 +103,16 @@ public:
   bool isReady();
   int16_t getPort() { return _port; };
 
+  FLProgEthernetClient *client() { return &_tcpClient; };
+  bool connected() { return _tcpClient.connected(); };
+  uint8_t connect();
+  void stop() { _tcpClient.stop(); };
+
+  void setActive(bool status) { _isActive = status; };
+  bool getIsActive();
+  void setWorkPause(uint32_t time);
+  uint32_t errorPauseTime();
+
 protected:
   int16_t _port = 502;
   IPAddress _serverIp;
@@ -108,5 +120,10 @@ protected:
   bool _serverAsHost = false;
   uint8_t slavesSize = 5;
   ModbusSlaveInMaster *slaves;
+  FLProgEthernetClient _tcpClient;
   uint8_t _mode = FLPROG_TCP_MODBUS;
+  bool _isActive = true;
+  uint32_t _workPause = 0;
+  uint32_t _startWorkPauseTime = 0;
+  bool _isWorkPause = false;
 };

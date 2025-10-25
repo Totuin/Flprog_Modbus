@@ -5,7 +5,11 @@ ModbusMasterTCP::ModbusMasterTCP(FLProgAbstractTcpInterface *sourse, uint8_t siz
   _serversSize = size;
   _servs = new ModbusTCPSlaveServer[_serversSize];
   _interface = sourse;
-  _tcpClient.setSourse(sourse);
+
+  for (uint8_t i = 0; i < _serversSize; i++)
+  {
+    _servs[i].client()->setSourse(sourse);
+  }
 }
 
 ModbusTCPSlaveServer *ModbusMasterTCP::servers()
@@ -49,7 +53,6 @@ void ModbusMasterTCP::setServerPort(uint8_t serverIndex, int16_t port)
   {
     if ((server(serverIndex)->getPort()) != port)
     {
-      _tcpClient.stop();
       server(serverIndex)->setPort(port);
     }
   }
@@ -79,7 +82,6 @@ void ModbusMasterTCP::setServerIpAdress(uint8_t serverIndex, IPAddress ip)
   {
     if ((server(serverIndex)->getIp()) != ip)
     {
-      _tcpClient.stop();
       server(serverIndex)->setIpAdress(ip);
     }
   }
@@ -612,30 +614,33 @@ bool ModbusMasterTCP::slaveStatus(uint8_t serverIndex, uint8_t slaveAddres, bool
 
 void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
 {
-
   if (_tempCurrentServer != server)
   {
-    _tcpClient.stop();
     _tempCurrentServer = server;
   }
-
-  if (_tempCurrentServer == 0)
+  if (server == 0)
   {
     _status = FLPROG_MODBUS_READY;
     return;
   }
-
-  if (!_tcpClient.connected())
+  if (_status == FLPROG_MODBUS_WAITING_CONNECT_CLIENT)
   {
-    uint8_t result;
-    if (_tempCurrentServer->serverAsHost())
+    if (flprog::isTimer(_startSendTime, (_telegrammSlave->getTimeOutTime())))
     {
-      result = _tcpClient.connect(_tempCurrentServer->getHost(), _tempCurrentServer->getPort());
+      _telegrammSlave->setLastError(244);
+      _tempCurrentServer->stop();
+      _tempCurrentServer->setWorkPause(errorPauseTime());
+      _status = FLPROG_MODBUS_READY;
+      return;
     }
-    else
-    {
-      result = _tcpClient.connect(_tempCurrentServer->getIp(), _tempCurrentServer->getPort());
-    }
+  }
+  else
+  {
+    _startSendTime = millis();
+  }
+  if (!_tempCurrentServer->connected())
+  {
+    uint8_t result = _tempCurrentServer->connect();
     if (result == FLPROG_WAIT)
     {
       _status = FLPROG_MODBUS_WAITING_CONNECT_CLIENT;
@@ -644,19 +649,21 @@ void ModbusMasterTCP::connect(ModbusTCPSlaveServer *server)
     if (result == FLPROG_ERROR)
     {
       _telegrammSlave->setLastError(244);
-      _tcpClient.stop();
+      _tempCurrentServer->stop();
       _status = FLPROG_MODBUS_READY;
+      nextServer();
       return;
     }
     return;
   }
   if (_telegrammServer->mode() == FLPROG_TCP_MODBUS)
   {
-    _tcpClient.write(_mbapBuffer, 6);
+    _tempCurrentServer->client()->write(_mbapBuffer, 6);
   }
-  _tcpClient.write(_buffer, _bufferSize);
+  _tempCurrentServer->client()->write(_buffer, _bufferSize);
   _status = FLPROG_MODBUS_WAITING_ANSWER;
   _bufferSize = 0;
+  _startSendTime = millis();
 }
 
 bool ModbusMasterTCP::hasServer(uint8_t serverIndex)
@@ -710,8 +717,10 @@ void ModbusMasterTCP::checkAnswer()
 {
   if (flprog::isTimer(_startSendTime, (_telegrammSlave->getTimeOutTime())))
   {
-    _tcpClient.stop();
+
+   _telegrammSlave->setWorkPause(errorPauseTime());
     _telegrammSlave->setLastError(244);
+         _tempCurrentServer->stop();
     _status = FLPROG_MODBUS_READY;
     return;
   }
@@ -740,7 +749,6 @@ void ModbusMasterTCP::checkAnswer()
   }
   _telegrammSlave->setLastError(0);
   writeMaserData(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
-  //_tcpClient.stop();
 }
 
 void ModbusMasterTCP::getRxBuffer()
@@ -749,9 +757,9 @@ void ModbusMasterTCP::getRxBuffer()
   uint8_t currentByteIndex = 0;
   _bufferSize = 0;
   uint8_t mode = _telegrammServer->mode();
-  while (_tcpClient.available())
+  while (_tempCurrentServer->client()->available())
   {
-    currentByte = _tcpClient.read();
+    currentByte = _tempCurrentServer->client()->read();
     if ((mode == FLPROG_TCP_MODBUS) && (currentByteIndex < 6))
     {
       _mbapBuffer[currentByteIndex] = currentByte;
@@ -765,7 +773,7 @@ void ModbusMasterTCP::getRxBuffer()
       }
       else
       {
-        _tcpClient.read();
+        _tempCurrentServer->client()->read();
       }
     }
     currentByteIndex++;
@@ -878,11 +886,19 @@ bool ModbusMasterTCP::nextStep()
     _currentSlaveStartAddress = _currentSlaveTable->getMinAdress();
     return true;
   }
+  if (!_currentServer->isReady())
+  {
+    return nextServer();
+  }
   return nextRegistor();
 }
 
 bool ModbusMasterTCP::nextRegistor()
 {
+  if (!_currentSlave->isReady())
+  {
+    return nextSlave();
+  }
   _currentSlaveStartAddress = _currentSlaveTable->findNextStartAddres(_currentSlaveLastAddress);
   if (_currentSlaveStartAddress == -1)
   {
@@ -893,6 +909,10 @@ bool ModbusMasterTCP::nextRegistor()
 
 bool ModbusMasterTCP::nextTable()
 {
+   if (!_currentSlave->isReady())
+  {
+    return nextSlave();
+  }
   _currentSlaveTable = _currentSlave->nextTable(_currentSlaveTable);
   if (_currentSlaveTable == 0)
   {
@@ -992,7 +1012,6 @@ void ModbusMasterTCP::sendQuery()
   _buffer[1] = _telegrammFunction;
   create_PDU(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
   _startSendTime = millis();
-  //_status = FLPROG_MODBUS_WAITING_ANSWER;
 }
 
 uint8_t ModbusMasterTCP::calculateSendRegSize()
@@ -1108,6 +1127,20 @@ void ModbusMasterTCP::setSlavesToServer(uint8_t serverIndex, ModbusSlaveInMaster
 
 void ModbusMasterTCP::begin()
 {
-  _tcpClient.stop();
+
+  for (uint8_t i = 0; i < _serversSize; i++)
+  {
+    _servs[i].stop();
+  }
   _isInit = true;
+}
+
+uint32_t ModbusMasterTCP::errorPauseTime()
+{
+  uint32_t result = 0;
+  for (uint8_t i = 0; i < _serversSize; i++)
+  {
+    result = result + (_servs[i].errorPauseTime());
+  }
+  return result;
 }

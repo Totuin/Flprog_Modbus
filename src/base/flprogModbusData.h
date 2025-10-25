@@ -118,6 +118,8 @@ public:
   int32_t getAdress(uint8_t table, int32_t index);
   void setAdress(uint8_t table, int32_t index, int32_t addr);
 
+   void setWorkPause(uint32_t time);
+
 protected:
   ModbusTable *_tableCoil = 0;
   ModbusTable *_tableDiscreteInput = 0;
@@ -127,6 +129,9 @@ protected:
   uint8_t _longOrder = 1;
   uint8_t _floatOrder = 1;
   uint8_t _unsignedlongOrder = 1;
+     uint32_t _workPause = 0;
+  uint32_t _startWorkPauseTime = 0;
+  bool _isWorkPause = false;
 
   void saveForByteWithOrder(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
   void saveForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
@@ -178,6 +183,8 @@ public:
   uint8_t coilSendMode() { return _coilSendMode; };
   void coilSendMode(uint8_t mode) { _coilSendMode = mode; };
 
+   
+
 protected:
   uint8_t _hrSendMode = FLPROG_SEND_AUTO;
   uint8_t _coilSendMode = FLPROG_SEND_AUTO;
@@ -189,4 +196,5 @@ protected:
   uint32_t _pollingPeriod = 1000;
   uint32_t _timeOutTime = 1000;
   virtual bool canSaveTable(uint8_t table);
+ 
 };
