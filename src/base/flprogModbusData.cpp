@@ -1117,16 +1117,6 @@ void ModbusSlaveInMaster::setPollingPeriod(uint32_t period)
   _pollingPeriod = period;
 }
 
-void ModbusSlaveInMaster::setTimeOutTime(uint32_t time)
-{
-  _timeOutTime = time;
-}
-
-uint32_t ModbusSlaveInMaster::getTimeOutTime()
-{
-  return _timeOutTime;
-}
-
 void ModbusSlaveInMaster::setLastError(uint8_t error)
 {
   _lastError = error;

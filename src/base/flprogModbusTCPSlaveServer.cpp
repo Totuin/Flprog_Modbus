@@ -176,6 +176,16 @@ void ModbusTCPSlaveServer::setTimeOutTime(uint8_t slaveAddres, uint32_t time, bo
   sl->setTimeOutTime(time);
 }
 
+uint32_t ModbusTCPSlaveServer::getTimeOutTime(uint8_t slaveAdr, bool isIndex)
+{
+  ModbusSlaveInMaster *sl = slave(slaveAdr, isIndex);
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->getTimeOutTime();
+}
+
 void ModbusTCPSlaveServer::setLongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
   ModbusSlaveInMaster *sl = slave(slaveAddres, isIndex);

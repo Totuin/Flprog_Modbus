@@ -55,6 +55,9 @@ public:
   uint8_t floatOrder() { return mainData()->floatOrder(); };
   uint8_t unsignedlongOrder() { return mainData()->unsignedlongOrder(); };
 
+  uint32_t getTimeOutTime() { return mainData()->getTimeOutTime(); };
+  void setTimeOutTime(uint32_t order) { mainData()->setTimeOutTime(order); };
+
   int32_t getAdress(uint8_t table, int32_t index) { return mainData()->getAdress(table, index); };
   void setAdress(uint8_t table, int32_t index, int32_t addrress) { mainData()->setAdress(table, index, addrress); };
 

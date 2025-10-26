@@ -35,6 +35,7 @@ public:
   uint32_t pollingPeriod(uint8_t serverIndex, uint8_t slaveAddres, bool isIndex);
 
   void setTimeOutTime(uint8_t serverIndex, uint8_t slaveAdr, uint32_t time, bool isIndex = false);
+  uint32_t getTimeOutTime(uint8_t serverIndex, uint8_t slaveAdr, bool isIndex = false);
 
   void setLongOrder(uint8_t serverIndex, uint8_t slaveAdr, uint8_t order, bool isIndex = false);
   void setFloatOrder(uint8_t serverIndex, uint8_t slaveAdr, uint8_t order, bool isIndex = false);

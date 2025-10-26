@@ -191,6 +191,16 @@ void ModbusMasterTCP::setTimeOutTime(uint8_t serverIndex, uint8_t slaveAddres, u
   serv->setTimeOutTime(slaveAddres, time, isIndex);
 }
 
+uint32_t ModbusMasterTCP::getTimeOutTime(uint8_t serverIndex, uint8_t slaveAdr, bool isIndex)
+{
+  ModbusTCPSlaveServer *serv = server(serverIndex);
+  if (serv == 0)
+  {
+    return 0;
+  }
+  return serv->getTimeOutTime(slaveAdr, isIndex);
+}
+
 void ModbusMasterTCP::setLongOrder(uint8_t serverIndex, uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
   ModbusTCPSlaveServer *serv = server(serverIndex);

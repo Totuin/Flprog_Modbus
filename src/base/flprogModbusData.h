@@ -119,6 +119,8 @@ public:
   void setAdress(uint8_t table, int32_t index, int32_t addr);
 
   void setWorkPause(uint32_t time);
+  void setTimeOutTime(uint32_t time) { _timeOutTime = time; };
+  uint32_t getTimeOutTime() { return _timeOutTime; };
 
 protected:
   ModbusTable *_tableCoil = 0;
@@ -132,6 +134,7 @@ protected:
   uint32_t _workPause = 0;
   uint32_t _startWorkPauseTime = 0;
   bool _isWorkPause = false;
+  uint32_t _timeOutTime = 1000;
 
   void saveForByteWithOrder(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
   void saveForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
@@ -164,8 +167,6 @@ public:
 
   void setPollingPeriod(uint32_t period);
   uint32_t pollingPeriod() { return _pollingPeriod; };
-  void setTimeOutTime(uint32_t time);
-  uint32_t getTimeOutTime();
   bool hasWriteRegisters();
   void setLastError(uint8_t error);
   ModbusTable *firstWriteTable();
@@ -192,6 +193,5 @@ protected:
   uint8_t _slaveAddres = 1;
   uint8_t _lastError;
   uint32_t _pollingPeriod = 1000;
-  uint32_t _timeOutTime = 1000;
   virtual bool canSaveTable(uint8_t table);
 };

@@ -1139,6 +1139,24 @@ void ModbusMasterRTU::setTimeOutTime(uint8_t slaveAddres, uint32_t time, bool is
   sl->setTimeOutTime(time);
 }
 
+uint32_t ModbusMasterRTU::getTimeOutTime(uint8_t slaveAddres, bool isIndex)
+{
+  ModbusSlaveInMaster *sl;
+  if (isIndex)
+  {
+    sl = slaveOnIndex(slaveAddres);
+  }
+  else
+  {
+    sl = slave(slaveAddres);
+  }
+  if (sl == 0)
+  {
+    return 0;
+  }
+  return sl->getTimeOutTime();
+}
+
 void ModbusMasterRTU::setLongOrder(uint8_t slaveAddres, uint8_t order, bool isIndex)
 {
   ModbusSlaveInMaster *sl;
