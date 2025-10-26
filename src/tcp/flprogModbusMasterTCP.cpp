@@ -717,10 +717,9 @@ void ModbusMasterTCP::checkAnswer()
 {
   if (flprog::isTimer(_startSendTime, (_telegrammSlave->getTimeOutTime())))
   {
-
-   _telegrammSlave->setWorkPause(errorPauseTime());
+    _telegrammSlave->setWorkPause(errorPauseTime());
     _telegrammSlave->setLastError(244);
-         _tempCurrentServer->stop();
+    _tempCurrentServer->stop();
     _status = FLPROG_MODBUS_READY;
     return;
   }
@@ -909,7 +908,7 @@ bool ModbusMasterTCP::nextRegistor()
 
 bool ModbusMasterTCP::nextTable()
 {
-   if (!_currentSlave->isReady())
+  if (!_currentSlave->isReady())
   {
     return nextSlave();
   }

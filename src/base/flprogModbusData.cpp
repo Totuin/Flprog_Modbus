@@ -1143,7 +1143,6 @@ bool ModbusSlaveInMaster::canSaveTable(uint8_t table)
 
 bool ModbusSlaveInMaster::hasWriteRegisters()
 {
-
   if (_isWorkPause)
   {
     if (flprog::isTimer(_startWorkPauseTime, _workPause))
@@ -1159,6 +1158,7 @@ bool ModbusSlaveInMaster::hasWriteRegisters()
   {
     return false;
   }
+
   ModbusTable *table1 = tableForType(FLPROG_HOLDING_REGISTR);
   if (table1 != 0)
   {

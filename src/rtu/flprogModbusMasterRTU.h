@@ -77,6 +77,7 @@ public:
   uint8_t getLastError(uint8_t slaveAddres, bool isIndex = false);
   void status(uint8_t slaveAddres, bool status, bool isIndex = false);
   bool slaveStatus(uint8_t slaveAddres, bool isIndex);
+  uint32_t errorPauseTime();
 
 protected:
   ModbusSlaveInMaster *slaves;

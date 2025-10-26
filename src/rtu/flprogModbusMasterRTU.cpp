@@ -91,6 +91,7 @@ void ModbusMasterRTU::checkAnswer()
   if (flprog::isTimer(_startSendTime, (_telegrammSlave->getTimeOutTime())))
   {
     _telegrammSlave->setLastError(244);
+    _telegrammSlave->setWorkPause(errorPauseTime());
     _status = FLPROG_MODBUS_READY;
     _bufferSize = 0;
     return;
@@ -305,6 +306,10 @@ bool ModbusMasterRTU::nextStep()
     _currentSlaveTable = _currentSlave->firstTabe();
     _currentSlaveStartAddress = _currentSlaveTable->getMinAdress();
     return true;
+  }
+  if (!_currentSlave->isReady())
+  {
+    return nextSlave();
   }
   return nextRegistor();
 }
@@ -1263,4 +1268,14 @@ void ModbusMasterRTU::status(uint8_t slaveAddres, bool status, bool isIndex)
 uint16_t ModbusMasterRTU::rtuPacadgeSize(uint16_t length, uint8_t bufferArray[])
 {
   return flprogModus::masterRTUPacadgeSize(length, bufferArray);
+}
+
+uint32_t ModbusMasterRTU::errorPauseTime()
+{
+  uint32_t result = 0;
+  for (uint8_t i = 0; i < slavesSize; i++)
+  {
+    result = result + (slaves[i].pollingPeriod()) + (slaves[i].getTimeOutTime());
+  }
+  return result;
 }
