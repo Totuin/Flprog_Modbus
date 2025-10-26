@@ -598,7 +598,7 @@ bool ModbusTCPSlaveServer::slaveStatus(uint8_t slaveAddres, bool isIndex)
 
 bool ModbusTCPSlaveServer::hasWriteRegisters()
 {
-if (_isWorkPause)
+  if (_isWorkPause)
   {
     if (flprog::isTimer(_startWorkPauseTime, _workPause))
     {

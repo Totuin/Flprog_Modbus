@@ -1099,7 +1099,6 @@ void ModbusMainData::setCallBack(FLProgModbusNewDataCallback func)
   }
 }
 
-
 void ModbusMainData::setWorkPause(uint32_t time)
 {
   _startWorkPauseTime = millis();
@@ -1145,7 +1144,7 @@ bool ModbusSlaveInMaster::canSaveTable(uint8_t table)
 bool ModbusSlaveInMaster::hasWriteRegisters()
 {
 
-if (_isWorkPause)
+  if (_isWorkPause)
   {
     if (flprog::isTimer(_startWorkPauseTime, _workPause))
     {
@@ -1156,8 +1155,10 @@ if (_isWorkPause)
       return false;
     }
   }
-if (!_isActive)
-{return false;}
+  if (!_isActive)
+  {
+    return false;
+  }
   ModbusTable *table1 = tableForType(FLPROG_HOLDING_REGISTR);
   if (table1 != 0)
   {
@@ -1304,7 +1305,7 @@ int16_t ModbusSlaveInMaster::nextTable(int16_t table)
 
 bool ModbusSlaveInMaster::isReady()
 {
-if (_isWorkPause)
+  if (_isWorkPause)
   {
     if (flprog::isTimer(_startWorkPauseTime, _workPause))
     {
@@ -1334,6 +1335,3 @@ void ModbusSlaveInMaster::setSlaveAddress(uint8_t adr)
 {
   _slaveAddres = adr;
 }
-
-
-
