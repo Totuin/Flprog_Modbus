@@ -123,6 +123,16 @@ public:
   uint32_t getTimeOutTime() { return _timeOutTime; };
 
 protected:
+  void saveForByteWithOrder(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
+  void saveForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
+
+  void readForByteWithOrder(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
+  void readForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
+
+  ModbusTable *tableForStartArddres(uint8_t table, int32_t startAddress, bool isTwoWord);
+
+  virtual bool canSaveTable(uint8_t table);
+
   ModbusTable *_tableCoil = 0;
   ModbusTable *_tableDiscreteInput = 0;
   ModbusTable *_tableInputRegistr = 0;
@@ -135,15 +145,6 @@ protected:
   uint32_t _startWorkPauseTime = 0;
   bool _isWorkPause = false;
   uint32_t _timeOutTime = 1000;
-
-  void saveForByteWithOrder(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
-  void saveForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
-
-  void readForByteWithOrder(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
-  void readForByteWithOrderByIndex(unsigned char *sourse, uint8_t table, int32_t startAddress, uint8_t order);
-
-  ModbusTable *tableForStartArddres(uint8_t table, int32_t startAddress, bool isTwoWord);
-  virtual bool canSaveTable(uint8_t table);
 };
 
 class ModbusSlaveInMaster : public ModbusMainData
@@ -152,15 +153,8 @@ public:
   ModbusSlaveInMaster() {};
   ModbusSlaveInMaster(uint8_t addr) { setSlaveAddress(addr); };
   uint8_t getLastError();
-
-  void status(bool status) { _isActive = status; };
-
-  bool status() { return _isActive; };
-  bool slaveStatus() { return _isActive; };
-
   void lastReqest(uint32_t time) { _lastReqestTime = time; };
   uint32_t lastReqest() { return _lastReqestTime; };
-
   bool isInit() { return _initFlag; };
   void setInit() { _initFlag = true; };
   void resetInit() { _initFlag = false; };
@@ -183,6 +177,10 @@ public:
   void hrSendMode(uint8_t mode) { _hrSendMode = mode; };
   uint8_t coilSendMode() { return _coilSendMode; };
   void coilSendMode(uint8_t mode) { _coilSendMode = mode; };
+
+  bool status() { return _isActive; };
+  void status(bool status) { _isActive = status; };
+  bool slaveStatus() { return _isActive; };
 
 protected:
   uint8_t _hrSendMode = FLPROG_SEND_AUTO;
