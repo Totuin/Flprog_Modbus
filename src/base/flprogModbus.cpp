@@ -196,8 +196,13 @@ uint8_t Modbus::validateSlaveReqest(ModbusMainData *data)
 
 void Modbus::executeSlaveReqest(ModbusMainData *data, uint8_t address)
 {
-  if ((_buffer[0] != address) && (_buffer[0] != 0))
-    return;
+  if (address > 0)
+  {
+    if ((_buffer[0] != address) && (_buffer[0] != 0))
+    {
+      return;
+    }
+  }
   uint8_t exception = validateRequest();
   if (exception > 0)
   {

@@ -79,7 +79,6 @@ public:
 
   uint32_t getTimeOutTime() { return mainData()->getTimeOutTime(); };
   void setTimeOutTime(uint32_t time) { mainData()->setTimeOutTime(time); };
-
   void setCallBack(FLProgModbusNewDataCallback func);
 
 protected:
