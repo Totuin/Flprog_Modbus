@@ -6,7 +6,7 @@
 #define FLPROG_BRIDGE_WAITING_FOR_REQUEST 0
 #define FLPROG_BRIDGE_WAITING_FOR_RESPONSE 1
 
-class ModbusBridge
+class ModbusBridge : public AbstractFLProgClass
 {
 public:
   ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sourse, FlprogAbstractUartExecutor *executor);
@@ -63,8 +63,11 @@ public:
   void setSkippingEvents(uint16_t value) { _skippingEvents = value; };
   void isPause(bool value) { _isPause = value; };
   bool isPause() { return _isPause; };
-   void setEnable(bool enable){_enable=enable;};
-   bool getEnable( ){return _enable;};
+  void setEnable(bool enable) { _enable = enable; };
+  bool getEnable() { return _enable; };
+
+  uint32_t getPauseTime() { return _pauseTime; };
+  void setPauseTime(uint32_t time) { _pauseTime = time; };
 
 protected:
   void onPeDePin();
@@ -90,7 +93,6 @@ protected:
   uint16_t _skippingEvents = 0;
   uint16_t _eventsCount = 0;
 
-  uint8_t _status = FLPROG_MODBUS_READY;
   uint8_t _uart = 0;
   int16_t _port = 502;
   int16_t _kasCadaCloudPort = 25000;
@@ -126,5 +128,10 @@ protected:
 
   String _deniceId;
   uint32_t _kaScadaCloudTimeStartTime;
-   bool _enable = true;
+  bool _enable = true;
+
+  uint32_t _startPauseTime;
+  // TODO Изменить время паузы по умолчанию.
+  uint32_t _pauseTime = 100;
+  bool _isPauseStatus = false;
 };

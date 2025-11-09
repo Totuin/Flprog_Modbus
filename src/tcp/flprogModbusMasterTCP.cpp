@@ -5,6 +5,7 @@ ModbusMasterTCP::ModbusMasterTCP(FLProgAbstractTcpInterface *sourse, uint8_t siz
   _serversSize = size;
   _servs = new ModbusTCPSlaveServer[_serversSize];
   _interface = sourse;
+  _status = FLPROG_MODBUS_READY;
 
   for (uint8_t i = 0; i < _serversSize; i++)
   {
@@ -1107,6 +1108,8 @@ ModbusTCPSlaveServer *ModbusMasterTCP::firstWriteServer()
   }
   return 0;
 }
+
+
 
 void ModbusMasterTCP::sendTxBuffer()
 {

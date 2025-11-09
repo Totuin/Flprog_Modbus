@@ -4,6 +4,7 @@ ModbusSlaveRTU::ModbusSlaveRTU(uint8_t number, FlprogAbstractUartExecutor *execu
 {
   _uartPortNumber = number;
   _executor = executor;
+  _status = FLPROG_MODBUS_READY;
 }
 
 void ModbusSlaveRTU::begin()
@@ -21,7 +22,8 @@ void ModbusSlaveRTU::begin()
 
 void ModbusSlaveRTU::pool()
 {
-  if(!_enable)
+  setFlags();
+  if (!_enable)
   {
     return;
   }
@@ -52,11 +54,21 @@ void ModbusSlaveRTU::pool()
       return;
     }
   }
-  if (checkAvaliblePacage())
+  if (_status == FLPROG_MODBUS_WAITING_PAUSE_BEFORE_ANSWERING)
   {
-    executeSlaveReqest(mainData(), _slaveAddres);
+    if ((flprog::isTimer(_startPauseTime, _pauseTime)))
+    {
+      executeSlaveReqest(mainData(), _slaveAddres);
+        }
     return;
   }
+  if (checkAvaliblePacage())
+  {
+    _status = FLPROG_MODBUS_WAITING_PAUSE_BEFORE_ANSWERING;
+    _startPauseTime = millis();
+    return;
+  }
+
   if (_bufferSize == 0)
   {
     return;

@@ -49,7 +49,6 @@ public:
   void setUnsignedlongOrder(uint8_t order) { mainData()->setUnsignedlongOrder(order); };
   void setIntOrder(uint8_t order) { mainData()->setIntOrder(order); };
 
-
   uint8_t intOrder() { return mainData()->intOrder(); };
   uint8_t longOrder() { return mainData()->longOrder(); };
   uint8_t floatOrder() { return mainData()->floatOrder(); };
@@ -64,6 +63,9 @@ public:
   ModbusMainData *mainData();
   void setCallBack(FLProgModbusNewDataCallback func);
 
+  uint32_t getPauseTime() { return _pauseTime; };
+  void setPauseTime(uint32_t time) { _pauseTime = time; };
+
 protected:
   uint8_t _slaveAddres = 1;
   virtual uint8_t validateRequest();
@@ -71,4 +73,6 @@ protected:
 
 private:
   ModbusMainData *_data;
+  uint32_t _startPauseTime;
+  uint32_t _pauseTime = 10;
 };

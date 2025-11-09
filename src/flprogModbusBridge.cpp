@@ -5,6 +5,7 @@ ModbusBridge::ModbusBridge(uint8_t portNumber, FLProgAbstractTcpInterface *sours
   _interface = sourse;
   _uart = portNumber;
   _executor = executor;
+  _status = FLPROG_MODBUS_READY;
   _server.setSourse(sourse);
   _tcpClient.setSourse(sourse);
 }
@@ -201,7 +202,8 @@ void ModbusBridge::connect()
 
 void ModbusBridge::pool()
 {
-  if(!_enable)
+  setFlags();
+  if (!_enable)
   {
     return;
   }
@@ -382,6 +384,7 @@ void ModbusBridge::clientrRequestProcess()
   }
   _rtuSendTime = millis();
   _bufferSize = 0;
+
   _currentStep = FLPROG_BRIDGE_WAITING_FOR_RESPONSE;
 }
 
@@ -485,7 +488,6 @@ void ModbusBridge::serverTcpModeRequestProcess()
   }
   sendRTUBuffer();
   _rtuSendTime = millis();
-
   _currentStep = FLPROG_BRIDGE_WAITING_FOR_RESPONSE;
 }
 
@@ -531,57 +533,76 @@ void ModbusBridge::serverRtuOverTcpModeRequestProcess()
 
 void ModbusBridge::serverResponseProcess()
 {
-  if (flprog::isTimer(_rtuSendTime, _timeoutTime))
+  uint16_t pacadgeSize;
+  if (!_isPauseStatus)
   {
-    _bufferSize = 0;
-    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-    return;
-  }
-  if (!(_executor->availableUart(_uart)))
-  {
-    return;
-  }
-  while (_executor->availableUart(_uart))
-  {
-    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+    if (flprog::isTimer(_rtuSendTime, _timeoutTime))
     {
-      _buffer[_bufferSize] = _executor->readUart(_uart);
-      _bufferSize++;
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
     }
-    else
+    if (!(_executor->availableUart(_uart)))
     {
-      _executor->readUart(_uart);
+      return;
     }
-  }
-  uint16_t pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
-  if ((pacadgeSize == 0) || (_bufferSize < pacadgeSize))
-  {
+    while (_executor->availableUart(_uart))
+    {
+      if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+      {
+        _buffer[_bufferSize] = _executor->readUart(_uart);
+        _bufferSize++;
+      }
+      else
+      {
+        _executor->readUart(_uart);
+      }
+    }
+    pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
+    if ((pacadgeSize == 0) || (_bufferSize < pacadgeSize))
+    {
+      return;
+    }
+    if (!_server.connected())
+    {
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
+    }
+    _isPauseStatus = true;
+    _startPauseTime = millis();
     return;
-  }
-  if (!_server.connected())
-  {
-    _bufferSize = 0;
-    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-    return;
-  }
-  while (_server.available())
-  {
-    _server.read();
-  }
-  if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
-  {
-    _server.write(_buffer, _bufferSize);
   }
   else
   {
-    _bufferSize = pacadgeSize - 2;
-    _mbapBuffer[4] = highByte(_bufferSize);
-    _mbapBuffer[5] = lowByte(_bufferSize);
-    _server.write(_mbapBuffer, 6);
-    _server.write(_buffer, _bufferSize);
+    if ((flprog::isTimer(_startPauseTime, _pauseTime)))
+    {
+      _isPauseStatus = false;
+    }
+    else
+    {
+      return;
+    }
+    while (_server.available())
+    {
+      _server.read();
+    }
+    if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
+    {
+      _server.write(_buffer, _bufferSize);
+    }
+    else
+    {
+      pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
+      _bufferSize = pacadgeSize - 2;
+      _mbapBuffer[4] = highByte(_bufferSize);
+      _mbapBuffer[5] = lowByte(_bufferSize);
+      _server.write(_mbapBuffer, 6);
+      _server.write(_buffer, _bufferSize);
+    }
+    _bufferSize = 0;
+    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
   }
-  _bufferSize = 0;
-  _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
 }
 
 void ModbusBridge::clientResponseProcess()
@@ -596,9 +617,12 @@ void ModbusBridge::clientResponseProcess()
     _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
     return;
   }
-  if (!_tcpClient.available())
+  if (!_isPauseStatus)
   {
-    return;
+    if (!_tcpClient.available())
+    {
+      return;
+    }
   }
   if (_mode == FLPROG_RTU_OVER_TCP_MODBUS)
   {
@@ -610,54 +634,9 @@ void ModbusBridge::clientResponseProcess()
 
 void ModbusBridge::clientRtuOverTCPModeResponseProcess()
 {
-  while (_tcpClient.available())
+  if (!_isPauseStatus)
   {
-    if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
-    {
-
-      _buffer[_bufferSize] = _tcpClient.read();
-      _bufferSize++;
-    }
-    else
-    {
-      _tcpClient.read();
-    }
-  }
-  uint16_t pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
-  if (pacadgeSize == 0)
-  {
-    _bufferSize = 0;
-    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-    return;
-  }
-  if (_bufferSize < pacadgeSize)
-  {
-    _bufferSize = 0;
-    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-    return;
-  }
-  if (!flprogModus::checkCRCOnBuffer(pacadgeSize, _buffer))
-  {
-    _bufferSize = 0;
-    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-    return;
-  }
-  _bufferSize = pacadgeSize - 2;
-  sendRTUBuffer();
-  _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-}
-
-void ModbusBridge::clientTCPModeResponseProcess()
-{
-  uint8_t byteIndex = 0;
-  while (_tcpClient.available())
-  {
-    if (byteIndex < 6)
-    {
-      _mbapBuffer[byteIndex] = _tcpClient.read();
-      byteIndex++;
-    }
-    else
+    while (_tcpClient.available())
     {
       if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
       {
@@ -670,34 +649,102 @@ void ModbusBridge::clientTCPModeResponseProcess()
         _tcpClient.read();
       }
     }
-  }
-  if (byteIndex < 6)
-  {
-    _bufferSize = 0;
-    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+    uint16_t pacadgeSize = flprogModus::masterRTUPacadgeSize(_bufferSize, _buffer);
+    if (pacadgeSize == 0)
+    {
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
+    }
+    if (_bufferSize < pacadgeSize)
+    {
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
+    }
+    if (!flprogModus::checkCRCOnBuffer(pacadgeSize, _buffer))
+    {
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
+    }
+    _bufferSize = pacadgeSize - 2;
+    _isPauseStatus = true;
+    _startPauseTime = millis();
     return;
   }
-  uint16_t pacadgeSize = (uint16_t)word(_mbapBuffer[4], _mbapBuffer[5]);
-  if (pacadgeSize == 0)
+  if ((flprog::isTimer(_startPauseTime, _pauseTime)))
   {
-    _bufferSize = 0;
+    _isPauseStatus = false;
+    sendRTUBuffer();
     _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+  }
+}
+
+void ModbusBridge::clientTCPModeResponseProcess()
+{
+  if (!_isPauseStatus)
+  {
+    uint8_t byteIndex = 0;
+    while (_tcpClient.available())
+    {
+      if (byteIndex < 6)
+      {
+        _mbapBuffer[byteIndex] = _tcpClient.read();
+        byteIndex++;
+      }
+      else
+      {
+        if (_bufferSize < FLPROG_MODBUS_BUFER_SIZE)
+        {
+
+          _buffer[_bufferSize] = _tcpClient.read();
+          _bufferSize++;
+        }
+        else
+        {
+          _tcpClient.read();
+        }
+      }
+    }
+    if (byteIndex < 6)
+    {
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
+    }
+    uint16_t pacadgeSize = (uint16_t)word(_mbapBuffer[4], _mbapBuffer[5]);
+    if (pacadgeSize == 0)
+    {
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
+    }
+    if (pacadgeSize != _bufferSize)
+    {
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
+    }
+    if (word(_mbapBuffer[0], _mbapBuffer[1]) != _transactionId)
+    {
+      _bufferSize = 0;
+      _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
+      return;
+    }
+    _isPauseStatus = true;
+    _startPauseTime = millis();
+
     return;
   }
-  if (pacadgeSize != _bufferSize)
+
+  if ((flprog::isTimer(_startPauseTime, _pauseTime)))
   {
-    _bufferSize = 0;
+    _isPauseStatus = false;
+
+    sendRTUBuffer();
     _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-    return;
   }
-  if (word(_mbapBuffer[0], _mbapBuffer[1]) != _transactionId)
-  {
-    _bufferSize = 0;
-    _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
-    return;
-  }
-  sendRTUBuffer();
-  _currentStep = FLPROG_BRIDGE_WAITING_FOR_REQUEST;
 }
 
 void ModbusBridge::kascadaCloudResponseProcess()

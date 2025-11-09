@@ -5,6 +5,7 @@ ModbusSlaveTCP::ModbusSlaveTCP(FLProgAbstractTcpInterface *sourse)
   _interface = sourse;
   _tcpClient.setSourse(sourse);
   _server.setSourse(sourse);
+  _status = FLPROG_MODBUS_READY;
 }
 
 void ModbusSlaveTCP::setMode(uint8_t mode)
@@ -132,6 +133,7 @@ void ModbusSlaveTCP::pool()
     return;
   }
   executeSlaveReqest(mainData(), _slaveAddres);
+  return;
 }
 
 void ModbusSlaveTCP::getRxBuffer()
@@ -215,6 +217,7 @@ void ModbusSlaveTCP::sendTxBuffer()
     if (!_server.connected())
     {
       _server.stopConnection();
+      _bufferSize = 0;
       return;
     }
   }

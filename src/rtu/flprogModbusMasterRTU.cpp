@@ -5,6 +5,7 @@ ModbusMasterRTU::ModbusMasterRTU(uint8_t portNumber, uint8_t size, FlprogAbstrac
   slavesSize = size;
   _executor = executor;
   slaves = new ModbusSlaveInMaster[slavesSize];
+  _status = FLPROG_MODBUS_READY;
   setUart(portNumber);
 }
 
@@ -76,6 +77,15 @@ void ModbusMasterRTU::pool()
     }
   }
 
+  if (_status == FLPROG_MODBUS_WAITING_PAUSE_BEFORE_ANSWERING)
+  {
+    if ((flprog::isTimer(_startPauseTime, _pauseTime)))
+    {
+      _status = FLPROG_MODBUS_READY;
+    }
+    return;
+  }
+
   if (_status == FLPROG_MODBUS_WAITING_ANSWER)
   {
     checkAnswer();
@@ -102,13 +112,16 @@ void ModbusMasterRTU::checkAnswer()
     if (exception > 0)
     {
       _telegrammSlave->setLastError(exception);
-      _status = FLPROG_MODBUS_READY;
+      _status = FLPROG_MODBUS_WAITING_PAUSE_BEFORE_ANSWERING;
+      _startPauseTime = millis();
       _bufferSize = 0;
       return;
     }
     _telegrammSlave->setLastError(0);
     writeMaserData(_telegrammTable, _telegrammStartAddres, _telegrammNumbeRegs);
     _bufferSize = 0;
+    _status = FLPROG_MODBUS_WAITING_PAUSE_BEFORE_ANSWERING;
+    _startPauseTime = millis();
     return;
   }
   if (_bufferSize == 0)

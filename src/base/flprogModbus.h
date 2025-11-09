@@ -1,7 +1,7 @@
 #pragma once
 #include "flprogModbusData.h"
 
-class Modbus
+class Modbus : public AbstractFLProgClass
 {
 public:
   void setLastError(uint8_t error) { _lastError = error; };
@@ -13,6 +13,7 @@ public:
   bool isPause() { return _isPause; };
   void setEnable(bool enable) { _enable = enable; };
   bool getEnable() { return _enable; };
+
 
 protected:
   virtual void sendTxBuffer() = 0;
@@ -38,7 +39,6 @@ protected:
   uint8_t tabeTypeForFunction(uint8_t function);
 
   uint8_t _lastError = 0;
-  uint8_t _status = FLPROG_MODBUS_READY;
   uint8_t _bufferSize = 0;
   uint8_t _buffer[FLPROG_MODBUS_BUFER_SIZE];
   uint32_t _startSendTime;

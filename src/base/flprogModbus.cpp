@@ -200,6 +200,8 @@ void Modbus::executeSlaveReqest(ModbusMainData *data, uint8_t address)
   {
     if ((_buffer[0] != address) && (_buffer[0] != 0))
     {
+      _status = FLPROG_MODBUS_READY;
+      _bufferSize = 0;
       return;
     }
   }
@@ -211,7 +213,10 @@ void Modbus::executeSlaveReqest(ModbusMainData *data, uint8_t address)
     {
       buildException(exception);
       sendTxBuffer();
+      return;
     }
+    _bufferSize = 0;
+    _status = FLPROG_MODBUS_READY;
     return;
   }
   setLastError(0);
@@ -290,9 +295,11 @@ void Modbus::get_FC1(ModbusTable *table, int32_t startAddress, int16_t numberReg
 
 void Modbus::get_FC3(ModbusTable *table, int32_t startAddress, int16_t numberRegs)
 {
+
   int32_t currentIndex = startAddress;
   uint8_t currentByte = 3;
   int16_t value;
+
   for (int32_t i = 0; i < numberRegs; i++)
   {
     value = word(_buffer[currentByte], _buffer[currentByte + 1]);
@@ -405,6 +412,7 @@ void Modbus::create_PDU(ModbusTable *table, int32_t startAddress, int16_t number
     create_Write_FC16(table, startAddress, numberRegs);
   }
   sendTxBuffer();
+
 }
 
 void Modbus::writeMaserData(ModbusTable *table, int32_t startAddress, int16_t numberRegs)

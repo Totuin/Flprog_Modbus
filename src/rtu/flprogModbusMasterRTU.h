@@ -78,6 +78,10 @@ public:
   uint8_t getLastError(uint8_t slaveAddres, bool isIndex = false);
   void status(uint8_t slaveAddres, bool status, bool isIndex = false);
   bool slaveStatus(uint8_t slaveAddres, bool isIndex);
+
+  uint32_t getPauseTime() { return _pauseTime; };
+  void setPauseTime(uint32_t time) { _pauseTime = time; };
+
   uint32_t errorPauseTime();
 
 protected:
@@ -112,4 +116,7 @@ protected:
   virtual uint16_t rtuPacadgeSize(uint16_t length, uint8_t bufferArray[]);
   uint8_t calculateSendRegSize();
   uint8_t selectSendFunction();
+
+  uint32_t _startPauseTime;
+  uint32_t _pauseTime = 10;
 };
