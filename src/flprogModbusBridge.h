@@ -129,9 +129,7 @@ protected:
   String _deniceId;
   uint32_t _kaScadaCloudTimeStartTime;
   bool _enable = true;
-
   uint32_t _startPauseTime;
-  // TODO Изменить время паузы по умолчанию.
-  uint32_t _pauseTime = 100;
+  uint32_t _pauseTime = 10;
   bool _isPauseStatus = false;
 };
